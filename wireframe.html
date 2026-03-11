@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VMMS Wireframe</title>
+<style>
+  :root {
+    --primary: #4A90D9;
+    --primary-light: #E8F0FE;
+    --success: #34C759;
+    --danger: #FF3B30;
+    --warning: #FF9500;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #F0F2F5;
+    color: var(--gray-800);
+    line-height: 1.5;
+  }
+
+  /* === Navigation === */
+  .nav-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: #fff; padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .nav-bar h1 { font-size: 16px; font-weight: 700; }
+  .nav-bar .back { font-size: 20px; cursor: pointer; text-decoration: none; color: var(--gray-700); }
+  .nav-bar .right-icons { display: flex; gap: 12px; }
+  .nav-bar .badge-icon { position: relative; font-size: 20px; cursor: pointer; }
+  .nav-bar .badge-icon .dot { position: absolute; top: -2px; right: -4px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; }
+
+  /* === Screen Container === */
+  .screen-gallery {
+    display: flex; flex-wrap: wrap; gap: 24px; padding: 20px;
+    justify-content: center;
+  }
+  .screen-wrapper {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .screen-wrapper .label {
+    font-size: 13px; font-weight: 600; color: var(--gray-500);
+    background: var(--gray-200); padding: 4px 12px; border-radius: 20px;
+  }
+  .screen {
+    width: 375px; min-height: 700px; background: #fff;
+    border-radius: 24px; overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    position: relative; display: flex; flex-direction: column;
+    border: 1px solid var(--gray-200);
+  }
+  .screen-body {
+    flex: 1; overflow-y: auto; padding-bottom: 70px;
+  }
+
+  /* === Bottom Tab === */
+  .bottom-tab {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: #fff; border-top: 1px solid var(--gray-200);
+    display: flex; height: 64px;
+  }
+  .bottom-tab .tab-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2px;
+    font-size: 10px; color: var(--gray-400); cursor: pointer;
+    text-decoration: none;
+  }
+  .bottom-tab .tab-item.active { color: var(--primary); }
+  .bottom-tab .tab-item .tab-icon { font-size: 22px; }
+  .tab-badge { position: relative; }
+  .tab-badge .count {
+    position: absolute; top: -6px; right: -10px;
+    background: var(--danger); color: #fff; font-size: 9px;
+    padding: 1px 5px; border-radius: 10px; font-weight: 600;
+  }
+
+  /* === Header within screen === */
+  .s-header {
+    padding: 14px 20px; display: flex; align-items: center;
+    justify-content: space-between; border-bottom: 1px solid var(--gray-100);
+    background: #fff; position: sticky; top: 0; z-index: 10;
+  }
+  .s-header h2 { font-size: 17px; font-weight: 700; }
+  .s-header .back { font-size: 18px; cursor: pointer; color: var(--gray-600); margin-right: 8px; }
+  .s-header-left { display: flex; align-items: center; }
+  .s-header .icon-btn { font-size: 20px; cursor: pointer; position: relative; }
+  .s-header .icon-btn .dot { position: absolute; top: -2px; right: -2px; width: 7px; height: 7px; background: var(--danger); border-radius: 50%; }
+
+  /* === Common === */
+  .card {
+    background: #fff; border-radius: var(--radius); padding: 16px;
+    margin: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid var(--gray-100);
+  }
+  .section-title {
+    font-size: 15px; font-weight: 700; padding: 16px 16px 8px;
+    color: var(--gray-700);
+  }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 12px 20px; border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 600; border: none; cursor: pointer;
+    width: 100%;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-outline { background: #fff; color: var(--primary); border: 1.5px solid var(--primary); }
+  .btn-sm { padding: 6px 14px; font-size: 12px; width: auto; border-radius: 6px; }
+
+  .input-group { margin-bottom: 14px; }
+  .input-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 4px; }
+  .input-field {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm); font-size: 14px; outline: none;
+    background: var(--gray-50);
+  }
+  .input-field:focus { border-color: var(--primary); background: #fff; }
+
+  .chip-group { display: flex; gap: 8px; padding: 12px 16px; flex-wrap: wrap; }
+  .chip {
+    padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500;
+    border: 1.5px solid var(--gray-200); background: #fff; color: var(--gray-600); cursor: pointer;
+  }
+  .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+  .status-badge {
+    display: inline-block; padding: 2px 10px; border-radius: 10px;
+    font-size: 11px; font-weight: 600;
+  }
+  .status-normal { background: #DEF7EC; color: #03543F; }
+  .status-offline { background: var(--gray-100); color: var(--gray-500); }
+  .status-maintenance { background: #FEF3C7; color: #92400E; }
+  .status-broken { background: #FEE2E2; color: #991B1B; }
+
+  .stat-row { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 8px; }
+  .stat-box {
+    flex: 1; padding: 14px; border-radius: var(--radius-sm);
+    text-align: center;
+  }
+  .stat-box .stat-value { font-size: 22px; font-weight: 700; color: #fff; margin-top: 4px; }
+  .stat-box .stat-label { font-size: 11px; color: rgba(255,255,255,0.85); }
+
+  .list-item {
+    padding: 14px 16px; border-bottom: 1px solid var(--gray-100);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .list-item:last-child { border-bottom: none; }
+
+  .func-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    padding: 0 16px;
+  }
+  .func-item {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 16px 8px; gap: 8px; cursor: pointer; border-radius: var(--radius-sm);
+  }
+  .func-item:hover { background: var(--gray-50); }
+  .func-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; background: var(--primary-light); color: var(--primary);
+  }
+  .func-item span { font-size: 12px; color: var(--gray-600); font-weight: 500; text-align: center; }
+
+  /* Revenue card */
+  .revenue-card {
+    margin: 12px 16px; border-radius: var(--radius); overflow: hidden;
+    background: linear-gradient(135deg, #4A90D9, #357ABD);
+    color: #fff; padding: 20px;
+  }
+  .revenue-top { display: flex; justify-content: space-between; margin-bottom: 16px; }
+  .revenue-top .col { text-align: center; flex: 1; }
+  .revenue-top .col .lbl { font-size: 12px; opacity: 0.8; }
+  .revenue-top .col .val { font-size: 24px; font-weight: 700; }
+  .revenue-divider { width: 1px; background: rgba(255,255,255,0.3); }
+  .period-chips { display: flex; gap: 8px; margin-bottom: 16px; }
+  .period-chip {
+    padding: 5px 16px; border-radius: 16px; font-size: 12px; font-weight: 500;
+    background: rgba(255,255,255,0.2); color: #fff; cursor: pointer; border: none;
+  }
+  .period-chip.active { background: #fff; color: var(--primary); }
+  .revenue-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .revenue-grid .cell { text-align: center; }
+  .revenue-grid .cell .clbl { font-size: 11px; opacity: 0.75; }
+  .revenue-grid .cell .cval { font-size: 16px; font-weight: 700; }
+
+  .search-bar {
+    margin: 12px 16px; padding: 10px 14px; background: var(--gray-50);
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+    font-size: 14px; display: flex; align-items: center; gap: 8px; color: var(--gray-400);
+  }
+
+  /* machine card */
+  .machine-card {
+    margin: 8px 16px; padding: 16px; border-radius: var(--radius);
+    border: 1px solid var(--gray-100); background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .machine-card .mc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .machine-card .mc-name { font-size: 15px; font-weight: 700; }
+  .machine-card .mc-loc { font-size: 13px; color: var(--gray-500); margin-bottom: 6px; }
+  .machine-card .mc-info { font-size: 12px; color: var(--gray-400); display: flex; gap: 12px; }
+
+  /* tabs */
+  .tab-bar { display: flex; border-bottom: 2px solid var(--gray-100); padding: 0 16px; background: #fff; }
+  .tab-bar .tab {
+    padding: 10px 0; margin-right: 24px; font-size: 14px; font-weight: 500;
+    color: var(--gray-400); cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+  }
+  .tab-bar .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+
+  /* slot list */
+  .slot-item {
+    margin: 8px 16px; padding: 14px; border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-100); background: #fff;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .slot-item .slot-left {}
+  .slot-item .slot-no { font-size: 12px; color: var(--gray-400); font-weight: 600; }
+  .slot-item .slot-name { font-size: 14px; font-weight: 600; }
+  .slot-item .slot-stock { font-size: 12px; color: var(--gray-500); }
+  .progress-bar { width: 80px; height: 6px; background: var(--gray-200); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+  .progress-bar .fill { height: 100%; border-radius: 3px; }
+
+  /* chat */
+  .chat-area { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { max-width: 75%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; }
+  .msg.incoming { background: var(--gray-100); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .msg.outgoing { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .msg .time { font-size: 10px; opacity: 0.6; margin-top: 4px; }
+  .chat-input {
+    display: flex; gap: 8px; padding: 12px 16px;
+    border-top: 1px solid var(--gray-200); background: #fff;
+  }
+  .chat-input input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--gray-200); border-radius: 20px; font-size: 14px; outline: none; }
+  .chat-input .send-btn {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--primary);
+    color: #fff; border: none; font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* notice */
+  .notice-item {
+    padding: 14px 16px; border-bottom: 1px solid var(--gray-100);
+    cursor: pointer;
+  }
+  .notice-item.unread { background: var(--primary-light); }
+  .notice-item .n-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .notice-item .n-type { font-size: 11px; font-weight: 600; color: var(--primary); }
+  .notice-item .n-time { font-size: 11px; color: var(--gray-400); }
+  .notice-item .n-title { font-size: 14px; font-weight: 600; }
+  .notice-item .n-body { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+
+  /* ads schedule */
+  .schedule-item {
+    margin: 8px 16px; padding: 14px; border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-100); background: #fff;
+  }
+  .schedule-item .sch-top { display: flex; justify-content: space-between; align-items: center; }
+  .schedule-item .sch-order { font-size: 13px; color: var(--gray-400); font-weight: 600; }
+  .schedule-item .sch-name { font-size: 14px; font-weight: 600; }
+  .schedule-item .sch-meta { font-size: 12px; color: var(--gray-500); margin-top: 6px; }
+  .toggle { width: 44px; height: 24px; border-radius: 12px; background: var(--gray-300); position: relative; cursor: pointer; }
+  .toggle.on { background: var(--success); }
+  .toggle .knob { width: 20px; height: 20px; border-radius: 50%; background: #fff; position: absolute; top: 2px; left: 2px; transition: 0.2s; }
+  .toggle.on .knob { left: 22px; }
+
+  /* promo */
+  .promo-card {
+    margin: 8px 16px; padding: 14px; border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-100); background: #fff;
+  }
+  .promo-card .promo-rule { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .promo-card .promo-detail { font-size: 12px; color: var(--gray-500); }
+  .promo-card .promo-period { font-size: 11px; color: var(--primary); margin-top: 6px; }
+
+  /* table */
+  .data-table { width: 100%; font-size: 13px; border-collapse: collapse; }
+  .data-table th { background: var(--gray-50); padding: 10px 12px; text-align: left; font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); }
+  .data-table td { padding: 10px 12px; border-bottom: 1px solid var(--gray-100); }
+
+  /* chart placeholder */
+  .chart-placeholder {
+    margin: 12px 16px; height: 200px; background: var(--gray-50);
+    border-radius: var(--radius-sm); border: 1.5px dashed var(--gray-300);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray-400); font-size: 14px;
+  }
+
+  /* gallery title bar */
+  .gallery-title {
+    text-align: center; padding: 40px 20px 20px;
+    font-size: 28px; font-weight: 800; color: var(--gray-800);
+  }
+  .gallery-subtitle {
+    text-align: center; font-size: 14px; color: var(--gray-500); margin-bottom: 30px;
+  }
+
+  /* my page */
+  .profile-section {
+    text-align: center; padding: 30px 16px 20px;
+  }
+  .avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--primary-light); color: var(--primary);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 700; margin-bottom: 12px;
+  }
+  .profile-name { font-size: 18px; font-weight: 700; }
+  .profile-role { font-size: 13px; color: var(--gray-500); }
+
+  .menu-list { margin: 0 16px; background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--gray-100); }
+  .menu-item {
+    padding: 14px 16px; display: flex; justify-content: space-between;
+    align-items: center; border-bottom: 1px solid var(--gray-100);
+    font-size: 14px; cursor: pointer;
+  }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-item .arrow { color: var(--gray-300); }
+
+  /* file upload */
+  .upload-zone {
+    margin: 12px 16px; padding: 40px; border: 2px dashed var(--gray-300);
+    border-radius: var(--radius); text-align: center; color: var(--gray-400);
+    background: var(--gray-50); cursor: pointer;
+  }
+  .upload-zone .upload-icon { font-size: 36px; margin-bottom: 8px; }
+
+  /* ranking */
+  .rank-item {
+    padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .rank-num {
+    width: 28px; height: 28px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 13px;
+    font-weight: 700;
+  }
+  .rank-1 { background: #FEF3C7; color: #92400E; }
+  .rank-2 { background: var(--gray-100); color: var(--gray-600); }
+  .rank-3 { background: #FDE8D8; color: #9A3412; }
+  .rank-other { background: var(--gray-50); color: var(--gray-500); }
+  .rank-info { flex: 1; }
+  .rank-name { font-size: 14px; font-weight: 600; }
+  .rank-qty { font-size: 12px; color: var(--gray-500); }
+  .rank-amount { font-size: 14px; font-weight: 700; color: var(--gray-800); }
+
+  /* login specific */
+  .login-bg {
+    background: linear-gradient(180deg, var(--primary) 0%, #357ABD 100%);
+    display: flex; flex-direction: column; min-height: 700px;
+  }
+  .login-logo { text-align: center; padding: 80px 0 40px; color: #fff; }
+  .login-logo h2 { font-size: 32px; font-weight: 800; letter-spacing: 2px; }
+  .login-logo p { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+  .login-form {
+    flex: 1; background: #fff; border-radius: 24px 24px 0 0;
+    padding: 32px 24px;
+  }
+  .login-form h3 { font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+  .login-link { text-align: center; margin-top: 16px; font-size: 13px; color: var(--gray-500); }
+  .login-link a { color: var(--primary); font-weight: 600; text-decoration: none; }
+
+  /* register status */
+  .status-center {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 60px 24px; text-align: center;
+  }
+  .status-icon { font-size: 64px; margin-bottom: 20px; }
+  .status-text { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .status-desc { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<h1 class="gallery-title">VMMS Wireframe</h1>
+<p class="gallery-subtitle">스마트 자판기 관리 솔루션 - 반응형 모바일 웹 와이어프레임 (24 Screens)</p>
+
+<div class="screen-gallery">
+
+<!-- ==================== 1. LOGIN ==================== -->
+<div class="screen-wrapper">
+  <span class="label">1. 로그인</span>
+  <div class="screen">
+    <div class="login-bg">
+      <div class="login-logo">
+        <h2>VMMS</h2>
+        <p>스마트 자판기 관리 솔루션</p>
+      </div>
+      <div class="login-form">
+        <h3>로그인</h3>
+        <div class="input-group">
+          <label>이메일</label>
+          <input class="input-field" placeholder="email@example.com" />
+        </div>
+        <div class="input-group">
+          <label>비밀번호</label>
+          <input class="input-field" type="password" placeholder="비밀번호 입력" />
+        </div>
+        <button class="btn btn-primary" style="margin-top:8px">로그인</button>
+        <p class="login-link">계정이 없으신가요? <a href="#">매장관리자 신청</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 2. REGISTER ==================== -->
+<div class="screen-wrapper">
+  <span class="label">2. 매장관리자 신청</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>매장관리자 신청</h2></div>
+    </div>
+    <div class="screen-body" style="padding:20px 16px;">
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;"><span style="color:var(--danger);">*</span> 표시는 필수 입력 항목입니다.</p>
+      <div class="input-group"><label>사업자 상호 <span style="color:var(--danger);">*</span></label><input class="input-field" placeholder="사업자 상호 입력" required /></div>
+      <div class="input-group"><label>사업자 등록번호 <span style="font-size:11px;color:var(--gray-400);">(선택)</span></label><input class="input-field" placeholder="000-00-00000" /></div>
+      <div class="input-group"><label>담당자 성명 <span style="color:var(--danger);">*</span></label><input class="input-field" placeholder="성명 입력" required /></div>
+      <div class="input-group"><label>휴대폰 번호 <span style="color:var(--danger);">*</span></label><input class="input-field" placeholder="010-0000-0000" required /></div>
+      <div class="input-group"><label>이메일 주소 (아이디) <span style="color:var(--danger);">*</span></label><input class="input-field" type="email" placeholder="email@example.com" required /></div>
+      <div class="input-group"><label>비밀번호 <span style="color:var(--danger);">*</span></label><input class="input-field" type="password" placeholder="8자리 이상 입력" minlength="8" required /><span style="font-size:11px;color:var(--gray-400);margin-top:2px;display:block;">영문, 숫자, 특수문자 포함 8자리 이상</span></div>
+      <div class="input-group"><label>비밀번호 확인 <span style="color:var(--danger);">*</span></label><input class="input-field" type="password" placeholder="비밀번호 재입력" required /></div>
+      <button class="btn btn-primary" style="margin-top:8px">신청하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 3. REGISTER STATUS ==================== -->
+<div class="screen-wrapper">
+  <span class="label">3. 승인 대기</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>신청 상태</h2></div>
+    </div>
+    <div class="screen-body">
+      <div class="status-center">
+        <div class="status-icon">&#9203;</div>
+        <div class="status-text">승인 대기 중</div>
+        <div class="status-desc">관리자가 신청 내용을 검토하고 있습니다.<br/>승인이 완료되면 알림을 보내드립니다.</div>
+        <div style="margin-top:30px;padding:16px;background:var(--gray-50);border-radius:var(--radius-sm);width:100%;text-align:left;">
+          <div style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">신청일시</div>
+          <div style="font-size:14px;font-weight:600;">2026.03.10 14:30</div>
+          <div style="font-size:13px;color:var(--gray-500);margin-top:12px;margin-bottom:4px;">상호명</div>
+          <div style="font-size:14px;font-weight:600;">스마트 푸드 (주)</div>
+        </div>
+        <button class="btn btn-outline" style="margin-top:24px">로그인 화면으로</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 4. DASHBOARD ==================== -->
+<div class="screen-wrapper">
+  <span class="label">4. 대시보드 (홈)</span>
+  <div class="screen">
+    <div class="s-header">
+      <h2>VMMS</h2>
+      <div style="display:flex;gap:14px;">
+        <span class="icon-btn">&#128276;<span class="dot"></span></span>
+      </div>
+    </div>
+    <div class="screen-body">
+      <div style="padding:16px 16px 4px;">
+        <div style="font-size:18px;font-weight:700;color:var(--gray-800);">안녕하세요! <span style="color:var(--primary);">김관리</span> 님</div>
+        <div id="dashboard-datetime" style="font-size:13px;color:var(--gray-400);margin-top:4px;"></div>
+        <script>
+        (function(){var e=document.getElementById('dashboard-datetime');function u(){var n=new Date(),d=['일','월','화','수','목','금','토'],y=n.getFullYear(),m=String(n.getMonth()+1).padStart(2,'0'),dd=String(n.getDate()).padStart(2,'0'),day=d[n.getDay()],h=String(n.getHours()).padStart(2,'0'),mi=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');e.textContent=y+'.'+m+'.'+dd+' ('+day+') '+h+':'+mi+':'+s;}u();setInterval(u,1000);})();
+        </script>
+      </div>
+      <div class="revenue-card">
+        <div class="revenue-top">
+          <div class="col"><div class="lbl">누적 매출(&#8361;)</div><div class="val">1,250,000</div></div>
+          <div class="revenue-divider"></div>
+          <div class="col"><div class="lbl">누적 환불(&#8361;)</div><div class="val">35,000</div></div>
+        </div>
+        <div class="period-chips">
+          <button class="period-chip active">오늘</button>
+          <button class="period-chip">이번주</button>
+          <button class="period-chip">이번달</button>
+          <button class="period-chip">올해</button>
+        </div>
+        <div class="revenue-grid">
+          <div class="cell"><div class="clbl">금일 매출</div><div class="cval">85,000</div></div>
+          <div class="cell"><div class="clbl">금일 주문</div><div class="cval">42</div></div>
+          <div class="cell"><div class="clbl">금일 환불</div><div class="cval">2,000</div></div>
+          <div class="cell"><div class="clbl">전일 매출</div><div class="cval">92,000</div></div>
+          <div class="cell"><div class="clbl">전일 주문</div><div class="cval">51</div></div>
+          <div class="cell"><div class="clbl">전일 환불</div><div class="cval">3,500</div></div>
+        </div>
+      </div>
+
+      <div class="section-title">장비 현황</div>
+      <div class="stat-row">
+        <div class="stat-box" style="background:var(--primary);">
+          <div class="stat-label">전체 장비</div><div class="stat-value">5</div>
+        </div>
+        <div class="stat-box" style="background:var(--success);">
+          <div class="stat-label">정상 (In-line)</div><div class="stat-value">3</div>
+        </div>
+        <div class="stat-box" style="background:var(--gray-400);">
+          <div class="stat-label">오프라인</div><div class="stat-value">2</div>
+        </div>
+      </div>
+
+      <div class="section-title">주요 기능</div>
+      <div class="func-grid">
+        <div class="func-item"><div class="func-icon">&#128230;</div><span>상품관리</span></div>
+        <div class="func-item"><div class="func-icon">&#128202;</div><span>재고현황</span></div>
+        <div class="func-item"><div class="func-icon">&#9881;</div><span>자판기관리</span></div>
+        <div class="func-item"><div class="func-icon">&#127909;</div><span>광고관리</span></div>
+        <div class="func-item"><div class="func-icon">&#128200;</div><span>매출순위</span></div>
+        <div class="func-item"><div class="func-icon">&#127873;</div><span>증정관리</span></div>
+        <div class="func-item"><div class="func-icon">&#128196;</div><span>주문조회</span></div>
+        <div class="func-item"><div class="func-icon">&#128276;</div><span>알림</span></div>
+        <div class="func-item"><div class="func-icon">&#9881;</div><span>설정</span></div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item active"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-badge tab-icon">&#128172;<span class="count">3</span></span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 5. MACHINE LIST ==================== -->
+<div class="screen-wrapper">
+  <span class="label">5. 자판기 리스트</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><h2>자판기 관리</h2></div>
+      <button class="btn btn-sm btn-primary">+ 등록</button>
+    </div>
+    <div class="screen-body">
+      <div class="chip-group">
+        <span class="chip active">전체 (5)</span>
+        <span class="chip">정상 (3)</span>
+        <span class="chip">오프라인 (1)</span>
+        <span class="chip">점검 중 (1)</span>
+      </div>
+      <div class="search-bar">&#128269; 자판기명, 배치장소 검색</div>
+
+      <div class="machine-card">
+        <div class="mc-top"><span class="mc-name">강남점 A-01</span><span class="status-badge status-normal">정상</span></div>
+        <div class="mc-loc">&#128205; 강남역 1번출구 지하상가</div>
+        <div class="mc-info"><span>제품 12종</span><span>재고 85%</span><span>오늘 매출 &#8361;32,000</span></div>
+      </div>
+      <div class="machine-card">
+        <div class="mc-top"><span class="mc-name">서초점 B-02</span><span class="status-badge status-offline">오프라인</span></div>
+        <div class="mc-loc">&#128205; 서초동 업무빌딩 1F 로비</div>
+        <div class="mc-info"><span>제품 8종</span><span>재고 40%</span><span>오늘 매출 &#8361;0</span></div>
+      </div>
+      <div class="machine-card">
+        <div class="mc-top"><span class="mc-name">역삼점 C-03</span><span class="status-badge status-normal">정상</span></div>
+        <div class="mc-loc">&#128205; 역삼동 테헤란로 오피스텔</div>
+        <div class="mc-info"><span>제품 15종</span><span>재고 72%</span><span>오늘 매출 &#8361;28,500</span></div>
+      </div>
+      <div class="machine-card">
+        <div class="mc-top"><span class="mc-name">삼성점 D-04</span><span class="status-badge status-maintenance">점검 중</span></div>
+        <div class="mc-loc">&#128205; 삼성동 코엑스 B1</div>
+        <div class="mc-info"><span>제품 10종</span><span>재고 55%</span><span>오늘 매출 &#8361;0</span></div>
+      </div>
+      <div class="machine-card">
+        <div class="mc-top"><span class="mc-name">논현점 E-05</span><span class="status-badge status-normal">정상</span></div>
+        <div class="mc-loc">&#128205; 논현동 학원가 입구</div>
+        <div class="mc-info"><span>제품 10종</span><span>재고 90%</span><span>오늘 매출 &#8361;24,500</span></div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-badge tab-icon">&#128172;<span class="count">3</span></span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 6. MACHINE NEW ==================== -->
+<div class="screen-wrapper">
+  <span class="label">6. 신규 자판기 등록</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>신규 자판기 등록</h2></div>
+    </div>
+    <div class="screen-body" style="padding:20px 16px;">
+      <div class="input-group"><label>자판기 고정 ID</label><input class="input-field" placeholder="VM-2026-0001" /></div>
+      <div class="input-group"><label>자판기 명칭</label><input class="input-field" placeholder="강남점 A-01" /></div>
+      <div class="input-group"><label>설치 장소</label><input class="input-field" placeholder="강남역 1번출구" /></div>
+      <div class="input-group"><label>상세 주소</label><input class="input-field" placeholder="서울시 강남구..." /></div>
+      <div class="input-group"><label>GPS 좌표</label>
+        <div style="display:flex;gap:8px;">
+          <input class="input-field" placeholder="위도" style="flex:1" />
+          <input class="input-field" placeholder="경도" style="flex:1" />
+        </div>
+      </div>
+      <div class="input-group"><label>무선 네트워크 주소 (선택)</label><input class="input-field" placeholder="IP 또는 MAC" /></div>
+      <button class="btn btn-primary" style="margin-top:12px">등록하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 7. MACHINE DETAIL - INFO ==================== -->
+<div class="screen-wrapper">
+  <span class="label">7. 자판기 상세 - 기본정보</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>강남점 A-01</h2></div>
+      <span class="status-badge status-normal">정상</span>
+    </div>
+    <div class="tab-bar">
+      <span class="tab active">기본정보</span>
+      <span class="tab">슬롯설정</span>
+      <span class="tab">재고</span>
+      <span class="tab">매출</span>
+    </div>
+    <div class="screen-body" style="padding:16px;">
+      <div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:13px;color:var(--gray-500);">자판기 ID</span>
+          <span style="font-size:14px;font-weight:600;">VM-2026-0001</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:13px;color:var(--gray-500);">설치 장소</span>
+          <span style="font-size:14px;font-weight:600;">강남역 1번출구 지하상가</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:13px;color:var(--gray-500);">상세 주소</span>
+          <span style="font-size:14px;font-weight:600;">서울 강남구 강남대로 396</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:13px;color:var(--gray-500);">GPS</span>
+          <span style="font-size:14px;font-weight:600;">37.4979, 127.0276</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:13px;color:var(--gray-500);">네트워크 주소</span>
+          <span style="font-size:14px;font-weight:600;">192.168.1.101</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:13px;color:var(--gray-500);">등록일</span>
+          <span style="font-size:14px;font-weight:600;">2026.01.15</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="font-size:13px;color:var(--gray-500);">상태</span>
+          <span class="status-badge status-normal">정상</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline" style="flex:1">수정</button>
+        <button class="btn btn-sm" style="flex:1;background:var(--gray-100);color:var(--gray-600);border:none;padding:12px;">정지</button>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 8. MACHINE DETAIL - SLOTS ==================== -->
+<div class="screen-wrapper">
+  <span class="label">8. 자판기 상세 - 슬롯설정</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>강남점 A-01</h2></div>
+    </div>
+    <div class="tab-bar">
+      <span class="tab">기본정보</span>
+      <span class="tab active">슬롯설정</span>
+      <span class="tab">재고</span>
+      <span class="tab">매출</span>
+    </div>
+    <div class="screen-body">
+      <div style="display:flex;justify-content:space-between;padding:12px 16px;">
+        <button class="btn btn-sm btn-primary">일괄 설정</button>
+        <button class="btn btn-sm btn-outline">전체 비우기</button>
+      </div>
+      <div class="slot-item">
+        <div class="slot-left">
+          <div class="slot-no">슬롯 #1</div>
+          <div class="slot-name">톤업 썬크림 SPF50+</div>
+          <div class="slot-stock">재고 15/20 | 임계값 5</div>
+          <div class="progress-bar"><div class="fill" style="width:75%;background:var(--success);"></div></div>
+        </div>
+        <button class="btn btn-sm btn-outline">수정</button>
+      </div>
+      <div class="slot-item">
+        <div class="slot-left">
+          <div class="slot-no">슬롯 #2</div>
+          <div class="slot-name">BB쿠션 미니</div>
+          <div class="slot-stock">재고 3/20 | 임계값 5</div>
+          <div class="progress-bar"><div class="fill" style="width:15%;background:var(--danger);"></div></div>
+        </div>
+        <button class="btn btn-sm btn-outline">수정</button>
+      </div>
+      <div class="slot-item">
+        <div class="slot-left">
+          <div class="slot-no">슬롯 #3</div>
+          <div class="slot-name">립틴트 로지코랄</div>
+          <div class="slot-stock">재고 18/20 | 임계값 5</div>
+          <div class="progress-bar"><div class="fill" style="width:90%;background:var(--success);"></div></div>
+        </div>
+        <button class="btn btn-sm btn-outline">수정</button>
+      </div>
+      <div class="slot-item">
+        <div class="slot-left">
+          <div class="slot-no">슬롯 #4</div>
+          <div class="slot-name" style="color:var(--gray-400);">(미설정)</div>
+        </div>
+        <button class="btn btn-sm btn-primary">설정</button>
+      </div>
+      <div class="slot-item">
+        <div class="slot-left">
+          <div class="slot-no">슬롯 #5</div>
+          <div class="slot-name" style="color:var(--gray-400);">(미설정)</div>
+        </div>
+        <button class="btn btn-sm btn-primary">설정</button>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 9. MACHINE DETAIL - INVENTORY ==================== -->
+<div class="screen-wrapper">
+  <span class="label">9. 자판기 상세 - 재고</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>강남점 A-01</h2></div>
+    </div>
+    <div class="tab-bar">
+      <span class="tab">기본정보</span>
+      <span class="tab">슬롯설정</span>
+      <span class="tab active">재고</span>
+      <span class="tab">매출</span>
+    </div>
+    <div class="screen-body">
+      <div style="padding:16px;">
+        <table class="data-table">
+          <thead><tr><th>제품명</th><th>재고</th><th>임계값</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td>톤업 썬크림 SPF50+</td><td>15/20</td><td>5</td><td><span class="status-badge status-normal">양호</span></td></tr>
+            <tr><td>BB쿠션 미니</td><td style="color:var(--danger);font-weight:600;">3/20</td><td>5</td><td><span class="status-badge status-broken">부족</span></td></tr>
+            <tr><td>립틴트 로지코랄</td><td>18/20</td><td>5</td><td><span class="status-badge status-normal">양호</span></td></tr>
+            <tr><td>레티놀 세럼 30ml</td><td>12/15</td><td>3</td><td><span class="status-badge status-normal">양호</span></td></tr>
+            <tr><td>수분 마스크팩</td><td style="color:var(--danger);font-weight:600;">2/25</td><td>5</td><td><span class="status-badge status-broken">부족</span></td></tr>
+            <tr><td>립밤 체리</td><td>8/10</td><td>3</td><td><span class="status-badge status-normal">양호</span></td></tr>
+            <tr><td>히알루론산 토너</td><td>10/15</td><td>4</td><td><span class="status-badge status-normal">양호</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 10. MACHINE DETAIL - SALES ==================== -->
+<div class="screen-wrapper">
+  <span class="label">10. 자판기 상세 - 매출</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>강남점 A-01</h2></div>
+    </div>
+    <div class="tab-bar">
+      <span class="tab">기본정보</span>
+      <span class="tab">슬롯설정</span>
+      <span class="tab">재고</span>
+      <span class="tab active">매출</span>
+    </div>
+    <div class="screen-body">
+      <div class="chip-group">
+        <span class="chip active">일별</span>
+        <span class="chip">주별</span>
+        <span class="chip">월별</span>
+        <span class="chip">연도별</span>
+      </div>
+      <div class="tab-bar" style="border-top:1px solid var(--gray-100);">
+        <span class="tab active">자판기별 매출추이</span>
+        <span class="tab">제품별 매출추이</span>
+      </div>
+      <div class="chart-placeholder">&#128200; 자판기별 매출 추이 차트 (Line Chart)</div>
+      <div style="padding:0 16px 8px;display:flex;gap:8px;">
+        <div style="flex:1;padding:12px;background:var(--primary-light);border-radius:var(--radius-sm);text-align:center;">
+          <div style="font-size:11px;color:var(--gray-500);">금일 매출</div>
+          <div style="font-size:18px;font-weight:700;color:var(--primary);">&#8361;32,000</div>
+        </div>
+        <div style="flex:1;padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+          <div style="font-size:11px;color:var(--gray-500);">금일 주문</div>
+          <div style="font-size:18px;font-weight:700;">18건</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 11. PRODUCT LIST ==================== -->
+<div class="screen-wrapper">
+  <span class="label">11. 상품 SKU 목록</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>상품 관리</h2></div>
+      <button class="btn btn-sm btn-primary">+ 등록</button>
+    </div>
+    <div class="screen-body">
+      <div class="search-bar">&#128269; 상품명, SKU 코드 검색</div>
+      <div class="chip-group">
+        <span class="chip active">전체</span>
+        <span class="chip">스킨케어</span>
+        <span class="chip">메이크업</span>
+        <span class="chip">증정품</span>
+      </div>
+      <div class="list-item">
+        <div style="width:44px;height:44px;background:var(--gray-100);border-radius:8px;display:flex;align-items:center;justify-content:center;">&#9728;</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;">톤업 썬크림 SPF50+</div>
+          <div style="font-size:12px;color:var(--gray-400);">SKU-001 | 스킨케어</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;">&#8361;12,900</div>
+          <div style="font-size:11px;color:var(--gray-400);">판매가</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div style="width:44px;height:44px;background:var(--gray-100);border-radius:8px;display:flex;align-items:center;justify-content:center;">&#128132;</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;">립틴트 로지코랄</div>
+          <div style="font-size:12px;color:var(--gray-400);">SKU-005 | 메이크업</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;">&#8361;8,900</div>
+          <div style="font-size:11px;color:var(--gray-400);">판매가</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div style="width:44px;height:44px;background:var(--gray-100);border-radius:8px;display:flex;align-items:center;justify-content:center;">&#129507;</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;">클렌징폼 150ml</div>
+          <div style="font-size:12px;color:var(--gray-400);">SKU-012 | 스킨케어</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;">&#8361;7,500</div>
+          <div style="font-size:11px;color:var(--gray-400);">판매가</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div style="width:44px;height:44px;background:#FEF3C7;border-radius:8px;display:flex;align-items:center;justify-content:center;">&#127873;</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;">미니 핸드크림 (증정용)</div>
+          <div style="font-size:12px;color:var(--warning);">SKU-020 | 증정품</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;">&#8361;0</div>
+          <div style="font-size:11px;color:var(--gray-400);">무료</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 12. PRODUCT NEW ==================== -->
+<div class="screen-wrapper">
+  <span class="label">12. 상품 SKU 등록</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>신규 상품 등록</h2></div>
+    </div>
+    <div class="screen-body" style="padding:20px 16px;">
+      <div class="input-group"><label>SKU 명칭</label><input class="input-field" placeholder="상품명 입력" /></div>
+      <div class="input-group"><label>카테고리</label>
+        <select class="input-field" style="appearance:auto;">
+          <option>스킨케어</option><option>메이크업</option><option>증정품 (무료)</option>
+        </select>
+      </div>
+      <div class="input-group"><label>판매가 (&#8361;)</label><input class="input-field" placeholder="0" type="number" /></div>
+      <div class="input-group"><label>매입가 (&#8361;) - 관리자 전용</label><input class="input-field" placeholder="0" type="number" /></div>
+      <div class="input-group"><label>바코드</label>
+        <div style="display:flex;gap:8px;">
+          <input class="input-field" placeholder="자동 생성" style="flex:1" disabled />
+          <button class="btn btn-sm btn-outline">생성</button>
+        </div>
+      </div>
+      <div class="input-group"><label>상태</label>
+        <select class="input-field" style="appearance:auto;">
+          <option>판매중</option><option>판매중지</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="margin-top:12px">등록하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 13. INVENTORY ==================== -->
+<div class="screen-wrapper">
+  <span class="label">13. 재고 현황 (통합)</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>재고 현황</h2></div>
+    </div>
+    <div class="screen-body">
+      <div class="chip-group">
+        <span class="chip active">전체</span>
+        <span class="chip" style="border-color:var(--danger);color:var(--danger);">부족 (4)</span>
+      </div>
+      <div class="section-title">재고 부족 알림</div>
+      <div class="machine-card" style="border-left:3px solid var(--danger);">
+        <div style="font-size:14px;font-weight:700;">강남점 A-01</div>
+        <div style="font-size:13px;color:var(--danger);margin-top:4px;">BB쿠션 미니 - 3/20 (임계값 5)</div>
+        <div style="font-size:13px;color:var(--danger);">수분 마스크팩 - 2/25 (임계값 5)</div>
+      </div>
+      <div class="machine-card" style="border-left:3px solid var(--danger);">
+        <div style="font-size:14px;font-weight:700;">역삼점 C-03</div>
+        <div style="font-size:13px;color:var(--danger);margin-top:4px;">립밤 체리 - 1/10 (임계값 3)</div>
+        <div style="font-size:13px;color:var(--danger);">레티놀 세럼 30ml - 2/15 (임계값 3)</div>
+      </div>
+      <div class="section-title">자판기별 재고 요약</div>
+      <div class="machine-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:14px;font-weight:700;">강남점 A-01</div>
+            <div style="font-size:12px;color:var(--gray-400);">12종 / 슬롯 20개</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:18px;font-weight:700;">72%</div>
+            <div class="progress-bar" style="width:60px;"><div class="fill" style="width:72%;background:var(--warning);"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="machine-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:14px;font-weight:700;">논현점 E-05</div>
+            <div style="font-size:12px;color:var(--gray-400);">10종 / 슬롯 15개</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:18px;font-weight:700;">90%</div>
+            <div class="progress-bar" style="width:60px;"><div class="fill" style="width:90%;background:var(--success);"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 14. SALES SUMMARY ==================== -->
+<div class="screen-wrapper">
+  <span class="label">14. 매출 요약</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>매출 현황</h2></div>
+    </div>
+    <div class="screen-body">
+      <div class="chip-group">
+        <span class="chip active">일별</span>
+        <span class="chip">주별</span>
+        <span class="chip">월별</span>
+        <span class="chip">연도별</span>
+      </div>
+      <div class="tab-bar" style="border-top:1px solid var(--gray-100);">
+        <span class="tab active">자판기별 매출추이</span>
+        <span class="tab">제품별 매출추이</span>
+      </div>
+      <div class="chart-placeholder">&#128200; 자판기별 매출 추이 차트 (Bar + Line)</div>
+      <div class="stat-row">
+        <div style="flex:1;padding:14px;background:var(--primary-light);border-radius:var(--radius-sm);text-align:center;">
+          <div style="font-size:11px;color:var(--gray-500);">총 매출</div>
+          <div style="font-size:20px;font-weight:700;color:var(--primary);">&#8361;1,250,000</div>
+        </div>
+        <div style="flex:1;padding:14px;background:#FEE2E2;border-radius:var(--radius-sm);text-align:center;">
+          <div style="font-size:11px;color:var(--gray-500);">총 환불</div>
+          <div style="font-size:20px;font-weight:700;color:var(--danger);">&#8361;35,000</div>
+        </div>
+      </div>
+      <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;padding-right:16px;">
+        <span>자판기별 매출</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <select id="machineSort" style="font-size:12px;padding:4px 8px;border:1px solid var(--gray-200);border-radius:6px;color:var(--gray-600);background:#fff;" onchange="sortList('machineList',this.value)">
+            <option value="sales-desc">매출 높은순</option>
+            <option value="sales-asc">매출 낮은순</option>
+            <option value="orders-desc">주문 많은순</option>
+          </select>
+          <span style="font-size:18px;cursor:pointer;color:var(--gray-400);" onclick="toggleSection('machineList','machineToggle')" id="machineToggle">&#9650;</span>
+        </div>
+      </div>
+      <div id="machineList">
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--primary);">1</span><div><div style="font-size:14px;font-weight:600;">강남점 A-01</div><div style="font-size:12px;color:var(--gray-400);">42건</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;85,000</div>
+        </div>
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--gray-500);">2</span><div><div style="font-size:14px;font-weight:600;">역삼점 C-03</div><div style="font-size:12px;color:var(--gray-400);">38건</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;72,000</div>
+        </div>
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--gray-500);">3</span><div><div style="font-size:14px;font-weight:600;">논현점 E-05</div><div style="font-size:12px;color:var(--gray-400);">31건</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;58,500</div>
+        </div>
+      </div>
+
+      <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;padding-right:16px;">
+        <span>제품별 매출</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <select id="productSort" style="font-size:12px;padding:4px 8px;border:1px solid var(--gray-200);border-radius:6px;color:var(--gray-600);background:#fff;" onchange="sortList('productList',this.value)">
+            <option value="sales-desc">매출 높은순</option>
+            <option value="sales-asc">매출 낮은순</option>
+            <option value="orders-desc">주문 많은순</option>
+          </select>
+          <span style="font-size:18px;cursor:pointer;color:var(--gray-400);" onclick="toggleSection('productList','productToggle')" id="productToggle">&#9650;</span>
+        </div>
+      </div>
+      <div id="productList">
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--primary);">1</span><div><div style="font-size:14px;font-weight:600;">톤업 썬크림 SPF50+</div><div style="font-size:12px;color:var(--gray-400);">35건</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;451,500</div>
+        </div>
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--gray-500);">2</span><div><div style="font-size:14px;font-weight:600;">립틴트 로지코랄</div><div style="font-size:12px;color:var(--gray-400);">48건</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;427,200</div>
+        </div>
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--gray-500);">3</span><div><div style="font-size:14px;font-weight:600;">레티놀 세럼 30ml</div><div style="font-size:12px;color:var(--gray-400);">22건</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;415,800</div>
+        </div>
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--gray-500);">4</span><div><div style="font-size:14px;font-weight:600;">BB쿠션 미니</div><div style="font-size:12px;color:var(--gray-400);">18건</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;178,200</div>
+        </div>
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--gray-500);">5</span><div><div style="font-size:14px;font-weight:600;">수분 마스크팩</div><div style="font-size:12px;color:var(--gray-400);">15건</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;45,000</div>
+        </div>
+      </div>
+
+      <script>
+      function toggleSection(listId, toggleId){
+        var el=document.getElementById(listId),tg=document.getElementById(toggleId);
+        if(el.style.display==='none'){el.style.display='';tg.innerHTML='&#9650;';}
+        else{el.style.display='none';tg.innerHTML='&#9660;';}
+      }
+      function sortList(listId, mode){
+        var el=document.getElementById(listId),items=Array.from(el.querySelectorAll('.list-item'));
+        items.sort(function(a,b){
+          if(mode==='orders-desc'){
+            var ao=parseInt(a.querySelector('[style*="gray-400"]').textContent),bo=parseInt(b.querySelector('[style*="gray-400"]').textContent);return bo-ao;
+          }
+          var av=parseInt(a.querySelector('[style*="font-weight:700"]').textContent.replace(/[^\d]/g,'')),bv=parseInt(b.querySelector('[style*="font-weight:700"]').textContent.replace(/[^\d]/g,''));
+          return mode==='sales-asc'?av-bv:bv-av;
+        });
+        items.forEach(function(it,i){
+          var rank=it.querySelector('span[style*="font-weight:700"]');
+          if(rank)rank.textContent=(i+1);
+          el.appendChild(it);
+        });
+      }
+      </script>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 15. SALES DETAIL ==================== -->
+<div class="screen-wrapper">
+  <span class="label">15. 판매 내역 상세</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>판매 내역</h2></div>
+    </div>
+    <div class="screen-body">
+      <div style="padding:12px 16px;display:flex;gap:8px;">
+        <input class="input-field" type="date" style="flex:1" />
+        <span style="display:flex;align-items:center;color:var(--gray-400);">~</span>
+        <input class="input-field" type="date" style="flex:1" />
+      </div>
+      <div style="padding:0 16px;">
+        <table class="data-table">
+          <thead><tr><th>시간</th><th>상품</th><th>수량</th><th>금액</th></tr></thead>
+          <tbody>
+            <tr><td style="font-size:12px;">03/11<br>14:32</td><td>톤업 썬크림 SPF50+</td><td>1</td><td>&#8361;12,900</td></tr>
+            <tr><td style="font-size:12px;">03/11<br>14:15</td><td>립틴트 로지코랄</td><td>2</td><td>&#8361;17,800</td></tr>
+            <tr><td style="font-size:12px;">03/11<br>13:48</td><td>클렌징폼 150ml</td><td>1</td><td>&#8361;7,500</td></tr>
+            <tr><td style="font-size:12px;">03/11<br>12:20</td><td>수분 마스크팩</td><td>3</td><td>&#8361;9,000</td></tr>
+            <tr><td style="font-size:12px;">03/11<br>11:05</td><td>립밤 체리</td><td>1</td><td>&#8361;5,900</td></tr>
+            <tr><td style="font-size:12px;">03/11<br>10:33</td><td>레티놀 세럼 30ml</td><td>1</td><td>&#8361;18,900</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 16. SALES RANKING ==================== -->
+<div class="screen-wrapper">
+  <span class="label">16. 매출 순위</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>매출 순위</h2></div>
+    </div>
+    <div class="screen-body">
+      <div class="chip-group">
+        <span class="chip active">이번달</span>
+        <span class="chip">이번주</span>
+        <span class="chip">오늘</span>
+      </div>
+      <div class="chart-placeholder">&#128202; 제품별 매출 비중 (Pie/Bar Chart)</div>
+      <div class="section-title">제품별 순위</div>
+      <div class="rank-item">
+        <div class="rank-num rank-1">1</div>
+        <div class="rank-info"><div class="rank-name">립틴트 로지코랄</div><div class="rank-qty">325건 판매</div></div>
+        <div class="rank-amount">&#8361;2,892,500</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num rank-2">2</div>
+        <div class="rank-info"><div class="rank-name">톤업 썬크림 SPF50+</div><div class="rank-qty">280건 판매</div></div>
+        <div class="rank-amount">&#8361;3,612,000</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num rank-3">3</div>
+        <div class="rank-info"><div class="rank-name">레티놀 세럼 30ml</div><div class="rank-qty">198건 판매</div></div>
+        <div class="rank-amount">&#8361;3,742,200</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num rank-other">4</div>
+        <div class="rank-info"><div class="rank-name">립밤 체리</div><div class="rank-qty">156건 판매</div></div>
+        <div class="rank-amount">&#8361;920,400</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num rank-other">5</div>
+        <div class="rank-info"><div class="rank-name">클렌징폼 150ml</div><div class="rank-qty">142건 판매</div></div>
+        <div class="rank-amount">&#8361;1,065,000</div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 17. ADS LIST ==================== -->
+<div class="screen-wrapper">
+  <span class="label">17. 광고 관리</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>광고 관리</h2></div>
+      <button class="btn btn-sm btn-primary">+ 등록</button>
+    </div>
+    <div class="screen-body">
+      <div class="chip-group">
+        <span class="chip active">전체</span>
+        <span class="chip">활성</span>
+        <span class="chip">비활성</span>
+      </div>
+      <div class="machine-card">
+        <div style="display:flex;gap:12px;">
+          <div style="width:80px;height:60px;background:var(--gray-200);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;">&#127909;</div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:700;">봄 시즌 세일 광고</div>
+            <div style="font-size:12px;color:var(--gray-400);">MP4 | 30초 | 1920x1080</div>
+            <div style="margin-top:4px;"><span class="status-badge status-normal">활성</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="machine-card">
+        <div style="display:flex;gap:12px;">
+          <div style="width:80px;height:60px;background:var(--gray-200);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;">&#127909;</div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:700;">신제품 홍보 영상</div>
+            <div style="font-size:12px;color:var(--gray-400);">MP4 | 15초 | 1920x1080</div>
+            <div style="margin-top:4px;"><span class="status-badge status-normal">활성</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="machine-card">
+        <div style="display:flex;gap:12px;">
+          <div style="width:80px;height:60px;background:var(--gray-200);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;">&#127909;</div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:700;">크리스마스 이벤트</div>
+            <div style="font-size:12px;color:var(--gray-400);">MP4 | 20초 | 1920x1080</div>
+            <div style="margin-top:4px;"><span class="status-badge status-offline">비활성</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 18. ADS NEW ==================== -->
+<div class="screen-wrapper">
+  <span class="label">18. 광고 등록</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>광고 등록</h2></div>
+    </div>
+    <div class="screen-body" style="padding:20px 16px;">
+      <div class="upload-zone">
+        <div class="upload-icon">&#128228;</div>
+        <div style="font-size:14px;font-weight:600;color:var(--gray-600);">MP4 영상 파일 업로드</div>
+        <div style="font-size:12px;margin-top:4px;">파일을 선택하거나 드래그하세요</div>
+      </div>
+      <div class="input-group" style="margin-top:16px;"><label>광고 명칭</label><input class="input-field" placeholder="광고 이름 입력" /></div>
+      <div class="input-group"><label>재생 시간 (초)</label><input class="input-field" placeholder="자동 감지" type="number" /></div>
+      <div class="input-group"><label>해상도</label>
+        <select class="input-field" style="appearance:auto;">
+          <option>1920x1080 (Full HD)</option><option>1280x720 (HD)</option>
+        </select>
+      </div>
+      <div class="input-group"><label>상태</label>
+        <select class="input-field" style="appearance:auto;">
+          <option>활성</option><option>비활성</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="margin-top:12px">업로드 & 등록</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 19. ADS SCHEDULE ==================== -->
+<div class="screen-wrapper">
+  <span class="label">19. 광고 재생 계획</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>재생 계획 설정</h2></div>
+    </div>
+    <div class="screen-body">
+      <div style="padding:12px 16px;font-size:13px;color:var(--gray-500);background:var(--gray-50);">
+        강남점 A-01 | 최종 업데이트: <span style="color:var(--success);font-weight:600;">성공</span> (2026.03.10 16:30)
+      </div>
+      <div style="padding:8px 16px;display:flex;justify-content:space-between;">
+        <button class="btn btn-sm btn-primary">+ 광고 추가</button>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sch-top">
+          <div><span class="sch-order">1순위</span> <span class="sch-name"> 봄 시즌 세일</span></div>
+          <div class="toggle on"><div class="knob"></div></div>
+        </div>
+        <div class="sch-meta">재생시간: 30초 | 시간대: 09:00~22:00 | 공휴일: 포함</div>
+      </div>
+      <div class="schedule-item">
+        <div class="sch-top">
+          <div><span class="sch-order">2순위</span> <span class="sch-name"> 신제품 홍보</span></div>
+          <div class="toggle on"><div class="knob"></div></div>
+        </div>
+        <div class="sch-meta">재생시간: 15초 | 시간대: 07:00~23:00 | 공휴일: 제외</div>
+      </div>
+      <div class="schedule-item">
+        <div class="sch-top">
+          <div><span class="sch-order">3순위</span> <span class="sch-name"> 크리스마스 이벤트</span></div>
+          <div class="toggle"><div class="knob"></div></div>
+        </div>
+        <div class="sch-meta">재생시간: 20초 | 비활성</div>
+      </div>
+
+      <div style="padding:16px;display:flex;gap:8px;">
+        <button class="btn btn-primary" style="flex:2">저장</button>
+        <button class="btn btn-outline" style="flex:1">업데이트 트리거</button>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 20. PROMOTIONS ==================== -->
+<div class="screen-wrapper">
+  <span class="label">20. 증정/프로모션</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>증정 관리</h2></div>
+      <button class="btn btn-sm btn-primary">+ 규칙 생성</button>
+    </div>
+    <div class="screen-body">
+      <div class="promo-card">
+        <div class="promo-rule">립틴트 구매 시 핸드크림 증정</div>
+        <div class="promo-detail">구매: 립틴트 로지코랄 (SKU-005) x1 -> 증정: 미니 핸드크림 (SKU-020) x1</div>
+        <div class="promo-period">2026.03.01 ~ 2026.03.31</div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-rule">썬크림 2개 구매 시 마스크팩 증정</div>
+        <div class="promo-detail">구매: 톤업 썬크림 SPF50+ (SKU-001) x2 -> 증정: 수분 마스크팩 (SKU-003) x1</div>
+        <div class="promo-period">2026.03.15 ~ 2026.04.15</div>
+      </div>
+      <div class="promo-card" style="opacity:0.6;">
+        <div class="promo-rule">신년 이벤트 (만료)</div>
+        <div class="promo-detail">구매: 립밤 체리 (SKU-008) x1 -> 증정: 클렌징폼 미니 (SKU-012) x1</div>
+        <div class="promo-period" style="color:var(--gray-400);">2026.01.01 ~ 2026.01.31 (만료)</div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 21. ORDERS ==================== -->
+<div class="screen-wrapper">
+  <span class="label">21. 주문 조회</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>주문 조회</h2></div>
+    </div>
+    <div class="screen-body">
+      <div class="search-bar">&#128269; 주문번호, 상품명 검색</div>
+      <div class="machine-card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;">#ORD-20260311-001</span>
+          <span class="status-badge status-normal">완료</span>
+        </div>
+        <div style="font-size:13px;color:var(--gray-600);">립틴트 로지코랄 x1 = &#8361;8,900</div>
+        <div style="font-size:13px;color:var(--warning);">+ 증정: 미니 핸드크림 x1</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">강남점 A-01 | 2026.03.11 14:32</div>
+      </div>
+      <div class="machine-card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;">#ORD-20260311-002</span>
+          <span class="status-badge status-normal">완료</span>
+        </div>
+        <div style="font-size:13px;color:var(--gray-600);">톤업 썬크림 SPF50+ x2 = &#8361;25,800</div>
+        <div style="font-size:13px;color:var(--warning);">+ 증정: 수분 마스크팩 x1</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">역삼점 C-03 | 2026.03.11 13:48</div>
+      </div>
+      <div class="machine-card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;">#ORD-20260311-003</span>
+          <span class="status-badge status-normal">완료</span>
+        </div>
+        <div style="font-size:13px;color:var(--gray-600);">클렌징폼 150ml x1 = &#8361;7,500</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">논현점 E-05 | 2026.03.11 12:20</div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 22. NOTICES ==================== -->
+<div class="screen-wrapper">
+  <span class="label">22. 알림</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><h2>알림</h2></div>
+      <span style="font-size:13px;color:var(--primary);cursor:pointer;font-weight:600;">전체 읽음</span>
+    </div>
+    <div class="screen-body">
+      <div class="notice-item unread">
+        <div class="n-top"><span class="n-type">재고 부족</span><span class="n-time">10분 전</span></div>
+        <div class="n-title">강남점 A-01 재고 부족</div>
+        <div class="n-body">BB쿠션 미니 재고가 임계값(5) 이하입니다. 현재 재고: 3개</div>
+      </div>
+      <div class="notice-item unread">
+        <div class="n-top"><span class="n-type" style="color:var(--danger);">상태 변경</span><span class="n-time">1시간 전</span></div>
+        <div class="n-title">서초점 B-02 오프라인 전환</div>
+        <div class="n-body">자판기 상태가 "정상"에서 "오프라인"으로 변경되었습니다.</div>
+      </div>
+      <div class="notice-item">
+        <div class="n-top"><span class="n-type" style="color:var(--gray-500);">시스템</span><span class="n-time">3시간 전</span></div>
+        <div class="n-title">광고 업데이트 완료</div>
+        <div class="n-body">강남점 A-01 광고 재생 계획이 성공적으로 업데이트되었습니다.</div>
+      </div>
+      <div class="notice-item">
+        <div class="n-top"><span class="n-type" style="color:var(--gray-500);">관리자</span><span class="n-time">어제</span></div>
+        <div class="n-title">3월 정기 점검 안내</div>
+        <div class="n-body">3월 15일(토) 02:00~06:00 시스템 정기 점검이 예정되어 있습니다.</div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item active"><span class="tab-badge tab-icon">&#128172;<span class="count">2</span></span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 23. DM ==================== -->
+<div class="screen-wrapper">
+  <span class="label">23. 관리자 DM</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>관리자 문의</h2></div>
+    </div>
+    <div class="screen-body" style="display:flex;flex-direction:column;padding-bottom:120px;">
+      <div class="chat-area" style="flex:1;">
+        <div class="msg incoming">
+          안녕하세요. VMMS 운영팀입니다. 무엇을 도와드릴까요?
+          <div class="time">어제 09:00</div>
+        </div>
+        <div class="msg outgoing">
+          서초점 B-02 자판기가 오프라인 상태인데 원인을 확인할 수 있을까요?
+          <div class="time">어제 10:15</div>
+        </div>
+        <div class="msg incoming">
+          확인해 보겠습니다. 네트워크 연결 상태를 점검 중입니다.
+          <div class="time">어제 10:20</div>
+        </div>
+        <div class="msg incoming">
+          확인 결과, 현장 WiFi 라우터 문제로 보입니다. 현장 방문 점검이 필요합니다.
+          <div class="time">어제 11:30</div>
+        </div>
+        <div class="msg outgoing">
+          알겠습니다. 오늘 오후에 현장 방문하겠습니다. 감사합니다.
+          <div class="time">어제 11:35</div>
+        </div>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:64px;left:0;right:0;">
+      <div class="chat-input">
+        <input placeholder="메시지 입력..." />
+        <button class="send-btn">&#10148;</button>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item active"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 24. MY PAGE ==================== -->
+<div class="screen-wrapper">
+  <span class="label">24. 마이페이지</span>
+  <div class="screen">
+    <div class="s-header">
+      <h2>MY</h2>
+    </div>
+    <div class="screen-body">
+      <div class="profile-section">
+        <div class="avatar">K</div>
+        <div class="profile-name">김관리</div>
+        <div class="profile-role">매장관리자 | 스마트 푸드 (주)</div>
+      </div>
+
+      <div class="section-title">계정 관리</div>
+      <div class="menu-list">
+        <div class="menu-item"><span>내 정보 수정</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-item"><span>비밀번호 변경</span><span class="arrow">&#8250;</span></div>
+      </div>
+
+      <div class="section-title" style="margin-top:16px;">설정</div>
+      <div class="menu-list">
+        <div class="menu-item"><span>알림 설정</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-item"><span>재고 임계값 설정</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-item"><span>언어 설정</span><span class="arrow">&#8250;</span></div>
+      </div>
+
+      <div class="section-title" style="margin-top:16px;">기타</div>
+      <div class="menu-list">
+        <div class="menu-item"><span>이용약관</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-item"><span>개인정보 처리방침</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-item"><span>앱 버전</span><span style="color:var(--gray-400);font-size:13px;">v1.0.0</span></div>
+      </div>
+
+      <div style="padding:24px 16px;">
+        <button class="btn" style="background:var(--gray-100);color:var(--danger);">로그아웃</button>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>홈</a>
+      <a class="tab-item"><span class="tab-icon">&#129518;</span>자판기</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>메시지</a>
+      <a class="tab-item active"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- end gallery -->
+
+<div style="text-align:center;padding:40px;color:var(--gray-400);font-size:13px;">
+  VMMS Wireframe - 24 Screens | Mobile-First Responsive Design
+</div>
+
+</body>
+</html>
