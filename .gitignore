@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+.claude/
+
+# OS
+.DS_Store
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Server DB (runtime generated)
+server/db/users.json
+
+# Vercel
+.vercel/
+
+# Logs
+*.log

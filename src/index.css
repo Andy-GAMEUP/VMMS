@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== VMMS Design Tokens ===== */
+:root {
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+  --font-mono: 'SF Mono', 'Roboto Mono', 'Courier New', monospace;
+
+  /* Safe area */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* Layout */
+  --header-h: 52px;
+  --bottom-nav-h: 60px;
+  --page-mx: 16px;
+}
+
+/* ===== Base Reset ===== */
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-800;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Tabular numbers for data */
+  .font-tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Money display */
+  .font-money {
+    font-family: var(--font-mono);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ===== Component Layer ===== */
+@layer components {
+  /* Page container with safe area */
+  .page {
+    @apply min-h-screen pb-[calc(var(--bottom-nav-h)+var(--safe-bottom))] pt-[var(--header-h)];
+    padding-left: var(--page-mx);
+    padding-right: var(--page-mx);
+  }
+
+  /* Card base */
+  .card {
+    @apply bg-white rounded-card shadow-card p-sp-4;
+  }
+
+  /* Stat card (Dashboard KPI) */
+  .stat-card {
+    @apply card flex flex-col gap-sp-1;
+  }
+
+  .stat-card-label {
+    @apply text-meta text-gray-500;
+  }
+
+  .stat-card-value {
+    @apply text-money text-gray-900 font-money;
+  }
+
+  /* Status dot */
+  .status-dot {
+    @apply w-2.5 h-2.5 rounded-full inline-block;
+  }
+
+  .status-dot--online { @apply bg-success-500; }
+  .status-dot--offline { @apply bg-warning-500; }
+  .status-dot--fault { @apply bg-danger-500; }
+  .status-dot--stopped { @apply bg-gray-400; }
+
+  /* Touch target minimum */
+  .touch-target {
+    @apply min-h-touch min-w-[44px] flex items-center justify-center;
+  }
+
+  /* Slot grid cell */
+  .slot-cell {
+    @apply w-12 h-14 rounded-lg border-2 flex flex-col items-center justify-center text-xs font-semibold;
+  }
+
+  .slot-cell--full { @apply border-success-500 bg-success-50 text-success-700; }
+  .slot-cell--mid { @apply border-gray-300 bg-gray-50 text-gray-600; }
+  .slot-cell--low { @apply border-warning-500 bg-warning-50 text-warning-600; }
+  .slot-cell--empty { @apply border-danger-500 bg-danger-50 text-danger-600; }
+  .slot-cell--none { @apply border-gray-200 bg-white text-gray-400; }
+}
+
+/* ===== Utility Layer ===== */
+@layer utilities {
+  .safe-bottom {
+    padding-bottom: calc(var(--safe-bottom) + var(--bottom-nav-h));
+  }
+}
