@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VMMS Wireframe</title>
+<style>
+  :root {
+    --primary: #4A90D9;
+    --primary-light: #E8F0FE;
+    --success: #34C759;
+    --danger: #FF3B30;
+    --warning: #FF9500;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #F0F2F5;
+    color: var(--gray-800);
+    line-height: 1.5;
+  }
+
+  /* === Navigation === */
+  .nav-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: #fff; padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .nav-bar h1 { font-size: 16px; font-weight: 700; }
+  .nav-bar .back { font-size: 20px; cursor: pointer; text-decoration: none; color: var(--gray-700); }
+  .nav-bar .right-icons { display: flex; gap: 12px; }
+  .nav-bar .badge-icon { position: relative; font-size: 20px; cursor: pointer; }
+  .nav-bar .badge-icon .dot { position: absolute; top: -2px; right: -4px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; }
+
+  /* === Screen Container === */
+  .screen-gallery {
+    display: flex; flex-wrap: wrap; gap: 24px; padding: 20px;
+    justify-content: center;
+  }
+  .screen-wrapper {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .screen-wrapper .label {
+    font-size: 13px; font-weight: 600; color: var(--gray-500);
+    background: var(--gray-200); padding: 4px 12px; border-radius: 20px;
+  }
+  .screen {
+    width: 375px; min-height: 700px; background: #fff;
+    border-radius: 24px; overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    position: relative; display: flex; flex-direction: column;
+    border: 1px solid var(--gray-200);
+  }
+  .screen-body {
+    flex: 1; overflow-y: auto; padding-bottom: 70px;
+  }
+
+  /* === Bottom Tab === */
+  .bottom-tab {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: #fff; border-top: 1px solid var(--gray-200);
+    display: flex; height: 64px;
+  }
+  .bottom-tab .tab-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2px;
+    font-size: 10px; color: var(--gray-400); cursor: pointer;
+    text-decoration: none;
+  }
+  .bottom-tab .tab-item.active { color: var(--primary); }
+  .bottom-tab .tab-item .tab-icon { font-size: 22px; }
+  .tab-badge { position: relative; }
+  .tab-badge .count {
+    position: absolute; top: -6px; right: -10px;
+    background: var(--danger); color: #fff; font-size: 9px;
+    padding: 1px 5px; border-radius: 10px; font-weight: 600;
+  }
+
+  /* === Header within screen === */
+  .s-header {
+    padding: 14px 20px; display: flex; align-items: center;
+    justify-content: space-between; border-bottom: 1px solid var(--gray-100);
+    background: #fff; position: sticky; top: 0; z-index: 10;
+  }
+  .s-header h2 { font-size: 17px; font-weight: 700; }
+  .s-header .back { font-size: 18px; cursor: pointer; color: var(--gray-600); margin-right: 8px; }
+  .s-header-left { display: flex; align-items: center; }
+  .s-header .icon-btn { font-size: 20px; cursor: pointer; position: relative; }
+  .s-header .icon-btn .dot { position: absolute; top: -2px; right: -2px; width: 7px; height: 7px; background: var(--danger); border-radius: 50%; }
+
+  /* === Common === */
+  .card {
+    background: #fff; border-radius: var(--radius); padding: 16px;
+    margin: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid var(--gray-100);
+  }
+  .section-title {
+    font-size: 15px; font-weight: 700; padding: 16px 16px 8px;
+    color: var(--gray-700);
+  }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 12px 20px; border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 600; border: none; cursor: pointer;
+    width: 100%;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-outline { background: #fff; color: var(--primary); border: 1.5px solid var(--primary); }
+  .btn-sm { padding: 6px 14px; font-size: 12px; width: auto; border-radius: 6px; }
+
+  .input-group { margin-bottom: 14px; }
+  .input-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 4px; }
+  .input-field {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm); font-size: 14px; outline: none;
+    background: var(--gray-50);
+  }
+  .input-field:focus { border-color: var(--primary); background: #fff; }
+
+  .chip-group { display: flex; gap: 8px; padding: 12px 16px; flex-wrap: wrap; }
+  .chip {
+    padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500;
+    border: 1.5px solid var(--gray-200); background: #fff; color: var(--gray-600); cursor: pointer;
+  }
+  .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+  .status-badge {
+    display: inline-block; padding: 2px 10px; border-radius: 10px;
+    font-size: 11px; font-weight: 600;
+  }
+  .status-normal { background: #DEF7EC; color: #03543F; }
+  .status-offline { background: var(--gray-100); color: var(--gray-500); }
+  .status-maintenance { background: #FEF3C7; color: #92400E; }
+  .status-broken { background: #FEE2E2; color: #991B1B; }
+
+  .stat-row { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 8px; }
+  .stat-box {
+    flex: 1; padding: 14px; border-radius: var(--radius-sm);
+    text-align: center;
+  }
+  .stat-box .stat-value { font-size: 22px; font-weight: 700; color: #fff; margin-top: 4px; }
+  .stat-box .stat-label { font-size: 11px; color: rgba(255,255,255,0.85); }
+
+  .list-item {
+    padding: 14px 16px; border-bottom: 1px solid var(--gray-100);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .list-item:last-child { border-bottom: none; }
+
+  .func-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    padding: 0 16px;
+  }
+  .func-item {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 16px 8px; gap: 8px; cursor: pointer; border-radius: var(--radius-sm);
+  }
+  .func-item:hover { background: var(--gray-50); }
+  .func-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; background: var(--primary-light); color: var(--primary);
+  }
+  .func-item span { font-size: 12px; color: var(--gray-600); font-weight: 500; text-align: center; }
+
+  /* Revenue card */
+  .revenue-card {
+    margin: 12px 16px; border-radius: var(--radius); overflow: hidden;
+    background: linear-gradient(135deg, #4A90D9, #357ABD);
+    color: #fff; padding: 20px;
+  }
+  .revenue-top { display: flex; justify-content: space-between; margin-bottom: 16px; }
+  .revenue-top .col { text-align: center; flex: 1; }
+  .revenue-top .col .lbl { font-size: 12px; opacity: 0.8; }
+  .revenue-top .col .val { font-size: 24px; font-weight: 700; }
+  .revenue-divider { width: 1px; background: rgba(255,255,255,0.3); }
+  .period-chips { display: flex; gap: 8px; margin-bottom: 16px; }
+  .period-chip {
+    padding: 5px 16px; border-radius: 16px; font-size: 12px; font-weight: 500;
+    background: rgba(255,255,255,0.2); color: #fff; cursor: pointer; border: none;
+  }
+  .period-chip.active { background: #fff; color: var(--primary); }
+  .revenue-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .revenue-grid .cell { text-align: center; }
+  .revenue-grid .cell .clbl { font-size: 11px; opacity: 0.75; }
+  .revenue-grid .cell .cval { font-size: 16px; font-weight: 700; }
+
+  .search-bar {
+    margin: 12px 16px; padding: 10px 14px; background: var(--gray-50);
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+    font-size: 14px; display: flex; align-items: center; gap: 8px; color: var(--gray-400);
+  }
+
+  /* machine card */
+  .machine-card {
+    margin: 8px 16px; padding: 16px; border-radius: var(--radius);
+    border: 1px solid var(--gray-100); background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .machine-card .mc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .machine-card .mc-name { font-size: 15px; font-weight: 700; }
+  .machine-card .mc-loc { font-size: 13px; color: var(--gray-500); margin-bottom: 6px; }
+  .machine-card .mc-info { font-size: 12px; color: var(--gray-400); display: flex; gap: 12px; }
+
+  /* tabs */
+  .tab-bar { display: flex; border-bottom: 2px solid var(--gray-100); padding: 0 16px; background: #fff; }
+  .tab-bar .tab {
+    padding: 10px 0; margin-right: 24px; font-size: 14px; font-weight: 500;
+    color: var(--gray-400); cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+  }
+  .tab-bar .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+
+  /* slot list */
+  .slot-item {
+    margin: 8px 16px; padding: 14px; border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-100); background: #fff;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .slot-item .slot-left {}
+  .slot-item .slot-no { font-size: 12px; color: var(--gray-400); font-weight: 600; }
+  .slot-item .slot-name { font-size: 14px; font-weight: 600; }
+  .slot-item .slot-stock { font-size: 12px; color: var(--gray-500); }
+  .progress-bar { width: 80px; height: 6px; background: var(--gray-200); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+  .progress-bar .fill { height: 100%; border-radius: 3px; }
+
+  /* chat */
+  .chat-area { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { max-width: 75%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; }
+  .msg.incoming { background: var(--gray-100); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .msg.outgoing { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .msg .time { font-size: 10px; opacity: 0.6; margin-top: 4px; }
+  .chat-input {
+    display: flex; gap: 8px; padding: 12px 16px;
+    border-top: 1px solid var(--gray-200); background: #fff;
+  }
+  .chat-input input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--gray-200); border-radius: 20px; font-size: 14px; outline: none; }
+  .chat-input .send-btn {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--primary);
+    color: #fff; border: none; font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* notice */
+  .notice-item {
+    padding: 14px 16px; border-bottom: 1px solid var(--gray-100);
+    cursor: pointer;
+  }
+  .notice-item.unread { background: var(--primary-light); }
+  .notice-item .n-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .notice-item .n-type { font-size: 11px; font-weight: 600; color: var(--primary); }
+  .notice-item .n-time { font-size: 11px; color: var(--gray-400); }
+  .notice-item .n-title { font-size: 14px; font-weight: 600; }
+  .notice-item .n-body { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+
+  /* ads schedule */
+  .schedule-item {
+    margin: 8px 16px; padding: 14px; border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-100); background: #fff;
+  }
+  .schedule-item .sch-top { display: flex; justify-content: space-between; align-items: center; }
+  .schedule-item .sch-order { font-size: 13px; color: var(--gray-400); font-weight: 600; }
+  .schedule-item .sch-name { font-size: 14px; font-weight: 600; }
+  .schedule-item .sch-meta { font-size: 12px; color: var(--gray-500); margin-top: 6px; }
+  .toggle { width: 44px; height: 24px; border-radius: 12px; background: var(--gray-300); position: relative; cursor: pointer; }
+  .toggle.on { background: var(--success); }
+  .toggle .knob { width: 20px; height: 20px; border-radius: 50%; background: #fff; position: absolute; top: 2px; left: 2px; transition: 0.2s; }
+  .toggle.on .knob { left: 22px; }
+
+  /* promo */
+  .promo-card {
+    margin: 8px 16px; padding: 14px; border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-100); background: #fff;
+  }
+  .promo-card .promo-rule { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .promo-card .promo-detail { font-size: 12px; color: var(--gray-500); }
+  .promo-card .promo-period { font-size: 11px; color: var(--primary); margin-top: 6px; }
+
+  /* table */
+  .data-table { width: 100%; font-size: 13px; border-collapse: collapse; }
+  .data-table th { background: var(--gray-50); padding: 10px 12px; text-align: left; font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); }
+  .data-table td { padding: 10px 12px; border-bottom: 1px solid var(--gray-100); }
+
+  /* chart placeholder */
+  .chart-placeholder {
+    margin: 12px 16px; height: 200px; background: var(--gray-50);
+    border-radius: var(--radius-sm); border: 1.5px dashed var(--gray-300);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray-400); font-size: 14px;
+  }
+
+  /* gallery title bar */
+  .gallery-title {
+    text-align: center; padding: 40px 20px 20px;
+    font-size: 28px; font-weight: 800; color: var(--gray-800);
+  }
+  .gallery-subtitle {
+    text-align: center; font-size: 14px; color: var(--gray-500); margin-bottom: 30px;
+  }
+
+  /* my page */
+  .profile-section {
+    text-align: center; padding: 30px 16px 20px;
+  }
+  .avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--primary-light); color: var(--primary);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 700; margin-bottom: 12px;
+  }
+  .profile-name { font-size: 18px; font-weight: 700; }
+  .profile-role { font-size: 13px; color: var(--gray-500); }
+
+  .menu-list { margin: 0 16px; background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--gray-100); }
+  .menu-item {
+    padding: 14px 16px; display: flex; justify-content: space-between;
+    align-items: center; border-bottom: 1px solid var(--gray-100);
+    font-size: 14px; cursor: pointer;
+  }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-item .arrow { color: var(--gray-300); }
+
+  /* file upload */
+  .upload-zone {
+    margin: 12px 16px; padding: 40px; border: 2px dashed var(--gray-300);
+    border-radius: var(--radius); text-align: center; color: var(--gray-400);
+    background: var(--gray-50); cursor: pointer;
+  }
+  .upload-zone .upload-icon { font-size: 36px; margin-bottom: 8px; }
+
+  /* ranking */
+  .rank-item {
+    padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .rank-num {
+    width: 28px; height: 28px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 13px;
+    font-weight: 700;
+  }
+  .rank-1 { background: #FEF3C7; color: #92400E; }
+  .rank-2 { background: var(--gray-100); color: var(--gray-600); }
+  .rank-3 { background: #FDE8D8; color: #9A3412; }
+  .rank-other { background: var(--gray-50); color: var(--gray-500); }
+  .rank-info { flex: 1; }
+  .rank-name { font-size: 14px; font-weight: 600; }
+  .rank-qty { font-size: 12px; color: var(--gray-500); }
+  .rank-amount { font-size: 14px; font-weight: 700; color: var(--gray-800); }
+
+  /* login specific */
+  .login-bg {
+    background: linear-gradient(180deg, var(--primary) 0%, #357ABD 100%);
+    display: flex; flex-direction: column; min-height: 700px;
+  }
+  .login-logo { text-align: center; padding: 80px 0 40px; color: #fff; }
+  .login-logo h2 { font-size: 32px; font-weight: 800; letter-spacing: 2px; }
+  .login-logo p { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+  .login-form {
+    flex: 1; background: #fff; border-radius: 24px 24px 0 0;
+    padding: 32px 24px;
+  }
+  .login-form h3 { font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+  .login-link { text-align: center; margin-top: 16px; font-size: 13px; color: var(--gray-500); }
+  .login-link a { color: var(--primary); font-weight: 600; text-decoration: none; }
+
+  /* register status */
+  .status-center {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 60px 24px; text-align: center;
+  }
+  .status-icon { font-size: 64px; margin-bottom: 20px; }
+  .status-text { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .status-desc { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<h1 class="gallery-title">VMMS Wireframe</h1>
+<p class="gallery-subtitle">智能售货机管理解决方案 - 响应式移动端网页线框图 (24 Screens)</p>
+
+<div class="screen-gallery">
+
+<!-- ==================== 1. 登录 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">1. 登录</span>
+  <div class="screen">
+    <div class="login-bg">
+      <div class="login-logo">
+        <h2>VMMS</h2>
+        <p>智能售货机管理解决方案</p>
+      </div>
+      <div class="login-form">
+        <h3>登录</h3>
+        <div class="input-group">
+          <label>邮箱</label>
+          <input class="input-field" placeholder="email@example.com" />
+        </div>
+        <div class="input-group">
+          <label>密码</label>
+          <input class="input-field" type="password" placeholder="请输入密码" />
+        </div>
+        <button class="btn btn-primary" style="margin-top:8px">登录</button>
+        <p class="login-link">还没有账号？ <a href="#">申请店铺管理员</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 2. 注册 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">2. 店铺管理员申请</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>店铺管理员申请</h2></div>
+    </div>
+    <div class="screen-body" style="padding:20px 16px;">
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;"><span style="color:var(--danger);">*</span> 标记为必填项。</p>
+      <div class="input-group"><label>企业名称 <span style="color:var(--danger);">*</span></label><input class="input-field" placeholder="请输入企业名称" required /></div>
+      <div class="input-group"><label>营业执照号 <span style="font-size:11px;color:var(--gray-400);">(选填)</span></label><input class="input-field" placeholder="000-00-00000" /></div>
+      <div class="input-group"><label>负责人姓名 <span style="color:var(--danger);">*</span></label><input class="input-field" placeholder="请输入姓名" required /></div>
+      <div class="input-group"><label>手机号码 <span style="color:var(--danger);">*</span></label><input class="input-field" placeholder="138-0000-0000" required /></div>
+      <div class="input-group"><label>邮箱地址（账号） <span style="color:var(--danger);">*</span></label><input class="input-field" type="email" placeholder="email@example.com" required /></div>
+      <div class="input-group"><label>密码 <span style="color:var(--danger);">*</span></label><input class="input-field" type="password" placeholder="请输入8位以上密码" minlength="8" required /><span style="font-size:11px;color:var(--gray-400);margin-top:2px;display:block;">须包含英文、数字、特殊字符，8位以上</span></div>
+      <div class="input-group"><label>确认密码 <span style="color:var(--danger);">*</span></label><input class="input-field" type="password" placeholder="请再次输入密码" required /></div>
+      <button class="btn btn-primary" style="margin-top:8px">提交申请</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 3. 审批等待 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">3. 等待审批</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>申请状态</h2></div>
+    </div>
+    <div class="screen-body">
+      <div class="status-center">
+        <div class="status-icon">&#9203;</div>
+        <div class="status-text">等待审批中</div>
+        <div class="status-desc">管理员正在审核您的申请内容。<br/>审批完成后将通过通知告知您。</div>
+        <div style="margin-top:30px;padding:16px;background:var(--gray-50);border-radius:var(--radius-sm);width:100%;text-align:left;">
+          <div style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">申请日期</div>
+          <div style="font-size:14px;font-weight:600;">2026.03.10 14:30</div>
+          <div style="font-size:13px;color:var(--gray-500);margin-top:12px;margin-bottom:4px;">企业名称</div>
+          <div style="font-size:14px;font-weight:600;">智慧食品（有限公司）</div>
+        </div>
+        <button class="btn btn-outline" style="margin-top:24px">返回登录页</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 4. 仪表盘 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">4. 仪表盘（首页）</span>
+  <div class="screen">
+    <div class="s-header">
+      <h2>VMMS</h2>
+      <div style="display:flex;gap:14px;">
+        <span class="icon-btn">&#128276;<span class="dot"></span></span>
+      </div>
+    </div>
+    <div class="screen-body">
+      <div style="padding:16px 16px 4px;">
+        <div style="font-size:18px;font-weight:700;color:var(--gray-800);">您好！<span style="color:var(--primary);">金管理</span></div>
+        <div id="dashboard-datetime" style="font-size:13px;color:var(--gray-400);margin-top:4px;"></div>
+        <script>
+        (function(){var e=document.getElementById('dashboard-datetime');function u(){var n=new Date(),d=['日','一','二','三','四','五','六'],y=n.getFullYear(),m=String(n.getMonth()+1).padStart(2,'0'),dd=String(n.getDate()).padStart(2,'0'),day=d[n.getDay()],h=String(n.getHours()).padStart(2,'0'),mi=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');e.textContent=y+'.'+m+'.'+dd+' (周'+day+') '+h+':'+mi+':'+s;}u();setInterval(u,1000);})();
+        </script>
+      </div>
+      <div class="revenue-card">
+        <div class="revenue-top">
+          <div class="col"><div class="lbl">累计销售额(&#8361;)</div><div class="val">1,250,000</div></div>
+          <div class="revenue-divider"></div>
+          <div class="col"><div class="lbl">累计退款(&#8361;)</div><div class="val">35,000</div></div>
+        </div>
+        <div class="period-chips">
+          <button class="period-chip active">今天</button>
+          <button class="period-chip">本周</button>
+          <button class="period-chip">本月</button>
+          <button class="period-chip">今年</button>
+        </div>
+        <div class="revenue-grid">
+          <div class="cell"><div class="clbl">今日销售额</div><div class="cval">85,000</div></div>
+          <div class="cell"><div class="clbl">今日订单</div><div class="cval">42</div></div>
+          <div class="cell"><div class="clbl">今日退款</div><div class="cval">2,000</div></div>
+          <div class="cell"><div class="clbl">昨日销售额</div><div class="cval">92,000</div></div>
+          <div class="cell"><div class="clbl">昨日订单</div><div class="cval">51</div></div>
+          <div class="cell"><div class="clbl">昨日退款</div><div class="cval">3,500</div></div>
+        </div>
+      </div>
+
+      <div class="section-title">设备状况</div>
+      <div class="stat-row">
+        <div class="stat-box" style="background:var(--primary);">
+          <div class="stat-label">全部设备</div><div class="stat-value">5</div>
+        </div>
+        <div class="stat-box" style="background:var(--success);">
+          <div class="stat-label">正常 (In-line)</div><div class="stat-value">3</div>
+        </div>
+        <div class="stat-box" style="background:var(--gray-400);">
+          <div class="stat-label">离线</div><div class="stat-value">2</div>
+        </div>
+      </div>
+
+      <div class="section-title">主要功能</div>
+      <div class="func-grid">
+        <div class="func-item"><div class="func-icon">&#128230;</div><span>商品管理</span></div>
+        <div class="func-item"><div class="func-icon">&#128202;</div><span>库存状况</span></div>
+        <div class="func-item"><div class="func-icon">&#9881;</div><span>售货机管理</span></div>
+        <div class="func-item"><div class="func-icon">&#127909;</div><span>广告管理</span></div>
+        <div class="func-item"><div class="func-icon">&#128200;</div><span>销售排名</span></div>
+        <div class="func-item"><div class="func-icon">&#127873;</div><span>赠品管理</span></div>
+        <div class="func-item"><div class="func-icon">&#128196;</div><span>订单查询</span></div>
+        <div class="func-item"><div class="func-icon">&#128276;</div><span>通知</span></div>
+        <div class="func-item"><div class="func-icon">&#9881;</div><span>设置</span></div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item active"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-badge tab-icon">&#128172;<span class="count">3</span></span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 5. 售货机列表 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">5. 售货机列表</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><h2>售货机管理</h2></div>
+      <button class="btn btn-sm btn-primary">+ 登记</button>
+    </div>
+    <div class="screen-body">
+      <div class="chip-group">
+        <span class="chip active">全部 (5)</span>
+        <span class="chip">正常 (3)</span>
+        <span class="chip">离线 (1)</span>
+        <span class="chip">维护中 (1)</span>
+      </div>
+      <div class="search-bar">&#128269; 搜索售货机名称、安装地点</div>
+
+      <div class="machine-card">
+        <div class="mc-top"><span class="mc-name">江南店 A-01</span><span class="status-badge status-normal">正常</span></div>
+        <div class="mc-loc">&#128205; 江南路1号出口地下商场</div>
+        <div class="mc-info"><span>商品 12种</span><span>库存 85%</span><span>今日销售额 &#8361;32,000</span></div>
+      </div>
+      <div class="machine-card">
+        <div class="mc-top"><span class="mc-name">瑞草店 B-02</span><span class="status-badge status-offline">离线</span></div>
+        <div class="mc-loc">&#128205; 瑞草路商务大厦1F大厅</div>
+        <div class="mc-info"><span>商品 8种</span><span>库存 40%</span><span>今日销售额 &#8361;0</span></div>
+      </div>
+      <div class="machine-card">
+        <div class="mc-top"><span class="mc-name">驿三店 C-03</span><span class="status-badge status-normal">正常</span></div>
+        <div class="mc-loc">&#128205; 驿三路科技大道写字楼</div>
+        <div class="mc-info"><span>商品 15种</span><span>库存 72%</span><span>今日销售额 &#8361;28,500</span></div>
+      </div>
+      <div class="machine-card">
+        <div class="mc-top"><span class="mc-name">三星店 D-04</span><span class="status-badge status-maintenance">维护中</span></div>
+        <div class="mc-loc">&#128205; 三星路会展中心B1</div>
+        <div class="mc-info"><span>商品 10种</span><span>库存 55%</span><span>今日销售额 &#8361;0</span></div>
+      </div>
+      <div class="machine-card">
+        <div class="mc-top"><span class="mc-name">论岘店 E-05</span><span class="status-badge status-normal">正常</span></div>
+        <div class="mc-loc">&#128205; 论岘路培训街入口</div>
+        <div class="mc-info"><span>商品 10种</span><span>库存 90%</span><span>今日销售额 &#8361;24,500</span></div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-badge tab-icon">&#128172;<span class="count">3</span></span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 6. 新增售货机登记 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">6. 新增售货机登记</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>新增售货机登记</h2></div>
+    </div>
+    <div class="screen-body" style="padding:20px 16px;">
+      <div class="input-group"><label>售货机固定 ID</label><input class="input-field" placeholder="VM-2026-0001" /></div>
+      <div class="input-group"><label>售货机名称</label><input class="input-field" placeholder="江南店 A-01" /></div>
+      <div class="input-group"><label>安装地点</label><input class="input-field" placeholder="江南路1号出口" /></div>
+      <div class="input-group"><label>详细地址</label><input class="input-field" placeholder="上海市浦东新区..." /></div>
+      <div class="input-group"><label>GPS 坐标</label>
+        <div style="display:flex;gap:8px;">
+          <input class="input-field" placeholder="纬度" style="flex:1" />
+          <input class="input-field" placeholder="经度" style="flex:1" />
+        </div>
+      </div>
+      <div class="input-group"><label>无线网络地址（选填）</label><input class="input-field" placeholder="IP 或 MAC" /></div>
+      <button class="btn btn-primary" style="margin-top:12px">提交登记</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 7. 售货机详情 - 基本信息 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">7. 售货机详情 - 基本信息</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>江南店 A-01</h2></div>
+      <span class="status-badge status-normal">正常</span>
+    </div>
+    <div class="tab-bar">
+      <span class="tab active">基本信息</span>
+      <span class="tab">货道设置</span>
+      <span class="tab">库存</span>
+      <span class="tab">销售额</span>
+    </div>
+    <div class="screen-body" style="padding:16px;">
+      <div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:13px;color:var(--gray-500);">售货机 ID</span>
+          <span style="font-size:14px;font-weight:600;">VM-2026-0001</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:13px;color:var(--gray-500);">安装地点</span>
+          <span style="font-size:14px;font-weight:600;">江南路1号出口地下商场</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:13px;color:var(--gray-500);">详细地址</span>
+          <span style="font-size:14px;font-weight:600;">上海市浦东新区江南大道396号</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:13px;color:var(--gray-500);">GPS</span>
+          <span style="font-size:14px;font-weight:600;">37.4979, 127.0276</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:13px;color:var(--gray-500);">网络地址</span>
+          <span style="font-size:14px;font-weight:600;">192.168.1.101</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:13px;color:var(--gray-500);">登记日期</span>
+          <span style="font-size:14px;font-weight:600;">2026.01.15</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="font-size:13px;color:var(--gray-500);">状态</span>
+          <span class="status-badge status-normal">正常</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline" style="flex:1">修改</button>
+        <button class="btn btn-sm" style="flex:1;background:var(--gray-100);color:var(--gray-600);border:none;padding:12px;">停用</button>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 8. 售货机详情 - 货道设置 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">8. 售货机详情 - 货道设置</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>江南店 A-01</h2></div>
+    </div>
+    <div class="tab-bar">
+      <span class="tab">基本信息</span>
+      <span class="tab active">货道设置</span>
+      <span class="tab">库存</span>
+      <span class="tab">销售额</span>
+    </div>
+    <div class="screen-body">
+      <div style="display:flex;justify-content:space-between;padding:12px 16px;">
+        <button class="btn btn-sm btn-primary">批量设置</button>
+        <button class="btn btn-sm btn-outline">全部清空</button>
+      </div>
+      <div class="slot-item">
+        <div class="slot-left">
+          <div class="slot-no">货道 #1</div>
+          <div class="slot-name">提亮防晒霜 SPF50+</div>
+          <div class="slot-stock">库存 15/20 | 阈值 5</div>
+          <div class="progress-bar"><div class="fill" style="width:75%;background:var(--success);"></div></div>
+        </div>
+        <button class="btn btn-sm btn-outline">修改</button>
+      </div>
+      <div class="slot-item">
+        <div class="slot-left">
+          <div class="slot-no">货道 #2</div>
+          <div class="slot-name">BB气垫 迷你</div>
+          <div class="slot-stock">库存 3/20 | 阈值 5</div>
+          <div class="progress-bar"><div class="fill" style="width:15%;background:var(--danger);"></div></div>
+        </div>
+        <button class="btn btn-sm btn-outline">修改</button>
+      </div>
+      <div class="slot-item">
+        <div class="slot-left">
+          <div class="slot-no">货道 #3</div>
+          <div class="slot-name">唇釉 玫瑰珊瑚</div>
+          <div class="slot-stock">库存 18/20 | 阈值 5</div>
+          <div class="progress-bar"><div class="fill" style="width:90%;background:var(--success);"></div></div>
+        </div>
+        <button class="btn btn-sm btn-outline">修改</button>
+      </div>
+      <div class="slot-item">
+        <div class="slot-left">
+          <div class="slot-no">货道 #4</div>
+          <div class="slot-name" style="color:var(--gray-400);">（未设置）</div>
+        </div>
+        <button class="btn btn-sm btn-primary">设置</button>
+      </div>
+      <div class="slot-item">
+        <div class="slot-left">
+          <div class="slot-no">货道 #5</div>
+          <div class="slot-name" style="color:var(--gray-400);">（未设置）</div>
+        </div>
+        <button class="btn btn-sm btn-primary">设置</button>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 9. 售货机详情 - 库存 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">9. 售货机详情 - 库存</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>江南店 A-01</h2></div>
+    </div>
+    <div class="tab-bar">
+      <span class="tab">基本信息</span>
+      <span class="tab">货道设置</span>
+      <span class="tab active">库存</span>
+      <span class="tab">销售额</span>
+    </div>
+    <div class="screen-body">
+      <div style="padding:16px;">
+        <table class="data-table">
+          <thead><tr><th>商品名</th><th>库存</th><th>阈值</th><th>状态</th></tr></thead>
+          <tbody>
+            <tr><td>提亮防晒霜 SPF50+</td><td>15/20</td><td>5</td><td><span class="status-badge status-normal">良好</span></td></tr>
+            <tr><td>BB气垫 迷你</td><td style="color:var(--danger);font-weight:600;">3/20</td><td>5</td><td><span class="status-badge status-broken">不足</span></td></tr>
+            <tr><td>唇釉 玫瑰珊瑚</td><td>18/20</td><td>5</td><td><span class="status-badge status-normal">良好</span></td></tr>
+            <tr><td>视黄醇精华 30ml</td><td>12/15</td><td>3</td><td><span class="status-badge status-normal">良好</span></td></tr>
+            <tr><td>补水面膜</td><td style="color:var(--danger);font-weight:600;">2/25</td><td>5</td><td><span class="status-badge status-broken">不足</span></td></tr>
+            <tr><td>润唇膏 樱桃</td><td>8/10</td><td>3</td><td><span class="status-badge status-normal">良好</span></td></tr>
+            <tr><td>玻尿酸爽肤水</td><td>10/15</td><td>4</td><td><span class="status-badge status-normal">良好</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 10. 售货机详情 - 销售额 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">10. 售货机详情 - 销售额</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>江南店 A-01</h2></div>
+    </div>
+    <div class="tab-bar">
+      <span class="tab">基本信息</span>
+      <span class="tab">货道设置</span>
+      <span class="tab">库存</span>
+      <span class="tab active">销售额</span>
+    </div>
+    <div class="screen-body">
+      <div class="chip-group">
+        <span class="chip active">按日</span>
+        <span class="chip">按周</span>
+        <span class="chip">按月</span>
+        <span class="chip">按年</span>
+      </div>
+      <div class="tab-bar" style="border-top:1px solid var(--gray-100);">
+        <span class="tab active">按售货机销售趋势</span>
+        <span class="tab">按商品销售趋势</span>
+      </div>
+      <div class="chart-placeholder">&#128200; 按售货机销售趋势图表 (Line Chart)</div>
+      <div style="padding:0 16px 8px;display:flex;gap:8px;">
+        <div style="flex:1;padding:12px;background:var(--primary-light);border-radius:var(--radius-sm);text-align:center;">
+          <div style="font-size:11px;color:var(--gray-500);">今日销售额</div>
+          <div style="font-size:18px;font-weight:700;color:var(--primary);">&#8361;32,000</div>
+        </div>
+        <div style="flex:1;padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);text-align:center;">
+          <div style="font-size:11px;color:var(--gray-500);">今日订单</div>
+          <div style="font-size:18px;font-weight:700;">18笔</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 11. 商品 SKU 列表 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">11. 商品 SKU 列表</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>商品管理</h2></div>
+      <button class="btn btn-sm btn-primary">+ 登记</button>
+    </div>
+    <div class="screen-body">
+      <div class="search-bar">&#128269; 搜索商品名、SKU 代码</div>
+      <div class="chip-group">
+        <span class="chip active">全部</span>
+        <span class="chip">护肤品</span>
+        <span class="chip">彩妆</span>
+        <span class="chip">赠品</span>
+      </div>
+      <div class="list-item">
+        <div style="width:44px;height:44px;background:var(--gray-100);border-radius:8px;display:flex;align-items:center;justify-content:center;">&#9728;</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;">提亮防晒霜 SPF50+</div>
+          <div style="font-size:12px;color:var(--gray-400);">SKU-001 | 护肤品</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;">&#8361;12,900</div>
+          <div style="font-size:11px;color:var(--gray-400);">售价</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div style="width:44px;height:44px;background:var(--gray-100);border-radius:8px;display:flex;align-items:center;justify-content:center;">&#128132;</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;">唇釉 玫瑰珊瑚</div>
+          <div style="font-size:12px;color:var(--gray-400);">SKU-005 | 彩妆</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;">&#8361;8,900</div>
+          <div style="font-size:11px;color:var(--gray-400);">售价</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div style="width:44px;height:44px;background:var(--gray-100);border-radius:8px;display:flex;align-items:center;justify-content:center;">&#129507;</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;">洁面乳 150ml</div>
+          <div style="font-size:12px;color:var(--gray-400);">SKU-012 | 护肤品</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;">&#8361;7,500</div>
+          <div style="font-size:11px;color:var(--gray-400);">售价</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div style="width:44px;height:44px;background:#FEF3C7;border-radius:8px;display:flex;align-items:center;justify-content:center;">&#127873;</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;">迷你护手霜（赠品）</div>
+          <div style="font-size:12px;color:var(--warning);">SKU-020 | 赠品</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;">&#8361;0</div>
+          <div style="font-size:11px;color:var(--gray-400);">免费</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 12. 商品 SKU 登记 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">12. 商品 SKU 登记</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>新增商品登记</h2></div>
+    </div>
+    <div class="screen-body" style="padding:20px 16px;">
+      <div class="input-group"><label>SKU 名称</label><input class="input-field" placeholder="请输入商品名" /></div>
+      <div class="input-group"><label>分类</label>
+        <select class="input-field" style="appearance:auto;">
+          <option>护肤品</option><option>彩妆</option><option>赠品（免费）</option>
+        </select>
+      </div>
+      <div class="input-group"><label>售价 (&#8361;)</label><input class="input-field" placeholder="0" type="number" /></div>
+      <div class="input-group"><label>进价 (&#8361;) - 管理员专用</label><input class="input-field" placeholder="0" type="number" /></div>
+      <div class="input-group"><label>条码</label>
+        <div style="display:flex;gap:8px;">
+          <input class="input-field" placeholder="自动生成" style="flex:1" disabled />
+          <button class="btn btn-sm btn-outline">生成</button>
+        </div>
+      </div>
+      <div class="input-group"><label>状态</label>
+        <select class="input-field" style="appearance:auto;">
+          <option>在售</option><option>停售</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="margin-top:12px">提交登记</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 13. 库存状况（汇总） ==================== -->
+<div class="screen-wrapper">
+  <span class="label">13. 库存状况（汇总）</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>库存状况</h2></div>
+    </div>
+    <div class="screen-body">
+      <div class="chip-group">
+        <span class="chip active">全部</span>
+        <span class="chip" style="border-color:var(--danger);color:var(--danger);">不足 (4)</span>
+      </div>
+      <div class="section-title">库存不足提醒</div>
+      <div class="machine-card" style="border-left:3px solid var(--danger);">
+        <div style="font-size:14px;font-weight:700;">江南店 A-01</div>
+        <div style="font-size:13px;color:var(--danger);margin-top:4px;">BB气垫 迷你 - 3/20（阈值 5）</div>
+        <div style="font-size:13px;color:var(--danger);">补水面膜 - 2/25（阈值 5）</div>
+      </div>
+      <div class="machine-card" style="border-left:3px solid var(--danger);">
+        <div style="font-size:14px;font-weight:700;">驿三店 C-03</div>
+        <div style="font-size:13px;color:var(--danger);margin-top:4px;">润唇膏 樱桃 - 1/10（阈值 3）</div>
+        <div style="font-size:13px;color:var(--danger);">视黄醇精华 30ml - 2/15（阈值 3）</div>
+      </div>
+      <div class="section-title">各售货机库存概览</div>
+      <div class="machine-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:14px;font-weight:700;">江南店 A-01</div>
+            <div style="font-size:12px;color:var(--gray-400);">12种 / 货道 20个</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:18px;font-weight:700;">72%</div>
+            <div class="progress-bar" style="width:60px;"><div class="fill" style="width:72%;background:var(--warning);"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="machine-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:14px;font-weight:700;">论岘店 E-05</div>
+            <div style="font-size:12px;color:var(--gray-400);">10种 / 货道 15个</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:18px;font-weight:700;">90%</div>
+            <div class="progress-bar" style="width:60px;"><div class="fill" style="width:90%;background:var(--success);"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 14. 销售额汇总 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">14. 销售额汇总</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>销售状况</h2></div>
+    </div>
+    <div class="screen-body">
+      <div class="chip-group">
+        <span class="chip active">按日</span>
+        <span class="chip">按周</span>
+        <span class="chip">按月</span>
+        <span class="chip">按年</span>
+      </div>
+      <div class="tab-bar" style="border-top:1px solid var(--gray-100);">
+        <span class="tab active">按售货机销售趋势</span>
+        <span class="tab">按商品销售趋势</span>
+      </div>
+      <div class="chart-placeholder">&#128200; 按售货机销售趋势图表 (Bar + Line)</div>
+      <div class="stat-row">
+        <div style="flex:1;padding:14px;background:var(--primary-light);border-radius:var(--radius-sm);text-align:center;">
+          <div style="font-size:11px;color:var(--gray-500);">总销售额</div>
+          <div style="font-size:20px;font-weight:700;color:var(--primary);">&#8361;1,250,000</div>
+        </div>
+        <div style="flex:1;padding:14px;background:#FEE2E2;border-radius:var(--radius-sm);text-align:center;">
+          <div style="font-size:11px;color:var(--gray-500);">总退款</div>
+          <div style="font-size:20px;font-weight:700;color:var(--danger);">&#8361;35,000</div>
+        </div>
+      </div>
+      <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;padding-right:16px;">
+        <span>按售货机销售额</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <select id="machineSort" style="font-size:12px;padding:4px 8px;border:1px solid var(--gray-200);border-radius:6px;color:var(--gray-600);background:#fff;" onchange="sortList('machineList',this.value)">
+            <option value="sales-desc">销售额从高到低</option>
+            <option value="sales-asc">销售额从低到高</option>
+            <option value="orders-desc">订单从多到少</option>
+          </select>
+          <span style="font-size:18px;cursor:pointer;color:var(--gray-400);" onclick="toggleSection('machineList','machineToggle')" id="machineToggle">&#9650;</span>
+        </div>
+      </div>
+      <div id="machineList">
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--primary);">1</span><div><div style="font-size:14px;font-weight:600;">江南店 A-01</div><div style="font-size:12px;color:var(--gray-400);">42笔</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;85,000</div>
+        </div>
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--gray-500);">2</span><div><div style="font-size:14px;font-weight:600;">驿三店 C-03</div><div style="font-size:12px;color:var(--gray-400);">38笔</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;72,000</div>
+        </div>
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--gray-500);">3</span><div><div style="font-size:14px;font-weight:600;">论岘店 E-05</div><div style="font-size:12px;color:var(--gray-400);">31笔</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;58,500</div>
+        </div>
+      </div>
+
+      <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;padding-right:16px;">
+        <span>按商品销售额</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <select id="productSort" style="font-size:12px;padding:4px 8px;border:1px solid var(--gray-200);border-radius:6px;color:var(--gray-600);background:#fff;" onchange="sortList('productList',this.value)">
+            <option value="sales-desc">销售额从高到低</option>
+            <option value="sales-asc">销售额从低到高</option>
+            <option value="orders-desc">订单从多到少</option>
+          </select>
+          <span style="font-size:18px;cursor:pointer;color:var(--gray-400);" onclick="toggleSection('productList','productToggle')" id="productToggle">&#9650;</span>
+        </div>
+      </div>
+      <div id="productList">
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--primary);">1</span><div><div style="font-size:14px;font-weight:600;">提亮防晒霜 SPF50+</div><div style="font-size:12px;color:var(--gray-400);">35笔</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;451,500</div>
+        </div>
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--gray-500);">2</span><div><div style="font-size:14px;font-weight:600;">唇釉 玫瑰珊瑚</div><div style="font-size:12px;color:var(--gray-400);">48笔</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;427,200</div>
+        </div>
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--gray-500);">3</span><div><div style="font-size:14px;font-weight:600;">视黄醇精华 30ml</div><div style="font-size:12px;color:var(--gray-400);">22笔</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;415,800</div>
+        </div>
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--gray-500);">4</span><div><div style="font-size:14px;font-weight:600;">BB气垫 迷你</div><div style="font-size:12px;color:var(--gray-400);">18笔</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;178,200</div>
+        </div>
+        <div class="list-item">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:12px;font-weight:700;color:var(--gray-500);">5</span><div><div style="font-size:14px;font-weight:600;">补水面膜</div><div style="font-size:12px;color:var(--gray-400);">15笔</div></div></div>
+          <div style="font-size:14px;font-weight:700;">&#8361;45,000</div>
+        </div>
+      </div>
+
+      <script>
+      function toggleSection(listId, toggleId){
+        var el=document.getElementById(listId),tg=document.getElementById(toggleId);
+        if(el.style.display==='none'){el.style.display='';tg.innerHTML='&#9650;';}
+        else{el.style.display='none';tg.innerHTML='&#9660;';}
+      }
+      function sortList(listId, mode){
+        var el=document.getElementById(listId),items=Array.from(el.querySelectorAll('.list-item'));
+        items.sort(function(a,b){
+          if(mode==='orders-desc'){
+            var ao=parseInt(a.querySelector('[style*="gray-400"]').textContent),bo=parseInt(b.querySelector('[style*="gray-400"]').textContent);return bo-ao;
+          }
+          var av=parseInt(a.querySelector('[style*="font-weight:700"]').textContent.replace(/[^\d]/g,'')),bv=parseInt(b.querySelector('[style*="font-weight:700"]').textContent.replace(/[^\d]/g,''));
+          return mode==='sales-asc'?av-bv:bv-av;
+        });
+        items.forEach(function(it,i){
+          var rank=it.querySelector('span[style*="font-weight:700"]');
+          if(rank)rank.textContent=(i+1);
+          el.appendChild(it);
+        });
+      }
+      </script>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 15. 销售明细 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">15. 销售明细</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>销售明细</h2></div>
+    </div>
+    <div class="screen-body">
+      <div style="padding:12px 16px;display:flex;gap:8px;">
+        <input class="input-field" type="date" style="flex:1" />
+        <span style="display:flex;align-items:center;color:var(--gray-400);">~</span>
+        <input class="input-field" type="date" style="flex:1" />
+      </div>
+      <div style="padding:0 16px;">
+        <table class="data-table">
+          <thead><tr><th>时间</th><th>商品</th><th>数量</th><th>金额</th></tr></thead>
+          <tbody>
+            <tr><td style="font-size:12px;">03/11<br>14:32</td><td>提亮防晒霜 SPF50+</td><td>1</td><td>&#8361;12,900</td></tr>
+            <tr><td style="font-size:12px;">03/11<br>14:15</td><td>唇釉 玫瑰珊瑚</td><td>2</td><td>&#8361;17,800</td></tr>
+            <tr><td style="font-size:12px;">03/11<br>13:48</td><td>洁面乳 150ml</td><td>1</td><td>&#8361;7,500</td></tr>
+            <tr><td style="font-size:12px;">03/11<br>12:20</td><td>补水面膜</td><td>3</td><td>&#8361;9,000</td></tr>
+            <tr><td style="font-size:12px;">03/11<br>11:05</td><td>润唇膏 樱桃</td><td>1</td><td>&#8361;5,900</td></tr>
+            <tr><td style="font-size:12px;">03/11<br>10:33</td><td>视黄醇精华 30ml</td><td>1</td><td>&#8361;18,900</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 16. 销售排名 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">16. 销售排名</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>销售排名</h2></div>
+    </div>
+    <div class="screen-body">
+      <div class="chip-group">
+        <span class="chip active">本月</span>
+        <span class="chip">本周</span>
+        <span class="chip">今天</span>
+      </div>
+      <div class="chart-placeholder">&#128202; 按商品销售占比 (Pie/Bar Chart)</div>
+      <div class="section-title">按商品排名</div>
+      <div class="rank-item">
+        <div class="rank-num rank-1">1</div>
+        <div class="rank-info"><div class="rank-name">唇釉 玫瑰珊瑚</div><div class="rank-qty">325笔 已售</div></div>
+        <div class="rank-amount">&#8361;2,892,500</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num rank-2">2</div>
+        <div class="rank-info"><div class="rank-name">提亮防晒霜 SPF50+</div><div class="rank-qty">280笔 已售</div></div>
+        <div class="rank-amount">&#8361;3,612,000</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num rank-3">3</div>
+        <div class="rank-info"><div class="rank-name">视黄醇精华 30ml</div><div class="rank-qty">198笔 已售</div></div>
+        <div class="rank-amount">&#8361;3,742,200</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num rank-other">4</div>
+        <div class="rank-info"><div class="rank-name">润唇膏 樱桃</div><div class="rank-qty">156笔 已售</div></div>
+        <div class="rank-amount">&#8361;920,400</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num rank-other">5</div>
+        <div class="rank-info"><div class="rank-name">洁面乳 150ml</div><div class="rank-qty">142笔 已售</div></div>
+        <div class="rank-amount">&#8361;1,065,000</div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 17. 广告管理 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">17. 广告管理</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>广告管理</h2></div>
+      <button class="btn btn-sm btn-primary">+ 登记</button>
+    </div>
+    <div class="screen-body">
+      <div class="chip-group">
+        <span class="chip active">全部</span>
+        <span class="chip">启用</span>
+        <span class="chip">停用</span>
+      </div>
+      <div class="machine-card">
+        <div style="display:flex;gap:12px;">
+          <div style="width:80px;height:60px;background:var(--gray-200);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;">&#127909;</div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:700;">春季促销广告</div>
+            <div style="font-size:12px;color:var(--gray-400);">MP4 | 30秒 | 1920x1080</div>
+            <div style="margin-top:4px;"><span class="status-badge status-normal">启用</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="machine-card">
+        <div style="display:flex;gap:12px;">
+          <div style="width:80px;height:60px;background:var(--gray-200);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;">&#127909;</div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:700;">新品宣传视频</div>
+            <div style="font-size:12px;color:var(--gray-400);">MP4 | 15秒 | 1920x1080</div>
+            <div style="margin-top:4px;"><span class="status-badge status-normal">启用</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="machine-card">
+        <div style="display:flex;gap:12px;">
+          <div style="width:80px;height:60px;background:var(--gray-200);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;">&#127909;</div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:700;">圣诞活动</div>
+            <div style="font-size:12px;color:var(--gray-400);">MP4 | 20秒 | 1920x1080</div>
+            <div style="margin-top:4px;"><span class="status-badge status-offline">停用</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 18. 广告登记 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">18. 广告登记</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>广告登记</h2></div>
+    </div>
+    <div class="screen-body" style="padding:20px 16px;">
+      <div class="upload-zone">
+        <div class="upload-icon">&#128228;</div>
+        <div style="font-size:14px;font-weight:600;color:var(--gray-600);">上传 MP4 视频文件</div>
+        <div style="font-size:12px;margin-top:4px;">请选择文件或拖拽上传</div>
+      </div>
+      <div class="input-group" style="margin-top:16px;"><label>广告名称</label><input class="input-field" placeholder="请输入广告名称" /></div>
+      <div class="input-group"><label>播放时长（秒）</label><input class="input-field" placeholder="自动检测" type="number" /></div>
+      <div class="input-group"><label>分辨率</label>
+        <select class="input-field" style="appearance:auto;">
+          <option>1920x1080 (Full HD)</option><option>1280x720 (HD)</option>
+        </select>
+      </div>
+      <div class="input-group"><label>状态</label>
+        <select class="input-field" style="appearance:auto;">
+          <option>启用</option><option>停用</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="margin-top:12px">上传并登记</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 19. 广告播放计划 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">19. 广告播放计划</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>播放计划设置</h2></div>
+    </div>
+    <div class="screen-body">
+      <div style="padding:12px 16px;font-size:13px;color:var(--gray-500);background:var(--gray-50);">
+        江南店 A-01 | 最近更新：<span style="color:var(--success);font-weight:600;">成功</span> (2026.03.10 16:30)
+      </div>
+      <div style="padding:8px 16px;display:flex;justify-content:space-between;">
+        <button class="btn btn-sm btn-primary">+ 添加广告</button>
+      </div>
+
+      <div class="schedule-item">
+        <div class="sch-top">
+          <div><span class="sch-order">优先级1</span> <span class="sch-name"> 春季促销</span></div>
+          <div class="toggle on"><div class="knob"></div></div>
+        </div>
+        <div class="sch-meta">播放时长：30秒 | 时间段：09:00~22:00 | 节假日：包含</div>
+      </div>
+      <div class="schedule-item">
+        <div class="sch-top">
+          <div><span class="sch-order">优先级2</span> <span class="sch-name"> 新品宣传</span></div>
+          <div class="toggle on"><div class="knob"></div></div>
+        </div>
+        <div class="sch-meta">播放时长：15秒 | 时间段：07:00~23:00 | 节假日：排除</div>
+      </div>
+      <div class="schedule-item">
+        <div class="sch-top">
+          <div><span class="sch-order">优先级3</span> <span class="sch-name"> 圣诞活动</span></div>
+          <div class="toggle"><div class="knob"></div></div>
+        </div>
+        <div class="sch-meta">播放时长：20秒 | 停用</div>
+      </div>
+
+      <div style="padding:16px;display:flex;gap:8px;">
+        <button class="btn btn-primary" style="flex:2">保存</button>
+        <button class="btn btn-outline" style="flex:1">触发更新</button>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 20. 赠品/促销 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">20. 赠品/促销</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>赠品管理</h2></div>
+      <button class="btn btn-sm btn-primary">+ 创建规则</button>
+    </div>
+    <div class="screen-body">
+      <div class="promo-card">
+        <div class="promo-rule">购买唇釉赠送护手霜</div>
+        <div class="promo-detail">购买：唇釉 玫瑰珊瑚 (SKU-005) x1 -> 赠送：迷你护手霜 (SKU-020) x1</div>
+        <div class="promo-period">2026.03.01 ~ 2026.03.31</div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-rule">购买2支防晒霜赠送面膜</div>
+        <div class="promo-detail">购买：提亮防晒霜 SPF50+ (SKU-001) x2 -> 赠送：补水面膜 (SKU-003) x1</div>
+        <div class="promo-period">2026.03.15 ~ 2026.04.15</div>
+      </div>
+      <div class="promo-card" style="opacity:0.6;">
+        <div class="promo-rule">新年活动（已过期）</div>
+        <div class="promo-detail">购买：润唇膏 樱桃 (SKU-008) x1 -> 赠送：迷你洁面乳 (SKU-012) x1</div>
+        <div class="promo-period" style="color:var(--gray-400);">2026.01.01 ~ 2026.01.31（已过期）</div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 21. 订单查询 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">21. 订单查询</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>订单查询</h2></div>
+    </div>
+    <div class="screen-body">
+      <div class="search-bar">&#128269; 搜索订单号、商品名</div>
+      <div class="machine-card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;">#ORD-20260311-001</span>
+          <span class="status-badge status-normal">已完成</span>
+        </div>
+        <div style="font-size:13px;color:var(--gray-600);">唇釉 玫瑰珊瑚 x1 = &#8361;8,900</div>
+        <div style="font-size:13px;color:var(--warning);">+ 赠品：迷你护手霜 x1</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">江南店 A-01 | 2026.03.11 14:32</div>
+      </div>
+      <div class="machine-card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;">#ORD-20260311-002</span>
+          <span class="status-badge status-normal">已完成</span>
+        </div>
+        <div style="font-size:13px;color:var(--gray-600);">提亮防晒霜 SPF50+ x2 = &#8361;25,800</div>
+        <div style="font-size:13px;color:var(--warning);">+ 赠品：补水面膜 x1</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">驿三店 C-03 | 2026.03.11 13:48</div>
+      </div>
+      <div class="machine-card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;">#ORD-20260311-003</span>
+          <span class="status-badge status-normal">已完成</span>
+        </div>
+        <div style="font-size:13px;color:var(--gray-600);">洁面乳 150ml x1 = &#8361;7,500</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">论岘店 E-05 | 2026.03.11 12:20</div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item active"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 22. 通知 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">22. 通知</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><h2>通知</h2></div>
+      <span style="font-size:13px;color:var(--primary);cursor:pointer;font-weight:600;">全部已读</span>
+    </div>
+    <div class="screen-body">
+      <div class="notice-item unread">
+        <div class="n-top"><span class="n-type">库存不足</span><span class="n-time">10分钟前</span></div>
+        <div class="n-title">江南店 A-01 库存不足</div>
+        <div class="n-body">BB气垫 迷你库存已低于阈值(5)。当前库存：3个</div>
+      </div>
+      <div class="notice-item unread">
+        <div class="n-top"><span class="n-type" style="color:var(--danger);">状态变更</span><span class="n-time">1小时前</span></div>
+        <div class="n-title">瑞草店 B-02 转为离线</div>
+        <div class="n-body">售货机状态已从"正常"变更为"离线"。</div>
+      </div>
+      <div class="notice-item">
+        <div class="n-top"><span class="n-type" style="color:var(--gray-500);">系统</span><span class="n-time">3小时前</span></div>
+        <div class="n-title">广告更新完成</div>
+        <div class="n-body">江南店 A-01 广告播放计划已成功更新。</div>
+      </div>
+      <div class="notice-item">
+        <div class="n-top"><span class="n-type" style="color:var(--gray-500);">管理员</span><span class="n-time">昨天</span></div>
+        <div class="n-title">3月定期维护通知</div>
+        <div class="n-body">3月15日（周六）02:00~06:00 将进行系统定期维护。</div>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item active"><span class="tab-badge tab-icon">&#128172;<span class="count">2</span></span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 23. 管理员私信 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">23. 管理员私信</span>
+  <div class="screen">
+    <div class="s-header">
+      <div class="s-header-left"><span class="back">&#8592;</span><h2>管理员咨询</h2></div>
+    </div>
+    <div class="screen-body" style="display:flex;flex-direction:column;padding-bottom:120px;">
+      <div class="chat-area" style="flex:1;">
+        <div class="msg incoming">
+          您好，这里是 VMMS 运营团队。请问有什么可以帮您？
+          <div class="time">昨天 09:00</div>
+        </div>
+        <div class="msg outgoing">
+          瑞草店 B-02 售货机处于离线状态，能帮忙确认一下原因吗？
+          <div class="time">昨天 10:15</div>
+        </div>
+        <div class="msg incoming">
+          好的，我来查一下。正在检查网络连接状态。
+          <div class="time">昨天 10:20</div>
+        </div>
+        <div class="msg incoming">
+          经确认，问题出在现场WiFi路由器。需要到现场进行检修。
+          <div class="time">昨天 11:30</div>
+        </div>
+        <div class="msg outgoing">
+          明白了。我今天下午去现场处理。谢谢。
+          <div class="time">昨天 11:35</div>
+        </div>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:64px;left:0;right:0;">
+      <div class="chat-input">
+        <input placeholder="请输入消息..." />
+        <button class="send-btn">&#10148;</button>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item active"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 24. 我的页面 ==================== -->
+<div class="screen-wrapper">
+  <span class="label">24. 我的页面</span>
+  <div class="screen">
+    <div class="s-header">
+      <h2>MY</h2>
+    </div>
+    <div class="screen-body">
+      <div class="profile-section">
+        <div class="avatar">K</div>
+        <div class="profile-name">金管理</div>
+        <div class="profile-role">店铺管理员 | 智慧食品（有限公司）</div>
+      </div>
+
+      <div class="section-title">账号管理</div>
+      <div class="menu-list">
+        <div class="menu-item"><span>修改个人信息</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-item"><span>修改密码</span><span class="arrow">&#8250;</span></div>
+      </div>
+
+      <div class="section-title" style="margin-top:16px;">设置</div>
+      <div class="menu-list">
+        <div class="menu-item"><span>通知设置</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-item"><span>库存阈值设置</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-item"><span>语言设置</span><span class="arrow">&#8250;</span></div>
+      </div>
+
+      <div class="section-title" style="margin-top:16px;">其他</div>
+      <div class="menu-list">
+        <div class="menu-item"><span>使用条款</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-item"><span>隐私政策</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-item"><span>应用版本</span><span style="color:var(--gray-400);font-size:13px;">v1.0.0</span></div>
+      </div>
+
+      <div style="padding:24px 16px;">
+        <button class="btn" style="background:var(--gray-100);color:var(--danger);">退出登录</button>
+      </div>
+    </div>
+    <div class="bottom-tab">
+      <a class="tab-item"><span class="tab-icon">&#127968;</span>首页</a>
+      <a class="tab-item"><span class="tab-icon">&#129518;</span>售货机</a>
+      <a class="tab-item"><span class="tab-icon">&#128172;</span>消息</a>
+      <a class="tab-item active"><span class="tab-icon">&#128100;</span>MY</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- end gallery -->
+
+<div style="text-align:center;padding:40px;color:var(--gray-400);font-size:13px;">
+  VMMS Wireframe - 24 Screens | Mobile-First Responsive Design
+</div>
+
+</body>
+</html>
