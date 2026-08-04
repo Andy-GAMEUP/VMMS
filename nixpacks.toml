@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs_22", "npm-10_x"]
+
+[phases.install]
+cmds = ["npm ci"]
+
+[phases.build]
+cmds = ["echo 'BFF server uses tsx runtime — no build needed'"]
+
+[start]
+cmd = "npx tsx server/index.ts"
