@@ -12,13 +12,17 @@ export interface StoredUser {
   passwordHash: string;
   name: string;
   phone: string;
-  role: 'admin' | 'manager' | 'viewer';
+  role: 'admin' | 'manager';
+  accountType: 'sub_admin' | 'business';
   deptId: number;
   deptName: string;
   status: 'active' | 'pending' | 'disabled';
   createdAt: number;
   lastLoginAt: number | null;
   refreshToken: string | null;
+  // business 전용
+  businessName?: string;
+  parentDeptId?: number;
 }
 
 const DB_PATH = join(import.meta.dirname, 'users.json');
@@ -95,7 +99,8 @@ export const userStore = {
       name: '시스템 관리자',
       phone: '01000000000',
       role: 'admin',
-      deptId: 0, // 전체 부서 접근
+      accountType: 'sub_admin',
+      deptId: 0,
       deptName: '전체',
       status: 'active',
       createdAt: Date.now(),
@@ -106,5 +111,38 @@ export const userStore = {
     writeDB(users);
     console.log('  [DB] Admin 계정 생성: admin@vmms.local');
     return true;
+  },
+
+  async seedTestUsers(passwordHash: string): Promise<number> {
+    const users = readDB();
+    const testAccounts: Omit<StoredUser, 'passwordHash'>[] = [
+      {
+        id: 'test-manager-001',
+        email: 'test@vmms.local',
+        name: '테스트 매니저',
+        phone: '01011112222',
+        role: 'manager',
+        accountType: 'sub_admin',
+        deptId: 245,
+        deptName: '서울 1지점',
+        status: 'active',
+        createdAt: Date.now(),
+        lastLoginAt: null,
+        refreshToken: null,
+      },
+    ];
+
+    let created = 0;
+    for (const acct of testAccounts) {
+      if (!users.some((u) => u.email === acct.email)) {
+        users.push({ ...acct, passwordHash });
+        created++;
+      }
+    }
+
+    if (created > 0) {
+      writeDB(users);
+    }
+    return created;
   },
 };

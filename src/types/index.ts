@@ -6,7 +6,7 @@ export { resolveStockLevel, STOCK_LEVEL_MAP } from './slot';
 
 export type { Product, ProductPage, ProductQueryParams } from './product';
 
-export type { SalesStat, SalesQueryParams, SalesStatType } from './sales';
+export type { SalesStat, SalesQueryParams } from './sales';
 export { fenToYuan, formatMoney } from './sales';
 
 export type {
@@ -16,6 +16,7 @@ export type {
   XzyDeptCreateDTO,
   VmmsUser,
   UserRole,
+  AccountType,
   LoginRequest,
   LoginResponse,
   RegisterRequest,

@@ -1,14 +1,10 @@
-/**
- * 로그인 페이지
- * - 이메일 + 비밀번호 입력
- * - 모바일 최적화 (375px base)
- */
-
 import { useState, type FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
+import { useT } from '@/i18n/useT';
 
 export default function LoginPage() {
+  const t = useT();
   const navigate = useNavigate();
   const { login, error, clearError, isLoading, rememberMe: savedRememberMe } = useAuthStore();
 
@@ -34,65 +30,61 @@ export default function LoginPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-8 h-8 border-3 border-primary-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--c-bg)' }}>
+        <div className="w-8 h-8 border-3 rounded-full animate-spin" style={{ borderColor: 'var(--c-pri)', borderTopColor: 'transparent' }} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* 상단 브랜딩 영역 */}
-      <div className="flex-1 flex flex-col items-center justify-center px-sp-4 pt-sp-10 pb-sp-6">
-        <div className="w-16 h-16 bg-primary-500 rounded-2xl flex items-center justify-center mb-sp-4 shadow-elevated">
-          <svg className="w-9 h-9 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(180deg, var(--c-pri) 0%, #1a4abf 100%)' }}>
+      <div className="flex-none flex flex-col items-center justify-center pt-20 pb-10">
+        <div className="w-20 h-20 bg-white/20 backdrop-blur rounded-3xl flex items-center justify-center mb-4 shadow-lg">
+          <svg className="w-11 h-11 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
           </svg>
         </div>
-        <h1 className="text-heading text-gray-900 font-bold">VMMS</h1>
-        <p className="text-body text-gray-500 mt-sp-1">자판기 관리 시스템</p>
+        <h1 className="text-3xl font-extrabold text-white tracking-wider">VMMS</h1>
+        <p className="text-sm text-white/80 mt-1">{t.auth.subtitle}</p>
       </div>
 
-      {/* 로그인 폼 */}
-      <div className="px-sp-4 pb-sp-10">
-        <form onSubmit={handleSubmit} className="space-y-sp-4">
-          {/* 에러 메시지 */}
+      <div className="flex-1 rounded-t-3xl px-6 pt-8 pb-10 shadow-xl" style={{ backgroundColor: 'var(--c-sf)' }}>
+        <h2 className="text-xl font-bold mb-6" style={{ color: 'var(--c-tx1)' }}>{t.auth.login}</h2>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="bg-danger-50 border border-danger-200 rounded-input px-sp-4 py-sp-3 text-sm text-danger-700">
-              {error}
-              <button
-                type="button"
-                onClick={clearError}
-                className="float-right text-danger-400 hover:text-danger-600"
-              >
+            <div className="rounded-lg px-4 py-3 text-sm flex items-center justify-between" style={{ backgroundColor: 'color-mix(in srgb, var(--c-err) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--c-err) 25%, transparent)', color: 'var(--c-err)' }}>
+              <span>{error}</span>
+              <button type="button" onClick={clearError} className="ml-2 opacity-60 hover:opacity-100">
                 ✕
               </button>
             </div>
           )}
 
-          {/* 이메일 */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-sp-1">
-              이메일
+            <label htmlFor="email" className="block text-[13px] font-semibold mb-1" style={{ color: 'var(--c-tx2)' }}>
+              {t.auth.email}
             </label>
             <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="example@company.com"
+              placeholder="email@example.com"
               autoComplete="email"
               required
-              className="w-full h-12 px-sp-4 border border-gray-300 rounded-input text-body
-                         focus:ring-2 focus:ring-primary-500 focus:border-primary-500
-                         placeholder:text-gray-400 outline-none transition-colors"
+              className="w-full h-12 px-4 border-[1.5px] rounded-lg text-[14px] outline-none transition-all"
+              style={{
+                borderColor: 'var(--c-bd)',
+                backgroundColor: 'var(--c-bg)',
+                color: 'var(--c-tx1)',
+              }}
             />
           </div>
 
-          {/* 비밀번호 */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-sp-1">
-              비밀번호
+            <label htmlFor="password" className="block text-[13px] font-semibold mb-1" style={{ color: 'var(--c-tx2)' }}>
+              {t.auth.password}
             </label>
             <input
               id="password"
@@ -102,48 +94,74 @@ export default function LoginPage() {
               placeholder="비밀번호 입력"
               autoComplete="current-password"
               required
-              className="w-full h-12 px-sp-4 border border-gray-300 rounded-input text-body
-                         focus:ring-2 focus:ring-primary-500 focus:border-primary-500
-                         placeholder:text-gray-400 outline-none transition-colors"
+              className="w-full h-12 px-4 border-[1.5px] rounded-lg text-[14px] outline-none transition-all"
+              style={{
+                borderColor: 'var(--c-bd)',
+                backgroundColor: 'var(--c-bg)',
+                color: 'var(--c-tx1)',
+              }}
             />
           </div>
 
-          {/* 자동로그인 */}
-          <label className="flex items-center gap-sp-2 cursor-pointer select-none">
+          <label className="flex items-center gap-2 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
-              className="w-[18px] h-[18px] rounded border-gray-300 text-primary-500
-                         focus:ring-primary-500 focus:ring-offset-0 cursor-pointer"
+              className="w-[18px] h-[18px] rounded cursor-pointer"
+              style={{ accentColor: 'var(--c-pri)' }}
             />
-            <span className="text-sm text-gray-600">자동로그인</span>
+            <span className="text-[13px]" style={{ color: 'var(--c-tx2)' }}>{t.auth.rememberMe}</span>
           </label>
 
-          {/* 로그인 버튼 */}
           <button
             type="submit"
             disabled={submitting || !email || !password}
-            className="w-full h-12 bg-primary-500 text-white font-semibold rounded-button
-                       hover:bg-primary-600 active:bg-primary-700
-                       disabled:bg-gray-300 disabled:cursor-not-allowed
-                       transition-colors flex items-center justify-center min-h-touch"
+            className="w-full h-12 rounded-lg font-semibold text-[15px] transition-all
+                       flex items-center justify-center
+                       disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{ marginTop: '8px', backgroundColor: 'var(--c-pri)', color: '#fff' }}
           >
             {submitting ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              '로그인'
+              t.auth.login
             )}
           </button>
 
-          {/* 회원가입 링크 */}
-          <p className="text-center text-sm text-gray-500 pt-sp-2">
-            계정이 없으신가요?{' '}
-            <Link to="/register" className="text-primary-500 font-medium hover:text-primary-600">
-              회원가입
+          <p className="text-center text-[13px] pt-4" style={{ color: 'var(--c-tx3)' }}>
+            {t.auth.noAccount}{' '}
+            <Link to="/register" className="font-semibold hover:underline" style={{ color: 'var(--c-pri)' }}>
+              {t.auth.signUp}
             </Link>
           </p>
         </form>
+
+        {import.meta.env.DEV && (
+          <div className="mt-6 pt-4" style={{ borderTop: '1px dashed var(--c-bd)' }}>
+            <p className="text-[11px] text-center mb-3" style={{ color: 'var(--c-tx3)' }}>DEV — 테스트 계정 빠른 로그인</p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                disabled={submitting}
+                onClick={() => { setEmail('admin@vmms.local'); setPassword('admin123'); }}
+                className="flex-1 h-9 rounded-lg text-[12px] font-medium transition-all"
+                style={{ border: '1px solid var(--c-bd)', backgroundColor: 'var(--c-bg)', color: 'var(--c-tx2)' }}
+              >
+                Admin
+              </button>
+              <button
+                type="button"
+                disabled={submitting}
+                onClick={() => { setEmail('test@vmms.local'); setPassword('test1234'); }}
+                className="flex-1 h-9 rounded-lg text-[12px] font-medium transition-all"
+                style={{ border: '1px solid var(--c-bd)', backgroundColor: 'var(--c-bg)', color: 'var(--c-tx2)' }}
+              >
+                Manager
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

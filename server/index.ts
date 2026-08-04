@@ -15,10 +15,14 @@ import { createProductRoutes } from './routes/products.js';
 import { createSalesRoutes } from './routes/sales.js';
 import { createUserRoutes, createDeptRoutes } from './routes/users.js';
 import { createAuthRoutes } from './routes/auth.js';
+import { createAdminRoutes } from './routes/admin.js';
 import { createNotificationRoutes } from './routes/notifications.js';
+import { createChatRoutes } from './routes/chat.js';
+import { createDashboardRoutes } from './routes/dashboard.js';
 import { authMiddleware } from './lib/auth.js';
 import { hashPassword } from './lib/auth.js';
 import { userStore } from './db/userStore.js';
+import { chatStore } from './db/chatStore.js';
 
 // ===== 환경 변수 검증 =====
 const requiredEnvs = ['XZY_APP_ID', 'XZY_API_KEY', 'XZY_API_BASE_V11', 'XZY_API_BASE_V12'] as const;
@@ -65,6 +69,23 @@ app.use((req, _res, next) => {
 // 인증 라우트 (공개)
 app.use('/api/auth', createAuthRoutes(xzy));
 
+// 회원가입 시 부서 목록 조회 (공개 — 인증 불필요)
+app.get('/api/public/departments', async (_req, res) => {
+  try {
+    const depts = await xzy.getDepartments();
+    res.json({ success: true, data: depts });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    res.status(500).json({ success: false, error: message });
+  }
+});
+
+// Admin 전용 라우트
+app.use('/api/admin', authMiddleware, createAdminRoutes(xzy));
+
+// 대시보드 요약 (인증 필요)
+app.use('/api/dashboard', authMiddleware, createDashboardRoutes(xzy));
+
 // 보호된 라우트 (JWT 인증 필요)
 app.use('/api/machines', authMiddleware, createMachineRoutes(xzy));
 app.use('/api/products', authMiddleware, createProductRoutes(xzy));
@@ -72,6 +93,7 @@ app.use('/api/sales', authMiddleware, createSalesRoutes(xzy));
 app.use('/api/users', authMiddleware, createUserRoutes(xzy));
 app.use('/api/departments', authMiddleware, createDeptRoutes(xzy));
 app.use('/api/notifications', authMiddleware, createNotificationRoutes(amqpConsumer));
+app.use('/api/chat', authMiddleware, createChatRoutes());
 
 // 헬스 체크
 app.get('/api/health', (_req, res) => {
@@ -91,6 +113,17 @@ async function bootstrap() {
   if (seeded) {
     console.log('  [BOOT] 초기 admin 계정 생성 완료 (admin@vmms.local / admin1234)');
   }
+
+  // 테스트용 매니저 계정 시드
+  const testHash = await hashPassword('test1234');
+  const testCreated = await userStore.seedTestUsers(testHash);
+  if (testCreated > 0) {
+    console.log(`  [BOOT] 테스트 계정 ${testCreated}개 생성 완료 (test@vmms.local / test1234)`);
+  }
+
+  // 채팅 시드 데이터
+  const allUsers = userStore.findAll();
+  chatStore.seed('admin-001', allUsers.map((u) => ({ id: u.id, name: u.name, role: u.role })));
 
   // AMQP 연결 시작 (실패해도 서버는 기동)
   if (process.env.XZY_AMQP_URL) {

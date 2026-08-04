@@ -1,41 +1,56 @@
 import { machineApi } from './machines';
 import { salesApi } from './sales';
+import { apiGet } from './client';
 import { resolveDeviceStatus } from '@/types';
 import type { Machine, DeviceStatusType } from '@/types';
+import { startOfMonth, endOfDay } from 'date-fns';
+
+export interface DashboardSummary {
+  totalMachines: number;
+  online: number;
+  fault: number;
+  offline: number;
+  lowStockCount: number;
+}
 
 export interface DashboardData {
-  todaySales: number; // 원(元) 단위
-  todayOrders: number;
+  mtdSales: number;
+  mtdOrders: number;
   machines: Machine[];
   statusSummary: Record<DeviceStatusType, number>;
   totalMachines: number;
+  lowStockCount: number;
 }
 
 export const dashboardApi = {
-  /** 대시보드 데이터 조합 */
+  /** 대시보드 데이터 조합 (MTD 매출 + 장비 요약) */
   getData: async (): Promise<DashboardData> => {
-    const [machines, salesStats] = await Promise.all([
+    const now = new Date();
+    const [machines, salesStats, summary] = await Promise.all([
       machineApi.getAll(),
-      salesApi.getStats({ statType: 'day' }),
+      salesApi.getStats({
+        startTime: startOfMonth(now).getTime(),
+        endTime: endOfDay(now).getTime(),
+      }),
+      apiGet<DashboardSummary>('/dashboard/summary'),
     ]);
 
-    // 설비 상태 집계
     const statusSummary: Record<DeviceStatusType, number> = { online: 0, offline: 0, fault: 0, stopped: 0 };
     for (const m of machines) {
       const status = resolveDeviceStatus(m.funStatus, m.lineStatus);
       statusSummary[status]++;
     }
 
-    // 오늘 매출 합산
-    const todaySales = salesStats.reduce((sum, s) => sum + s.decTotalOrderMoney, 0);
-    const todayOrders = salesStats.reduce((sum, s) => sum + s.totalOrderNumber, 0);
+    const mtdSales = salesStats.reduce((sum, s) => sum + s.decTotalOrderMoney, 0);
+    const mtdOrders = salesStats.reduce((sum, s) => sum + s.totalOrderNumber, 0);
 
     return {
-      todaySales,
-      todayOrders,
+      mtdSales,
+      mtdOrders,
       machines,
       statusSummary,
       totalMachines: machines.length,
+      lowStockCount: summary.lowStockCount,
     };
   },
 };

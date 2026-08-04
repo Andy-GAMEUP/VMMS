@@ -10,7 +10,7 @@ import { ROLE_PERMISSIONS } from '@/types/auth';
 export function useAuth() {
   const { isAuthenticated, user, isLoading } = useAuthStore();
 
-  const role = user?.role ?? 'viewer';
+  const role = user?.role ?? 'manager';
   const permissions = ROLE_PERMISSIONS[role];
 
   return {

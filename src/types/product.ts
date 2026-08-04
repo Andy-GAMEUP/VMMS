@@ -16,20 +16,24 @@ export interface Product {
   fileCopyUrl: string; // 부이미지 URL
   isList: number; // 0=미상장, 1=상장
   createTime: number; // Unix ms
+  shelfTime: number; // 유통기한(일)
+  goodsPresent: string; // 상품 설명
+  goodsTypeUrl: string; // 카테고리 이미지 URL
 }
 
-/** 상품 페이징 응답 */
+/** 상품 페이징 응답 (鑫之源 API 형식) */
 export interface ProductPage {
-  list: Product[];
+  records: Product[];
   total: number;
-  pageNum: number;
-  pageSize: number;
+  current: number;
+  size: number;
+  pages: number;
 }
 
 /** 상품 조회 파라미터 */
 export interface ProductQueryParams {
   appId: number;
-  pageNum?: number;
-  pageSize?: number;
-  funId?: number; // 설비별 필터
+  current?: number;
+  size?: number;
+  funId?: number;
 }

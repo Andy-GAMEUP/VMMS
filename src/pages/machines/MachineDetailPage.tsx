@@ -1,229 +1,203 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { clsx } from 'clsx';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useMachineDetail } from '@/hooks/useMachines';
 import { useSlots } from '@/hooks/useSlots';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Tabs } from '@/components/ui/Tabs';
-import { resolveDeviceStatus, resolveStockLevel, STOCK_LEVEL_MAP } from '@/types';
+import { resolveDeviceStatus, formatMoney } from '@/types';
+import { SlotGrid } from '@/components/machines/SlotGrid';
+import { useT } from '@/i18n/useT';
 
-const DETAIL_TABS = [
-  { key: 'info', label: '정보' },
-  { key: 'slots', label: '슬롯' },
-  { key: 'inventory', label: '재고' },
-];
+type DetailTab = 'info' | 'stock';
 
 export default function MachineDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const funId = id ? Number(id) : undefined;
-  const [activeTab, setActiveTab] = useState('info');
+  const initialTab = searchParams.get('tab') === 'stock' ? 'stock' : 'info';
+  const [activeTab, setActiveTab] = useState<DetailTab>(initialTab);
+  const t = useT();
 
   const { data: machine, isLoading: machineLoading } = useMachineDetail(funId);
   const { data: roads, isLoading: roadsLoading } = useSlots(funId);
 
   if (machineLoading) {
     return (
-      <div className="space-y-4 py-sp-4">
-        <div className="card h-32 animate-pulse bg-gray-100" />
-        <div className="card h-64 animate-pulse bg-gray-100" />
+      <div className="space-y-4 py-4">
+        <div className="h-28 rounded-[18px] animate-pulse" style={{ backgroundColor: 'var(--c-bd2)' }} />
+        <div className="h-64 rounded-xl animate-pulse" style={{ backgroundColor: 'var(--c-bd2)' }} />
       </div>
     );
   }
 
   if (!machine) {
     return (
-      <div className="text-center py-20 text-body text-gray-400">
-        설비 정보를 찾을 수 없습니다
+      <div className="text-center py-20 text-sm" style={{ color: 'var(--c-tx3)' }}>
+        {t.machineDetail.notFound}
       </div>
     );
   }
 
   const status = resolveDeviceStatus(machine.funStatus, machine.lineStatus);
+  const statusLabel: Record<string, string> = {
+    online: t.machines.statusOnline,
+    offline: t.machines.statusOffline,
+    fault: t.machines.statusFault,
+    stopped: t.machines.statusStopped,
+  };
+  const dotColor: Record<string, string> = { online: '#34D399', offline: '#9AA0AC', fault: '#F87171', stopped: '#6B7280' };
+
+  const stocked = (roads || []).filter((r) => r.goodsId != null);
+  const totalStock = stocked.reduce((s, r) => s + r.stockCurr, 0);
+  const totalCap = stocked.reduce((s, r) => s + r.stockMax, 0);
+
+  const slots = (roads || []).map((r) => ({
+    row: r.roadRow - 1,
+    col: r.roadColumn - 1,
+    productName: r.goodsName ?? r.roadCode,
+    stock: r.stockCurr,
+    capacity: r.stockMax,
+  }));
+
+  const tabLabels: Record<DetailTab, string> = {
+    info: t.machineDetail.detailView,
+    stock: t.machineDetail.stockCheck,
+  };
 
   return (
-    <div className="space-y-sp-4 py-sp-4">
-      {/* 기기 헤더 */}
-      <div className="card">
-        <div className="flex items-start justify-between mb-sp-3">
-          <div>
-            <h2 className="text-heading">{machine.funName}</h2>
-            <p className="text-caption text-gray-500">{machine.funCode}</p>
+    <div className="pb-4">
+      {/* Blue hero card */}
+      <div className="rounded-[18px] p-5 text-white mb-4" style={{ background: 'linear-gradient(135deg, var(--c-pri), #1a4abf)' }}>
+        <div className="flex items-center gap-3 mb-3.5">
+          <div className="w-[46px] h-[46px] rounded-[13px] flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,255,255,.18)' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff">
+              <path d="M4 3h16a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm0 7h7a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9a1 1 0 011-1zm10 2h6a1 1 0 011 1v7a1 1 0 01-1 1h-6a1 1 0 01-1-1v-7a1 1 0 011-1z" />
+            </svg>
           </div>
-          <StatusBadge status={status} />
+          <div>
+            <div className="text-base font-bold">{machine.funName}</div>
+            <div className="text-[11.5px] opacity-80 mt-0.5">{machine.funCode} · {machine.deptName || '-'}</div>
+          </div>
         </div>
-        <div className="grid grid-cols-2 gap-sp-3 text-body">
-          <div>
-            <span className="text-meta text-gray-400 block">설치 위치</span>
-            <span>{machine.address}</span>
-          </div>
-          <div>
-            <span className="text-meta text-gray-400 block">담당 부서</span>
-            <span>{machine.deptName}</span>
-          </div>
-          <div>
-            <span className="text-meta text-gray-400 block">온도</span>
-            <span>{machine.temperature}°C</span>
-          </div>
-          <div>
-            <span className="text-meta text-gray-400 block">재고 예경</span>
-            <span>{machine.funWaring}개 이하</span>
-          </div>
+        <div className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-[7px]" style={{ background: 'rgba(255,255,255,.18)' }}>
+          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: dotColor[status] ?? '#9AA0AC' }} />
+          {statusLabel[status] ?? status}
         </div>
       </div>
 
-      {/* 탭 */}
-      <Tabs
-        tabs={DETAIL_TABS.map((t) => ({
-          ...t,
-          count: t.key === 'slots' ? machine.goodsRoadCount : undefined,
-        }))}
-        activeKey={activeTab}
-        onChange={setActiveTab}
-      />
-
-      {/* 탭 콘텐츠 */}
-      {activeTab === 'info' && <InfoTab machine={machine} />}
-      {activeTab === 'slots' && <SlotsTab roads={roads || []} loading={roadsLoading} />}
-      {activeTab === 'inventory' && <InventoryTab roads={roads || []} loading={roadsLoading} />}
-    </div>
-  );
-}
-
-/** 기본정보 탭 */
-function InfoTab({ machine }: { machine: NonNullable<ReturnType<typeof useMachineDetail>['data']> }) {
-  const rows = [
-    ['IMEI', machine.imei || '-'],
-    ['IP', machine.ip || '-'],
-    ['GPS', machine.gpsX && machine.gpsY ? `${machine.gpsY}, ${machine.gpsX}` : '-'],
-    ['펌웨어', machine.version || '-'],
-    ['등록일', machine.createTime ? new Date(machine.createTime).toLocaleDateString('ko-KR') : '-'],
-  ];
-
-  return (
-    <div className="card divide-y divide-gray-100">
-      {rows.map(([label, value]) => (
-        <div key={label} className="flex items-center justify-between py-sp-3">
-          <span className="text-caption text-gray-500">{label}</span>
-          <span className="text-body font-medium">{value}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/** 슬롯 그리드 탭 */
-function SlotsTab({ roads, loading }: { roads: Array<{ roadCode: string; stockCurr: number; stockMax: number; goodsName: string; roadRow: number; roadColumn: number }>; loading: boolean }) {
-  if (loading) return <div className="card h-64 animate-pulse bg-gray-100" />;
-  if (roads.length === 0) return <div className="card text-center py-sp-8 text-body text-gray-400">화도 정보가 없습니다</div>;
-
-  const maxRow = Math.max(...roads.map((r) => r.roadRow), 0);
-  const maxCol = Math.max(...roads.map((r) => r.roadColumn), 0);
-
-  const grid: (typeof roads[0] | null)[][] = Array.from({ length: maxRow }, () =>
-    Array.from({ length: maxCol }, () => null),
-  );
-  for (const road of roads) {
-    if (road.roadRow > 0 && road.roadColumn > 0) {
-      grid[road.roadRow - 1][road.roadColumn - 1] = road;
-    }
-  }
-
-  return (
-    <div className="card">
-      <div className="flex items-center justify-between mb-sp-3">
-        <h3 className="text-title">화도 현황</h3>
-        <span className="text-meta text-gray-400">{maxCol}열 x {maxRow}행 = {roads.length}슬롯</span>
-      </div>
-
-      <div className="flex flex-col gap-sp-2">
-        {grid.map((row, ri) => (
-          <div key={ri} className="flex gap-sp-2 justify-center">
-            {row.map((cell, ci) => {
-              if (!cell) {
-                return <div key={ci} className="slot-cell slot-cell--none">-</div>;
-              }
-              const level = resolveStockLevel(cell.stockCurr, cell.stockMax);
-              const { cellClass } = STOCK_LEVEL_MAP[level];
-              return (
-                <div key={ci} className={clsx('slot-cell', cellClass)} title={cell.goodsName}>
-                  <span className="text-[10px]">{cell.roadCode}</span>
-                  <span className="font-bold">{cell.stockCurr}</span>
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-
-      {/* 범례 */}
-      <div className="flex flex-wrap gap-sp-3 mt-sp-4 text-meta text-gray-500">
-        {Object.entries(STOCK_LEVEL_MAP).map(([, { label, cellClass }]) => (
-          <span key={label} className="flex items-center gap-1">
-            <span className={clsx('w-3 h-3 rounded', cellClass.replace('slot-cell--', 'border-2 '))} />
-            {label}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/** 재고현황 탭 */
-function InventoryTab({ roads, loading }: { roads: Array<{ roadCode: string; stockCurr: number; stockMax: number; goodsName: string }>; loading: boolean }) {
-  if (loading) return <div className="card h-64 animate-pulse bg-gray-100" />;
-  if (roads.length === 0) return <div className="card text-center py-sp-8 text-body text-gray-400">재고 정보가 없습니다</div>;
-
-  const totalStock = roads.reduce((s, r) => s + r.stockCurr, 0);
-  const totalCapacity = roads.reduce((s, r) => s + r.stockMax, 0);
-  const stockRate = totalCapacity > 0 ? Math.round((totalStock / totalCapacity) * 100) : 0;
-
-  const sorted = [...roads].sort((a, b) => {
-    const rateA = a.stockMax > 0 ? a.stockCurr / a.stockMax : 1;
-    const rateB = b.stockMax > 0 ? b.stockCurr / b.stockMax : 1;
-    return rateA - rateB;
-  });
-
-  return (
-    <div className="space-y-sp-3">
-      {/* 전체 재고율 */}
-      <div className="card">
-        <div className="flex items-center justify-between mb-sp-2">
-          <span className="text-title">총 재고율</span>
-          <span className={clsx('font-money text-xl', stockRate < 30 ? 'text-danger-500' : 'text-success-500')}>
-            {stockRate}%
-          </span>
-        </div>
-        <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className={clsx('h-full rounded-full', stockRate < 30 ? 'bg-danger-500' : stockRate < 60 ? 'bg-warning-500' : 'bg-success-500')}
-            style={{ width: `${stockRate}%` }}
-          />
-        </div>
-        <p className="text-meta text-gray-400 mt-sp-1">총 {totalStock}/{totalCapacity}</p>
-      </div>
-
-      {/* 화도별 재고 바 */}
-      <div className="card space-y-sp-3">
-        {sorted.map((road) => {
-          const rate = road.stockMax > 0 ? Math.round((road.stockCurr / road.stockMax) * 100) : 0;
+      {/* Tab bar */}
+      <div className="flex gap-2 mb-4">
+        {(['info', 'stock'] as DetailTab[]).map((key) => {
+          const active = activeTab === key;
           return (
-            <div key={road.roadCode}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-caption">
-                  {road.roadCode} <span className="text-gray-400">{road.goodsName}</span>
-                </span>
-                <span className="text-meta font-tabular">{rate}%</span>
-              </div>
-              <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className={clsx('h-full rounded-full', rate < 20 ? 'bg-danger-500' : rate < 50 ? 'bg-warning-500' : 'bg-success-500')}
-                  style={{ width: `${rate}%` }}
-                />
-              </div>
-            </div>
+            <button
+              key={key}
+              onClick={() => setActiveTab(key)}
+              className="flex-1 py-2.5 text-[13px] font-semibold rounded-[9px] border-[1.5px] cursor-pointer"
+              style={{
+                borderColor: active ? 'var(--c-pri)' : 'var(--c-bd)',
+                backgroundColor: active ? 'var(--c-pri)' : 'transparent',
+                color: active ? '#fff' : 'var(--c-tx2)',
+              }}
+            >
+              {tabLabels[key]}
+            </button>
           );
         })}
       </div>
+
+      {activeTab === 'info' ? (
+        <InfoContent machine={machine} />
+      ) : (
+        <StockContent
+          totalStock={totalStock}
+          totalCap={totalCap}
+          slots={slots}
+          loading={roadsLoading}
+        />
+      )}
     </div>
+  );
+}
+
+function InfoContent({ machine }: { machine: any }) {
+  const t = useT();
+
+  const rows = [
+    { label: t.machineDetail.machineNo, value: machine.funCode || '-' },
+    { label: t.machineDetail.machineName, value: machine.funName || '-' },
+    { label: t.machineDetail.imei, value: machine.imei || '-' },
+    { label: t.machineDetail.operator, value: machine.deptName || '-' },
+    { label: t.machineDetail.manager, value: machine.adminName || '-' },
+    { label: t.machineDetail.contact, value: machine.adminPhone || '-' },
+    { label: t.machineDetail.installDate, value: machine.createTime ? new Date(machine.createTime).toLocaleDateString('ko-KR') : '-' },
+    { label: t.machineDetail.address, value: machine.address || '-' },
+    { label: t.machineDetail.lastConnection, value: machine.lastOnlineTime || '-' },
+  ];
+
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-2.5 mb-3.5">
+        <div className="rounded-xl p-3 border" style={{ backgroundColor: 'var(--c-sf)', borderColor: 'var(--c-bd)' }}>
+          <div className="text-[9.5px] uppercase tracking-wider" style={{ color: 'var(--c-tx3)' }}>{t.machineDetail.todayRevenue}</div>
+          <div className="text-[15px] font-bold mt-1" style={{ color: 'var(--c-pri)', fontVariantNumeric: 'tabular-nums' }}>
+            {formatMoney(0)}
+          </div>
+        </div>
+        <div className="rounded-xl p-3 border" style={{ backgroundColor: 'var(--c-sf)', borderColor: 'var(--c-bd)' }}>
+          <div className="text-[9.5px] uppercase tracking-wider" style={{ color: 'var(--c-tx3)' }}>{t.machineDetail.todaySales}</div>
+          <div className="text-[15px] font-bold mt-1" style={{ color: 'var(--c-tx1)', fontVariantNumeric: 'tabular-nums' }}>
+            0{t.common.items}
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-[14px] px-4 border" style={{ backgroundColor: 'var(--c-sf)', borderColor: 'var(--c-bd)' }}>
+        {rows.map((row, i) => (
+          <div
+            key={row.label}
+            className="flex py-3"
+            style={i < rows.length - 1 ? { borderBottom: '1px solid var(--c-bd2)' } : undefined}
+          >
+            <span className="w-[110px] text-xs font-medium flex-shrink-0" style={{ color: 'var(--c-tx3)' }}>{row.label}</span>
+            <span className="flex-1 text-[12.5px] font-medium" style={{ color: 'var(--c-tx1)' }}>{row.value}</span>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function StockContent({ totalStock, totalCap, slots, loading }: {
+  totalStock: number;
+  totalCap: number;
+  slots: { row: number; col: number; productName?: string; stock: number; capacity: number }[];
+  loading: boolean;
+}) {
+  const t = useT();
+
+  if (loading) {
+    return <div className="h-64 rounded-xl animate-pulse" style={{ backgroundColor: 'var(--c-bd2)' }} />;
+  }
+
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-2.5 mb-4">
+        <div className="rounded-xl p-3 border" style={{ backgroundColor: 'var(--c-sf)', borderColor: 'var(--c-bd)' }}>
+          <div className="text-[9.5px] uppercase tracking-wider" style={{ color: 'var(--c-tx3)' }}>{t.machineDetail.totalSlots}</div>
+          <div className="text-[15px] font-bold mt-1" style={{ color: 'var(--c-tx1)' }}>56 (7×8)</div>
+        </div>
+        <div className="rounded-xl p-3 border" style={{ backgroundColor: 'var(--c-sf)', borderColor: 'var(--c-bd)' }}>
+          <div className="text-[9.5px] uppercase tracking-wider" style={{ color: 'var(--c-tx3)' }}>{t.machineDetail.currentStock}</div>
+          <div className="text-[15px] font-bold mt-1" style={{ color: 'var(--c-ok)', fontVariantNumeric: 'tabular-nums' }}>
+            {totalStock}/{totalCap}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center mb-2.5">
+        <div className="text-[13.5px] font-bold" style={{ color: 'var(--c-tx1)' }}>{t.machineDetail.slotStatus(7, 8)}</div>
+      </div>
+
+      <SlotGrid slots={slots} rows={8} cols={7} />
+    </>
   );
 }

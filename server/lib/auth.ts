@@ -18,7 +18,7 @@ const REFRESH_EXPIRES = '7d';
 export interface TokenPayload {
   userId: string;
   email: string;
-  role: 'admin' | 'manager' | 'viewer';
+  role: 'admin' | 'manager';
   deptId: number;
 }
 

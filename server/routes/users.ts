@@ -11,12 +11,12 @@ export function createUserRoutes(xzy: XzyClient): Router {
   /** GET /api/users — 사용자 조회 */
   router.get('/', async (req: Request, res: Response) => {
     try {
-      const { userAccount, userPhone, deptId, userStatus } = req.query;
+      const { userName, phone, deptId, status } = req.query;
       const data = await xzy.getUsers({
-        userAccount: userAccount as string | undefined,
-        userPhone: userPhone as string | undefined,
+        userName: userName as string | undefined,
+        phone: phone as string | undefined,
         deptId: deptId ? Number(deptId) : undefined,
-        userStatus: userStatus !== undefined ? Number(userStatus) : undefined,
+        status: status !== undefined ? Number(status) : undefined,
       });
       res.json({ success: true, data, timestamp: Date.now() });
     } catch (err) {

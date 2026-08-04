@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  body{margin:0;-webkit-font-smoothing:antialiased}
+  * { box-sizing: border-box; }
+  ::-webkit-scrollbar{width:0;height:0}
+  a{color:inherit;text-decoration:none}
+  @keyframes vmSheetUp{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+  @keyframes vmFadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes vmToast{0%{transform:translateY(12px);opacity:0}10%{transform:translateY(0);opacity:1}90%{transform:translateY(0);opacity:1}100%{transform:translateY(12px);opacity:0}}
+</style>
+</helmet>
+
+<div style="font-family:'Pretendard',-apple-system,sans-serif; background:{{c.bg}}; color:{{c.tx1}}; min-height:100vh; display:flex; flex-direction:column; transition:background .2s,color .2s; letter-spacing:-.01em; position:relative;">
+
+<sc-if value="{{isLogin}}" hint-placeholder-val="{{false}}">
+  <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:{{c.bg}}; padding:24px;">
+    <div style="width:100%; max-width:380px;">
+      <div style="text-align:center; margin-bottom:28px;">
+        <div style="width:52px; height:52px; border-radius:14px; background:{{c.pri}}; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M4 3h16a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm0 7h7a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9a1 1 0 011-1zm10 2h6a1 1 0 011 1v7a1 1 0 01-1 1h-6a1 1 0 01-1-1v-7a1 1 0 011-1z"/></svg>
+        </div>
+        <div style="font-size:22px; font-weight:800;">VMMS</div>
+        <div style="font-size:13px; color:{{c.tx3}}; margin-top:4px;">IOT 무인자판기 매장관리 시스템</div>
+      </div>
+      <div style="background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:20px; padding:28px 24px;">
+        <div style="font-size:16px; font-weight:700; margin-bottom:18px;">로그인</div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:12px; font-weight:600; color:{{c.tx2}}; margin-bottom:6px;">이메일</div>
+          <div style="height:44px; border:1.5px solid {{c.bd}}; border-radius:10px; background:{{c.inpBg}}; display:flex; align-items:center; padding:0 14px; font-size:13px; color:{{c.tx3}};">admin@vmms.local</div>
+        </div>
+        <div style="margin-bottom:16px;">
+          <div style="font-size:12px; font-weight:600; color:{{c.tx2}}; margin-bottom:6px;">비밀번호</div>
+          <div style="height:44px; border:1.5px solid {{c.bd}}; border-radius:10px; background:{{c.inpBg}}; display:flex; align-items:center; padding:0 14px; font-size:13px; color:{{c.tx3}};">••••••••</div>
+        </div>
+        <button onclick="{{login}}" style="width:100%; height:46px; border:none; border-radius:10px; background:{{c.pri}}; color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit;">로그인</button>
+        <div style="text-align:center; font-size:12px; color:{{c.tx3}}; margin-top:16px;">계정이 없으신가요? <span style="color:{{c.pri}}; font-weight:600; cursor:pointer;">매장관리자 신청</span></div>
+        <div style="border-top:1px dashed {{c.bd}}; margin-top:18px; padding-top:14px; text-align:center;">
+          <div style="font-size:10px; color:{{c.tx3}}; margin-bottom:8px; text-transform:uppercase; letter-spacing:.05em;">빠른 테스트 로그인</div>
+          <div style="display:flex; gap:8px;">
+            <button onclick="{{login}}" style="flex:1; height:36px; border:1px solid {{c.bd}}; border-radius:9px; background:{{c.inpBg}}; font-size:12px; font-weight:600; color:{{c.tx2}}; cursor:pointer; font-family:inherit;">Admin</button>
+            <button onclick="{{login}}" style="flex:1; height:36px; border:1px solid {{c.bd}}; border-radius:9px; background:{{c.inpBg}}; font-size:12px; font-weight:600; color:{{c.tx2}}; cursor:pointer; font-family:inherit;">Manager</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{isApp}}" hint-placeholder-val="{{true}}">
+<div style="display:flex; flex:1; min-height:100vh;">
+
+  <sc-if value="{{isDesktop}}" hint-placeholder-val="{{true}}">
+    <div style="width:236px; flex-shrink:0; background:{{c.sf}}; border-right:1px solid {{c.bd}}; display:flex; flex-direction:column; padding:20px 14px; position:sticky; top:0; height:100vh;">
+      <div style="display:flex; align-items:center; gap:10px; padding:6px 8px 22px;">
+        <div style="width:32px; height:32px; border-radius:9px; background:{{c.pri}}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M4 3h16a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm0 7h7a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9a1 1 0 011-1zm10 2h6a1 1 0 011 1v7a1 1 0 01-1 1h-6a1 1 0 01-1-1v-7a1 1 0 011-1z"/></svg>
+        </div>
+        <div style="font-size:16px; font-weight:800;">VMMS</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:2px;">
+        <div onclick="{{goDashboard}}" style="display:flex; align-items:center; gap:11px; padding:11px 12px; border-radius:10px; cursor:pointer; background:{{navBg.dashboard}}; color:{{navColor.dashboard}}; font-weight:{{navWeight.dashboard}};">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          <span style="font-size:13.5px;">홈</span>
+        </div>
+        <div onclick="{{goMachines}}" style="display:flex; align-items:center; gap:11px; padding:11px 12px; border-radius:10px; cursor:pointer; background:{{navBg.machines}}; color:{{navColor.machines}}; font-weight:{{navWeight.machines}};">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h16a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm0 7h7a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9a1 1 0 011-1zm10 2h6a1 1 0 011 1v7a1 1 0 01-1 1h-6a1 1 0 01-1-1v-7a1 1 0 011-1z"/></svg>
+          <span style="font-size:13.5px;">자판기</span>
+        </div>
+        <div onclick="{{goMessages}}" style="display:flex; align-items:center; gap:11px; padding:11px 12px; border-radius:10px; cursor:pointer; background:{{navBg.messages}}; color:{{navColor.messages}}; font-weight:{{navWeight.messages}}; position:relative;">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16a2 2 0 012 2v10a2 2 0 01-2 2H8l-5 4V6a2 2 0 012-2z"/></svg>
+          <span style="font-size:13.5px;">메시지</span>
+          <sc-if value="{{hasUnread}}" hint-placeholder-val="{{false}}"><span style="position:absolute; right:12px; width:7px; height:7px; border-radius:50%; background:{{c.err}};"></span></sc-if>
+        </div>
+        <div onclick="{{goMy}}" style="display:flex; align-items:center; gap:11px; padding:11px 12px; border-radius:10px; cursor:pointer; background:{{navBg.mypage}}; color:{{navColor.mypage}}; font-weight:{{navWeight.mypage}};">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0z"/></svg>
+          <span style="font-size:13.5px;">MY</span>
+        </div>
+      </div>
+      <div style="flex:1;"></div>
+      <div onclick="{{toggleTheme}}" style="display:flex; align-items:center; gap:11px; padding:11px 12px; border-radius:10px; cursor:pointer; color:{{c.tx2}};">
+        <sc-if value="{{isDark}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36A5.4 5.4 0 0112 4.1c0-.37.03-.74.1-1.1A9 9 0 0012 3z"/></svg></sc-if>
+        <sc-if value="{{isDark}}" hint-placeholder-val="{{false}}"><span style="display:none">.</span></sc-if>
+        <sc-if value="{{isLight}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V2m0 20v-2M4 12H2m20 0h-2M5.6 5.6L4.2 4.2m15.6 1.4l1.4-1.4M5.6 18.4l-1.4 1.4m15.6-1.4l1.4 1.4"/><circle cx="12" cy="12" r="5"/></svg></sc-if>
+        <span style="font-size:12.5px; font-weight:500;">{{themeLabel}}</span>
+      </div>
+      <div onclick="{{logout}}" style="display:flex; align-items:center; gap:11px; padding:11px 12px; border-radius:10px; cursor:pointer; color:{{c.err}}; margin-top:2px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        <span style="font-size:12.5px; font-weight:600;">로그아웃</span>
+      </div>
+    </div>
+  </sc-if>
+
+  <div style="flex:1; min-width:0; display:flex; flex-direction:column;">
+    <div style="height:60px; flex-shrink:0; display:flex; align-items:center; gap:14px; padding:0 {{padX}}; background:{{c.sf}}; border-bottom:1px solid {{c.bd}}; position:sticky; top:0; z-index:8;">
+      <sc-if value="{{isMobile}}" hint-placeholder-val="{{false}}">
+        <div style="width:26px; height:26px; border-radius:8px; background:{{c.pri}}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M4 3h16a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm0 7h7a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9a1 1 0 011-1zm10 2h6a1 1 0 011 1v7a1 1 0 01-1 1h-6a1 1 0 01-1-1v-7a1 1 0 011-1z"/></svg>
+        </div>
+      </sc-if>
+      <div style="font-size:16px; font-weight:700; flex-shrink:0;">{{screenTitle}}</div>
+      <div style="flex:1;"></div>
+      <div style="display:flex; align-items:center; gap:10px; font-size:12px; font-weight:600; color:{{c.tx2}}; font-variant-numeric:tabular-nums;">
+        <span>전체 {{devCount}}</span>
+        <span style="display:flex; align-items:center; gap:4px;"><span style="width:7px; height:7px; border-radius:50%; background:{{c.ok}};"></span>{{devOk}}</span>
+        <span style="display:flex; align-items:center; gap:4px;"><span style="width:7px; height:7px; border-radius:50%; background:{{c.err}};"></span>{{devErr}}</span>
+        <span style="display:flex; align-items:center; gap:4px;"><span style="width:7px; height:7px; border-radius:50%; background:{{c.warn}};"></span>{{devWarn}}</span>
+      </div>
+      <div onclick="{{goMessages}}" style="position:relative; width:22px; height:22px; cursor:pointer; color:{{c.tx2}}; flex-shrink:0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <sc-if value="{{hasUnread}}" hint-placeholder-val="{{false}}"><span style="position:absolute; top:-2px; right:-2px; width:8px; height:8px; border-radius:50%; background:{{c.err}}; border:1.5px solid {{c.sf}};"></span></sc-if>
+      </div>
+      <sc-if value="{{isMobile}}" hint-placeholder-val="{{false}}">
+        <div onclick="{{toggleTheme}}" style="width:22px; height:22px; cursor:pointer; color:{{c.tx2}}; flex-shrink:0;">
+          <sc-if value="{{isDark}}" hint-placeholder-val="{{false}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36A5.4 5.4 0 0112 4.1c0-.37.03-.74.1-1.1A9 9 0 0012 3z"/></svg></sc-if>
+          <sc-if value="{{isLight}}" hint-placeholder-val="{{true}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V2m0 20v-2M4 12H2m20 0h-2M5.6 5.6L4.2 4.2m15.6 1.4l1.4-1.4M5.6 18.4l-1.4 1.4m15.6-1.4l1.4 1.4"/><circle cx="12" cy="12" r="5"/></svg></sc-if>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="flex:1; overflow-y:auto; padding-bottom:{{bottomPad}}; position:relative;">
+      <div style="max-width:{{contentMax}}; margin:0 auto; padding:{{contentPad}};">
+
+        <sc-if value="{{isDashboard}}" hint-placeholder-val="{{true}}">
+          <div style="margin-bottom:18px;">
+            <div style="font-size:18px; font-weight:700;">안녕하세요, <span style="color:{{c.pri}}">관리자</span>님</div>
+            <div style="font-size:12.5px; color:{{c.tx3}}; margin-top:3px;">최고관리자 · 2026.08.03 (월)</div>
+          </div>
+          <div style="display:grid; grid-template-columns:{{dashTopCols}}; gap:14px; margin-bottom:22px;">
+            <div style="background:{{c.pri}}; border-radius:18px; padding:22px; color:#fff;">
+              <div style="font-size:12px; opacity:.8;">오늘 매출</div>
+              <div style="font-size:30px; font-weight:800; margin-top:4px; font-variant-numeric:tabular-nums;">₩1,248,500</div>
+              <div style="display:flex; gap:10px; margin-top:18px;">
+                <div style="flex:1; background:rgba(255,255,255,.14); border-radius:12px; padding:12px;">
+                  <div style="font-size:11px; opacity:.8;">판매건수</div>
+                  <div style="font-size:17px; font-weight:700; margin-top:3px;">847<span style="font-size:11px; opacity:.7; margin-left:2px;">건</span></div>
+                  <div style="font-size:11px; font-weight:700; background:rgba(255,255,255,.2); display:inline-block; padding:2px 6px; border-radius:5px; margin-top:6px;">▲ 12.5%</div>
+                </div>
+                <div style="flex:1; background:rgba(255,255,255,.14); border-radius:12px; padding:12px;">
+                  <div style="font-size:11px; opacity:.8;">전일 대비</div>
+                  <div style="font-size:17px; font-weight:700; margin-top:3px;">₩1,109,778</div>
+                  <div style="font-size:11px; font-weight:700; background:rgba(255,255,255,.2); display:inline-block; padding:2px 6px; border-radius:5px; margin-top:6px;">▼ 3.2%</div>
+                </div>
+              </div>
+            </div>
+            <div style="background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:18px; padding:18px;">
+              <div style="display:flex; gap:8px; margin-bottom:12px;">
+                <button onclick="{{setPeriodWeek}}" style="flex:1; padding:9px 0; border-radius:9px; border:1.5px solid {{periodBd.week}}; background:{{periodBg.week}}; color:{{periodColor.week}}; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit;">일주일</button>
+                <button onclick="{{setPeriodMonth}}" style="flex:1; padding:9px 0; border-radius:9px; border:1.5px solid {{periodBd.month}}; background:{{periodBg.month}}; color:{{periodColor.month}}; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit;">월별</button>
+                <button onclick="{{setPeriodCustom}}" style="flex:1; padding:9px 0; border-radius:9px; border:1.5px solid {{periodBd.custom}}; background:{{periodBg.custom}}; color:{{periodColor.custom}}; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit;">날짜지정</button>
+              </div>
+              <sc-if value="{{hasPeriod}}" hint-placeholder-val="{{false}}">
+                <div style="display:flex; gap:10px;">
+                  <div style="flex:1; text-align:center; padding:12px; border-radius:10px; background:{{c.priLt}};">
+                    <div style="font-size:10.5px; color:{{c.tx3}};">{{periodLabelSales}}</div>
+                    <div style="font-size:16px; font-weight:700; color:{{c.pri}}; margin-top:3px; font-variant-numeric:tabular-nums;">{{periodSalesVal}}</div>
+                  </div>
+                  <div style="flex:1; text-align:center; padding:12px; border-radius:10px; background:{{c.pageBg}};">
+                    <div style="font-size:10.5px; color:{{c.tx3}};">{{periodLabelCount}}</div>
+                    <div style="font-size:16px; font-weight:700; margin-top:3px; font-variant-numeric:tabular-nums;">{{periodCountVal}}</div>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{noPeriod}}" hint-placeholder-val="{{true}}">
+                <div style="text-align:center; padding:20px 0; color:{{c.tx3}}; font-size:12px;">기간을 선택하면 매출 요약을 확인할 수 있습니다</div>
+              </sc-if>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:{{dashRankCols}}; gap:18px;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div style="font-size:14.5px; font-weight:700;">자판기 매출 순위</div>
+                <div style="font-size:10.5px; color:{{c.tx3}}; background:{{c.pageBg}}; padding:3px 8px; border-radius:5px;">2026년 8월</div>
+              </div>
+              <sc-for list="{{machRanks}}" as="it" hint-placeholder-count="5">
+                <div style="display:flex; align-items:center; gap:10px; padding:11px 12px; background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:11px; margin-bottom:6px;">
+                  <div style="width:22px; height:22px; border-radius:6px; background:{{it.rankBg}}; color:{{it.rankColor}}; font-size:10.5px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0;">{{it.rank}}</div>
+                  <div style="flex:1; font-size:12.5px; font-weight:500; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{it.name}}</div>
+                  <div style="font-size:12.5px; font-weight:700; font-variant-numeric:tabular-nums; flex-shrink:0;">{{it.value}}<span style="font-size:10px; color:{{c.tx3}}; font-weight:500; margin-left:3px;">{{it.sub}}</span></div>
+                </div>
+              </sc-for>
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div style="font-size:14.5px; font-weight:700;">인기 상품 순위</div>
+                <div style="font-size:10.5px; color:{{c.tx3}}; background:{{c.pageBg}}; padding:3px 8px; border-radius:5px;">2026년 8월</div>
+              </div>
+              <sc-for list="{{prodRanks}}" as="it" hint-placeholder-count="5">
+                <div style="display:flex; align-items:center; gap:10px; padding:11px 12px; background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:11px; margin-bottom:6px;">
+                  <div style="width:22px; height:22px; border-radius:6px; background:{{it.rankBg}}; color:{{it.rankColor}}; font-size:10.5px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0;">{{it.rank}}</div>
+                  <div style="flex:1; font-size:12.5px; font-weight:500; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{it.name}}</div>
+                  <div style="font-size:12.5px; font-weight:700; font-variant-numeric:tabular-nums; flex-shrink:0;">{{it.value}}<span style="font-size:10px; color:{{c.tx3}}; font-weight:500; margin-left:3px;">{{it.sub}}</span></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{isMachines}}" hint-placeholder-val="{{false}}">
+          <div style="display:flex; border-bottom:2px solid {{c.bd}}; margin-bottom:16px;">
+            <button onclick="{{setTabManage}}" style="flex:1; padding:12px 0 10px; text-align:center; font-size:13.5px; font-weight:600; color:{{tabColor.manage}}; cursor:pointer; border:none; background:transparent; font-family:inherit; border-bottom:2px solid {{tabBorder.manage}}; margin-bottom:-2px;">자판기관리</button>
+            <button onclick="{{setTabSales}}" style="flex:1; padding:12px 0 10px; text-align:center; font-size:13.5px; font-weight:600; color:{{tabColor.sales}}; cursor:pointer; border:none; background:transparent; font-family:inherit; border-bottom:2px solid {{tabBorder.sales}}; margin-bottom:-2px;">매출현황</button>
+            <button onclick="{{setTabProducts}}" style="flex:1; padding:12px 0 10px; text-align:center; font-size:13.5px; font-weight:600; color:{{tabColor.products}}; cursor:pointer; border:none; background:transparent; font-family:inherit; border-bottom:2px solid {{tabBorder.products}}; margin-bottom:-2px;">상품정보</button>
+          </div>
+
+          <sc-if value="{{tabIsManage}}" hint-placeholder-val="{{true}}">
+            <div style="display:grid; grid-template-columns:{{machGridCols}}; gap:12px;">
+              <sc-for list="{{machines}}" as="m" hint-placeholder-count="4">
+                <div onclick="{{m.openInfo}}" style="background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:14px; padding:16px; cursor:pointer;">
+                  <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <div style="width:11px; height:11px; border-radius:50%; background:{{m.dotColor}}; flex-shrink:0;"></div>
+                    <div style="flex:1; min-width:0;">
+                      <div style="font-size:14px; font-weight:700;">{{m.name}}</div>
+                      <div style="font-size:10.5px; color:{{c.tx3}}; margin-top:2px;">{{m.id}} · {{m.status}}</div>
+                      <div style="font-size:10.5px; color:{{c.tx2}}; margin-top:2px;">{{m.addr}}</div>
+                    </div>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{c.tx3}}" stroke-width="2" style="flex-shrink:0;"><path d="M9 18l6-6-6-6"/></svg>
+                  </div>
+                  <div style="display:flex; gap:6px; margin-bottom:10px;">
+                    <div style="flex:1; text-align:center; padding:9px 0; background:{{c.pageBg}}; border-radius:9px;"><div style="font-size:9.5px; color:{{c.tx3}};">오늘매출</div><div style="font-size:13.5px; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums;">{{m.todaySales}}</div></div>
+                    <div style="flex:1; text-align:center; padding:9px 0; background:{{c.pageBg}}; border-radius:9px;"><div style="font-size:9.5px; color:{{c.tx3}};">재고</div><div style="font-size:13.5px; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums; color:{{m.stockColor}};">{{m.stock}}</div></div>
+                    <div style="flex:1; text-align:center; padding:9px 0; background:{{c.pageBg}}; border-radius:9px;"><div style="font-size:9.5px; color:{{c.tx3}};">판매</div><div style="font-size:13.5px; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums;">{{m.salesCount}}</div></div>
+                  </div>
+                  <div style="display:flex; gap:6px;">
+                    <button onclick="{{m.openInfoStop}}" style="flex:1; padding:8px 0; text-align:center; font-size:11.5px; font-weight:600; border-radius:8px; border:none; cursor:pointer; font-family:inherit; background:{{c.pri}}; color:#fff;">상세보기</button>
+                    <button onclick="{{m.openInventoryStop}}" style="flex:1; padding:8px 0; text-align:center; font-size:11.5px; font-weight:600; border-radius:8px; border:none; cursor:pointer; font-family:inherit; background:{{c.priLt}}; color:{{c.pri}};">재고 확인</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{tabIsSales}}" hint-placeholder-val="{{false}}">
+            <div style="display:flex; gap:12px; margin-bottom:16px;">
+              <div style="flex:1; background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:14px; padding:16px;"><div style="font-size:11px; color:{{c.tx3}};">금일 총 매출</div><div style="font-size:20px; font-weight:700; color:{{c.pri}}; margin-top:4px; font-variant-numeric:tabular-nums;">₩483,200</div></div>
+              <div style="flex:1; background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:14px; padding:16px;"><div style="font-size:11px; color:{{c.tx3}};">금일 판매건수</div><div style="font-size:20px; font-weight:700; margin-top:4px; font-variant-numeric:tabular-nums;">241건</div></div>
+            </div>
+            <div style="font-size:14px; font-weight:700; margin-bottom:10px;">자판기별 매출 현황</div>
+            <div style="display:grid; grid-template-columns:{{machGridCols}}; gap:10px;">
+              <sc-for list="{{machines}}" as="m" hint-placeholder-count="4">
+                <div style="background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:12px; padding:14px;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <div style="width:9px; height:9px; border-radius:50%; background:{{m.dotColor}}; flex-shrink:0;"></div>
+                    <div style="flex:1; min-width:0;">
+                      <div style="font-size:12.5px; font-weight:600;">{{m.name}}</div>
+                      <div style="font-size:9.5px; color:{{c.tx3}}; margin-top:2px;">{{m.periodNote}}</div>
+                    </div>
+                    <div style="font-size:13.5px; font-weight:700; color:{{c.pri}}; font-variant-numeric:tabular-nums;">{{m.periodSales}}</div>
+                    <div style="font-size:10.5px; color:{{c.tx3}}; margin-left:4px;">{{m.periodCount}}</div>
+                  </div>
+                  <div style="display:flex; gap:5px; margin-top:10px; padding-top:10px; border-top:1px solid {{c.bd2}};">
+                    <sc-for list="{{m.periods}}" as="p" hint-placeholder-count="4">
+                      <button onclick="{{p.select}}" style="flex:1; padding:6px 0; border-radius:7px; border:1px solid {{p.bd}}; background:{{p.bg}}; color:{{p.color}}; font-size:10.5px; font-weight:500; cursor:pointer; font-family:inherit;">{{p.label}}</button>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{tabIsProducts}}" hint-placeholder-val="{{false}}">
+            <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+              <sc-for list="{{categories}}" as="cat" hint-placeholder-count="5">
+                <button onclick="{{cat.select}}" style="padding:7px 14px; border-radius:20px; font-size:12px; font-weight:600; white-space:nowrap; border:1.5px solid {{cat.bd}}; background:{{cat.bg}}; color:{{cat.color}}; cursor:pointer; font-family:inherit;">{{cat.label}}</button>
+              </sc-for>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <div style="font-size:14px; font-weight:700;">매출순위</div>
+              <div style="font-size:10.5px; color:{{c.tx3}}; font-weight:500;">2026년 8월 기준</div>
+            </div>
+            <div style="display:grid; grid-template-columns:{{prodGridCols}}; gap:8px;">
+              <sc-for list="{{products}}" as="p" hint-placeholder-count="6">
+                <div style="display:flex; align-items:center; gap:12px; padding:12px; background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:12px;">
+                  <div style="width:24px; height:24px; border-radius:7px; background:{{p.rankBg}}; color:{{p.rankColor}}; font-size:10.5px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0;">{{p.rank}}</div>
+                  <div style="width:44px; height:44px; border-radius:10px; background:{{p.catLt}}; color:{{p.catColor}}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9 2h6v3.2l3 4.3V20a2 2 0 01-2 2H8a2 2 0 01-2-2V9.5l3-4.3V2zm2 2v2.6L8 10.6V20h8v-9.4l-3-4.3V4h-2z"/></svg>
+                  </div>
+                  <div style="flex:1; min-width:0;">
+                    <div style="font-size:12.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{p.name}}</div>
+                    <div style="font-size:11.5px; color:{{c.pri}}; margin-top:1px; font-variant-numeric:tabular-nums;">{{p.priceLabel}}</div>
+                    <div style="font-size:9.5px; color:{{c.tx3}}; margin-top:1px;">{{p.type}} · {{p.sub}}</div>
+                  </div>
+                  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px; flex-shrink:0;">
+                    <div style="font-size:10.5px; font-weight:600; color:{{c.tx2}}; font-variant-numeric:tabular-nums;">{{p.sales}}</div>
+                    <div style="display:flex; align-items:center; gap:3px; font-size:9.5px; color:{{c.tx3}};"><span style="width:6px; height:6px; border-radius:50%; background:{{p.statusColor}};"></span>{{p.statusText}}</div>
+                    <button onclick="{{p.openDetail}}" style="font-size:9.5px; color:{{c.pri}}; cursor:pointer; font-weight:600; padding:3px 8px; border:1px solid {{c.pri}}; border-radius:5px; background:transparent; font-family:inherit; white-space:nowrap;">상세정보</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </sc-if>
+
+        <sc-if value="{{isDetail}}" hint-placeholder-val="{{false}}">
+          <div onclick="{{backToMachines}}" style="display:flex; align-items:center; gap:6px; color:{{c.tx2}}; font-size:12.5px; font-weight:600; cursor:pointer; margin-bottom:14px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>자판기 목록
+          </div>
+          <div style="background:{{c.pri}}; border-radius:18px; padding:20px; color:#fff; margin-bottom:16px;">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+              <div style="width:46px; height:46px; border-radius:13px; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M4 3h16a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm0 7h7a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9a1 1 0 011-1zm10 2h6a1 1 0 011 1v7a1 1 0 01-1 1h-6a1 1 0 01-1-1v-7a1 1 0 011-1z"/></svg>
+              </div>
+              <div>
+                <div style="font-size:16px; font-weight:700;">{{detMachine.name}}</div>
+                <div style="font-size:11.5px; opacity:.8; margin-top:2px;">{{detMachine.id}} · {{detMachine.operator}}</div>
+              </div>
+            </div>
+            <div style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; background:rgba(255,255,255,.18); padding:5px 12px; border-radius:7px;"><span style="width:6px; height:6px; border-radius:50%; background:{{detMachine.dotColor}};"></span>{{detMachine.status}}</div>
+          </div>
+
+          <div style="display:flex; gap:8px; margin-bottom:16px;">
+            <button onclick="{{setDetailInfo}}" style="flex:1; padding:10px 0; text-align:center; font-size:13px; font-weight:600; border-radius:9px; border:1.5px solid {{detTabBd.info}}; background:{{detTabBg.info}}; color:{{detTabColor.info}}; cursor:pointer; font-family:inherit;">상세보기</button>
+            <button onclick="{{setDetailInventory}}" style="flex:1; padding:10px 0; text-align:center; font-size:13px; font-weight:600; border-radius:9px; border:1.5px solid {{detTabBd.inventory}}; background:{{detTabBg.inventory}}; color:{{detTabColor.inventory}}; cursor:pointer; font-family:inherit;">재고 확인</button>
+          </div>
+
+          <sc-if value="{{detailIsInfo}}" hint-placeholder-val="{{true}}">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+              <div style="background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:12px; padding:13px;"><div style="font-size:9.5px; color:{{c.tx3}}; text-transform:uppercase; letter-spacing:.04em;">금일 매출</div><div style="font-size:15px; font-weight:700; margin-top:3px; color:{{c.pri}}; font-variant-numeric:tabular-nums;">{{detMachine.todaySales}}</div></div>
+              <div style="background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:12px; padding:13px;"><div style="font-size:9.5px; color:{{c.tx3}}; text-transform:uppercase; letter-spacing:.04em;">금일 판매</div><div style="font-size:15px; font-weight:700; margin-top:3px; font-variant-numeric:tabular-nums;">{{detMachine.salesCount}}</div></div>
+            </div>
+            <div style="background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:14px; padding:4px 16px;">
+              <sc-for list="{{detMachine.infoRows}}" as="row" hint-placeholder-count="9">
+                <div style="display:flex; padding:12px 0; border-bottom:1px solid {{c.bd2}};"><span style="width:110px; font-size:12px; color:{{c.tx3}}; flex-shrink:0; font-weight:500;">{{row.label}}</span><span style="flex:1; font-size:12.5px; font-weight:500;">{{row.value}}</span></div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{detailIsInventory}}" hint-placeholder-val="{{false}}">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+              <div style="background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:12px; padding:13px;"><div style="font-size:9.5px; color:{{c.tx3}}; text-transform:uppercase; letter-spacing:.04em;">총 슬롯</div><div style="font-size:15px; font-weight:700; margin-top:3px;">56개 (7×8)</div></div>
+              <div style="background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:12px; padding:13px;"><div style="font-size:9.5px; color:{{c.tx3}}; text-transform:uppercase; letter-spacing:.04em;">현재 재고</div><div style="font-size:15px; font-weight:700; margin-top:3px; color:{{c.ok}};">{{detMachine.stock}}</div></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <div style="font-size:13.5px; font-weight:700;">슬롯 현황 (7×8)</div>
+              <div style="display:flex; gap:10px; font-size:9.5px; color:{{c.tx3}};">
+                <span style="display:flex; align-items:center; gap:3px;"><span style="width:7px; height:7px; border-radius:2px; background:{{c.pri}};"></span>정상</span>
+                <span style="display:flex; align-items:center; gap:3px;"><span style="width:7px; height:7px; border-radius:2px; background:{{c.warn}};"></span>부족</span>
+                <span style="display:flex; align-items:center; gap:3px;"><span style="width:7px; height:7px; border-radius:2px; background:{{c.bd}};"></span>빈슬롯</span>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat({{slotCols}},1fr); gap:3px;">
+              <sc-for list="{{slots}}" as="s" hint-placeholder-count="56">
+                <div style="aspect-ratio:1; border-radius:5px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:{{s.bg}}; color:{{s.fg}}; font-variant-numeric:tabular-nums;">
+                  <span style="font-size:8px; font-weight:700;">{{s.label}}</span>
+                  <span style="font-size:7px; opacity:.85; margin-top:1px;">{{s.stockLabel}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </sc-if>
+
+        <sc-if value="{{isMessages}}" hint-placeholder-val="{{false}}">
+          <sc-if value="{{chatOpen}}" hint-placeholder-val="{{false}}">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+              <svg onclick="{{closeChat}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer; flex-shrink:0;"><path d="M15 18l-6-6 6-6"/></svg>
+              <div><div style="font-size:15px; font-weight:700;">{{activeChatData.name}}</div><div style="font-size:10.5px; color:{{c.tx3}};">{{activeChatData.role}}</div></div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px; max-width:640px; margin-bottom:20px;">
+              <sc-for list="{{activeChatData.msgs}}" as="m" hint-placeholder-count="3">
+                <div style="max-width:72%; padding:11px 15px; border-radius:15px; font-size:12.5px; line-height:1.5; align-self:{{m.align}}; background:{{m.bg}}; color:{{m.color}}; border-bottom-left-radius:{{m.blr}}; border-bottom-right-radius:{{m.brr}};">
+                  <div>{{m.txt}}</div>
+                  <div style="font-size:9.5px; opacity:.6; margin-top:4px;">{{m.time}}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex; gap:10px; max-width:640px;">
+              <div style="flex:1; height:40px; border:1px solid {{c.bd}}; border-radius:20px; padding:0 16px; font-size:12.5px; color:{{c.tx3}}; display:flex; align-items:center; background:{{c.inpBg}};">메시지 입력...</div>
+              <div style="width:40px; height:40px; border-radius:50%; background:{{c.pri}}; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{chatClosed}}" hint-placeholder-val="{{true}}">
+            <div style="display:flex; gap:2px; background:{{c.pageBg}}; padding:4px; border-radius:11px; margin-bottom:16px; max-width:320px;">
+              <button onclick="{{setMsgNotif}}" style="flex:1; padding:9px 0; text-align:center; font-size:12.5px; font-weight:600; border-radius:8px; border:none; cursor:pointer; font-family:inherit; background:{{msgTabBg.notif}}; color:{{msgTabColor.notif}}; position:relative;">알림<sc-if value="{{unreadNotif}}" hint-placeholder-val="{{true}}"><span style="position:absolute; top:2px; right:10px; min-width:14px; height:14px; padding:0 3px; border-radius:7px; background:{{c.err}}; color:#fff; font-size:8px; font-weight:700; display:flex; align-items:center; justify-content:center;">{{notifUnreadCount}}</span></sc-if></button>
+              <button onclick="{{setMsgDm}}" style="flex:1; padding:9px 0; text-align:center; font-size:12.5px; font-weight:600; border-radius:8px; border:none; cursor:pointer; font-family:inherit; background:{{msgTabBg.dm}}; color:{{msgTabColor.dm}}; position:relative;">DM<sc-if value="{{unreadDm}}" hint-placeholder-val="{{true}}"><span style="position:absolute; top:2px; right:10px; min-width:14px; height:14px; padding:0 3px; border-radius:7px; background:{{c.err}}; color:#fff; font-size:8px; font-weight:700; display:flex; align-items:center; justify-content:center;">{{dmUnreadCount}}</span></sc-if></button>
+            </div>
+
+            <sc-if value="{{msgIsNotif}}" hint-placeholder-val="{{true}}">
+              <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+                <sc-for list="{{notifFilters}}" as="f" hint-placeholder-count="4">
+                  <button onclick="{{f.select}}" style="padding:6px 13px; border-radius:20px; font-size:11.5px; font-weight:500; white-space:nowrap; border:1.5px solid {{f.bd}}; background:{{f.bg}}; color:{{f.color}}; cursor:pointer; font-family:inherit;">{{f.label}}</button>
+                </sc-for>
+              </div>
+              <div style="display:grid; grid-template-columns:{{listGridCols}}; gap:8px;">
+                <sc-for list="{{notifications}}" as="n" hint-placeholder-count="5">
+                  <div style="display:flex; align-items:flex-start; gap:11px; padding:13px; background:{{n.bg}}; border:1px solid {{c.bd}}; border-radius:12px;">
+                    <div style="width:30px; height:30px; border-radius:9px; background:{{n.iconBg}}; color:{{n.iconColor}}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                      <sc-if value="{{n.isWarn}}" hint-placeholder-val="{{false}}"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 6a1.2 1.2 0 011.2 1.2v5.1a1.2 1.2 0 01-2.4 0V9.2A1.2 1.2 0 0112 8zm0 9.6a1.3 1.3 0 110 2.6 1.3 1.3 0 010-2.6z"/></svg></sc-if>
+                      <sc-if value="{{n.isChange}}" hint-placeholder-val="{{false}}"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></sc-if>
+                      <sc-if value="{{n.isCheck}}" hint-placeholder-val="{{false}}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12l5 5L20 6"/></svg></sc-if>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                      <div style="font-size:12.5px; font-weight:{{n.titleWeight}};">{{n.title}}</div>
+                      <div style="font-size:11.5px; color:{{c.tx3}}; margin-top:3px; line-height:1.4;">{{n.desc}}</div>
+                      <div style="font-size:9.5px; color:{{c.tx3}}; margin-top:5px;">{{n.meta}}</div>
+                    </div>
+                    <span style="font-size:9.5px; color:{{c.tx3}}; flex-shrink:0;">{{n.time}}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{msgIsDm}}" hint-placeholder-val="{{false}}">
+              <div style="font-size:11.5px; color:{{c.tx3}}; margin-bottom:10px;">{{chatSummary}}</div>
+              <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+                <sc-for list="{{dmFilters}}" as="f" hint-placeholder-count="4">
+                  <button onclick="{{f.select}}" style="padding:6px 13px; border-radius:20px; font-size:11.5px; font-weight:500; white-space:nowrap; border:1.5px solid {{f.bd}}; background:{{f.bg}}; color:{{f.color}}; cursor:pointer; font-family:inherit;">{{f.label}}</button>
+                </sc-for>
+              </div>
+              <div style="display:grid; grid-template-columns:{{listGridCols}}; gap:8px;">
+                <sc-for list="{{chats}}" as="ch" hint-placeholder-count="3">
+                  <div onclick="{{ch.open}}" style="display:flex; align-items:center; gap:11px; padding:13px; background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:12px; cursor:pointer;">
+                    <div style="width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13.5px; font-weight:700; background:{{ch.avBg}}; color:{{ch.avColor}}; flex-shrink:0;">{{ch.initial}}</div>
+                    <div style="flex:1; min-width:0;">
+                      <div style="display:flex; align-items:center; gap:6px;"><span style="font-size:13px; font-weight:600;">{{ch.name}}</span><span style="font-size:9px; font-weight:600; padding:1px 6px; border-radius:4px; background:{{ch.roleBg}}; color:{{ch.roleColor}};">{{ch.role}}</span></div>
+                      <div style="font-size:11px; color:{{ch.lastColor}}; font-weight:{{ch.lastWeight}}; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ch.lastMsg}}</div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px; flex-shrink:0;">
+                      <span style="font-size:9.5px; color:{{c.tx3}};">{{ch.time}}</span>
+                      <sc-if value="{{ch.hasUnread}}" hint-placeholder-val="{{false}}"><div style="min-width:16px; height:16px; padding:0 4px; border-radius:8px; background:{{c.pri}}; color:#fff; font-size:9px; font-weight:700; display:flex; align-items:center; justify-content:center;">{{ch.unread}}</div></sc-if>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </sc-if>
+        </sc-if>
+
+        <sc-if value="{{isMy}}" hint-placeholder-val="{{false}}">
+          <sc-if value="{{myIsMain}}" hint-placeholder-val="{{true}}">
+            <div style="display:flex; align-items:center; gap:14px; padding:18px; background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:16px; margin-bottom:14px; max-width:480px;">
+              <div style="width:54px; height:54px; border-radius:50%; background:{{c.priLt}}; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:700; color:{{c.pri}}; flex-shrink:0;">관</div>
+              <div>
+                <div style="font-size:16px; font-weight:700;">관리자<span style="color:{{c.pri}}; font-weight:600; font-size:11px; margin-left:6px;">최고관리자</span></div>
+                <div style="font-size:12px; color:{{c.tx2}}; margin-top:2px;">본사 운영팀</div>
+                <div style="font-size:11px; color:{{c.tx3}}; margin-top:1px;">admin@vmms.local</div>
+              </div>
+            </div>
+            <div onclick="{{openUsers}}" style="display:flex; align-items:center; gap:11px; padding:15px 18px; background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:14px; margin-bottom:10px; cursor:pointer; max-width:480px;">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="{{c.pri}}"><path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+              <span style="flex:1; font-size:13px; font-weight:600; color:{{c.pri}};">사용자 관리</span>
+              <span style="font-size:10.5px; color:{{c.tx3}};">관리자 전용</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{c.pri}}" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+            <div style="background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:14px; overflow:hidden; margin-bottom:10px; max-width:480px;">
+              <div style="display:flex; align-items:center; gap:11px; padding:14px 18px; border-bottom:1px solid {{c.bd2}};"><svg width="17" height="17" viewBox="0 0 24 24" fill="{{c.tx2}}"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0z"/></svg><span style="flex:1; font-size:12.5px; font-weight:500;">내 정보 수정</span><span style="color:{{c.tx3}}; font-size:14px;">›</span></div>
+              <div style="display:flex; align-items:center; gap:11px; padding:14px 18px; border-bottom:1px solid {{c.bd2}};"><svg width="17" height="17" viewBox="0 0 24 24" fill="{{c.tx2}}"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span style="flex:1; font-size:12.5px; font-weight:500;">알림 설정</span><span style="color:{{c.tx3}}; font-size:14px;">›</span></div>
+              <div style="display:flex; align-items:center; gap:11px; padding:14px 18px; border-bottom:1px solid {{c.bd2}};"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{c.tx2}}" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18 14 14 0 010-18z"/></svg><span style="flex:1; font-size:12.5px; font-weight:500;">언어 설정</span><span style="color:{{c.tx3}}; font-size:14px;">›</span></div>
+              <div style="display:flex; align-items:center; gap:11px; padding:14px 18px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{c.tx2}}" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/></svg><span style="flex:1; font-size:12.5px; font-weight:500;">앱 정보</span><span style="font-size:10.5px; color:{{c.tx3}}; margin-right:4px;">v1.0.0</span><span style="color:{{c.tx3}}; font-size:14px;">›</span></div>
+            </div>
+            <div onclick="{{logout}}" style="padding:14px 0; text-align:center; background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:14px; color:{{c.err}}; font-size:13.5px; font-weight:600; cursor:pointer; max-width:480px;">로그아웃</div>
+          </sc-if>
+
+          <sc-if value="{{myIsUsers}}" hint-placeholder-val="{{false}}">
+            <div onclick="{{closeUsers}}" style="display:flex; align-items:center; gap:6px; color:{{c.tx2}}; font-size:12.5px; font-weight:600; cursor:pointer; margin-bottom:14px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>MY
+            </div>
+            <div style="font-size:16px; font-weight:700; margin-bottom:14px;">사용자 관리</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <span style="font-size:11.5px; color:{{c.tx3}};">{{users.length}}명의 사용자</span>
+              <span style="font-size:11.5px; color:{{c.pri}}; font-weight:600; cursor:pointer;">+ 사용자 추가</span>
+            </div>
+            <div style="display:grid; grid-template-columns:{{listGridCols}}; gap:8px;">
+              <sc-for list="{{users}}" as="u" hint-placeholder-count="5">
+                <div style="display:flex; align-items:center; gap:11px; padding:13px; background:{{c.sf}}; border:1px solid {{c.bd}}; border-radius:12px;">
+                  <div style="width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; background:{{u.avBg}}; color:{{u.avColor}}; flex-shrink:0;">{{u.initial}}</div>
+                  <div style="flex:1; min-width:0;">
+                    <div style="font-size:12.5px; font-weight:600;">{{u.name}}</div>
+                    <div style="font-size:10.5px; color:{{c.tx3}}; margin-top:2px;">{{u.meta}}</div>
+                  </div>
+                  <span style="font-size:9.5px; font-weight:600; padding:3px 8px; border-radius:5px; background:{{u.badgeBg}}; color:{{u.badgeColor}}; flex-shrink:0;">{{u.badge}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </sc-if>
+
+      </div>
+    </div>
+
+    <sc-if value="{{isMobile}}" hint-placeholder-val="{{false}}">
+      <div style="height:60px; flex-shrink:0; background:{{c.sf}}; border-top:1px solid {{c.bd}}; display:flex; align-items:center; justify-content:space-around; position:sticky; bottom:0;">
+        <div onclick="{{goDashboard}}" style="display:flex; flex-direction:column; align-items:center; gap:3px; font-size:10px; cursor:pointer; color:{{navColor.dashboard}};"><svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>홈</span></div>
+        <div onclick="{{goMachines}}" style="display:flex; flex-direction:column; align-items:center; gap:3px; font-size:10px; cursor:pointer; color:{{navColor.machines}};"><svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h16a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm0 7h7a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9a1 1 0 011-1zm10 2h6a1 1 0 011 1v7a1 1 0 01-1 1h-6a1 1 0 01-1-1v-7a1 1 0 011-1z"/></svg><span>자판기</span></div>
+        <div onclick="{{goMessages}}" style="display:flex; flex-direction:column; align-items:center; gap:3px; font-size:10px; cursor:pointer; color:{{navColor.messages}}; position:relative;"><svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16a2 2 0 012 2v10a2 2 0 01-2 2H8l-5 4V6a2 2 0 012-2z"/></svg><span>메시지</span><sc-if value="{{hasUnread}}" hint-placeholder-val="{{false}}"><span style="position:absolute; top:0; right:6px; width:6px; height:6px; border-radius:50%; background:{{c.err}};"></span></sc-if></div>
+        <div onclick="{{goMy}}" style="display:flex; flex-direction:column; align-items:center; gap:3px; font-size:10px; cursor:pointer; color:{{navColor.mypage}};"><svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0z"/></svg><span>MY</span></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{showFabAdd}}" hint-placeholder-val="{{false}}">
+      <button onclick="{{openOrderModal}}" style="position:absolute; bottom:{{fabBottom}}; right:24px; width:52px; height:52px; border-radius:50%; background:{{c.pri}}; color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,.22); cursor:pointer; z-index:15; border:none;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </sc-if>
+    <sc-if value="{{showFabDm}}" hint-placeholder-val="{{false}}">
+      <button onclick="{{openDmCompose}}" style="position:absolute; bottom:{{fabBottom}}; right:24px; width:52px; height:52px; border-radius:50%; background:{{c.pri}}; color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,.22); cursor:pointer; z-index:15; border:none;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg>
+      </button>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{productDetailOpen}}" hint-placeholder-val="{{false}}">
+  <div style="position:fixed; inset:0; background:rgba(10,12,16,.5); z-index:30; display:flex; align-items:center; justify-content:center; padding:20px; animation:vmFadeIn .15s;">
+    <div style="width:100%; max-width:440px; max-height:88vh; overflow-y:auto; background:{{c.sf}}; border-radius:20px; animation:vmSheetUp .2s;">
+      <div style="display:flex; align-items:center; gap:10px; padding:16px 18px; border-bottom:1px solid {{c.bd}};">
+        <svg onclick="{{closeProductDetail}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;"><path d="M15 18l-6-6 6-6"/></svg>
+        <span style="font-size:14.5px; font-weight:700;">제품 상세정보</span>
+      </div>
+      <div style="text-align:center; padding:26px 20px 20px;">
+        <div style="width:96px; height:96px; border-radius:22px; margin:0 auto 14px; display:flex; align-items:center; justify-content:center; background:{{pd.catLt}}; color:{{pd.catColor}};"><svg width="42" height="42" viewBox="0 0 24 24" fill="currentColor"><path d="M9 2h6v3.2l3 4.3V20a2 2 0 01-2 2H8a2 2 0 01-2-2V9.5l3-4.3V2zm2 2v2.6L8 10.6V20h8v-9.4l-3-4.3V4h-2z"/></svg></div>
+        <div style="font-size:16px; font-weight:700;">{{pd.name}}</div>
+        <div style="font-size:11.5px; color:{{c.tx3}}; margin-top:3px;">{{pd.type}} · {{pd.sub}}</div>
+        <div style="font-size:18px; font-weight:700; color:{{c.pri}}; margin-top:6px; font-variant-numeric:tabular-nums;">{{pd.priceLabel}}</div>
+      </div>
+      <div style="padding:0 20px 16px;">
+        <div style="font-size:12px; font-weight:700; color:{{c.tx2}}; padding:10px 0 6px; border-bottom:1px solid {{c.bd2}}; margin-bottom:6px;">상품 기본정보</div>
+        <div style="display:flex; padding:8px 0; border-bottom:1px solid {{c.bd2}};"><span style="width:90px; font-size:11.5px; color:{{c.tx3}};">상품 유형</span><span style="flex:1; font-size:11.5px; font-weight:500;">{{pd.type}}</span></div>
+        <div style="display:flex; padding:8px 0; border-bottom:1px solid {{c.bd2}};"><span style="width:90px; font-size:11.5px; color:{{c.tx3}};">판매 가격</span><span style="flex:1; font-size:11.5px; font-weight:600; color:{{c.pri}};">{{pd.priceLabel}}</span></div>
+        <div style="display:flex; padding:8px 0; border-bottom:1px solid {{c.bd2}};"><span style="width:90px; font-size:11.5px; color:{{c.tx3}};">유통기한</span><span style="flex:1; font-size:11.5px; font-weight:500;">{{pd.shelfLifeLabel}}</span></div>
+        <div style="display:flex; padding:8px 0;"><span style="width:90px; font-size:11.5px; color:{{c.tx3}};">상품 코드</span><span style="flex:1; font-size:11.5px; font-weight:500;">{{pd.code}}</span></div>
+      </div>
+      <div style="padding:0 20px 16px;">
+        <div style="font-size:12px; font-weight:700; color:{{c.tx2}}; padding:10px 0 6px; border-bottom:1px solid {{c.bd2}}; margin-bottom:6px;">상품 설명</div>
+        <div style="font-size:12px; color:{{c.tx2}}; line-height:1.6;">{{pd.desc}}</div>
+      </div>
+      <sc-if value="{{pd.stocked}}" hint-placeholder-val="{{false}}">
+        <div style="padding:0 20px 22px;">
+          <div style="font-size:12px; font-weight:700; color:{{c.tx2}}; padding:10px 0 6px; border-bottom:1px solid {{c.bd2}}; margin-bottom:6px;">판매 현황</div>
+          <div style="display:flex; padding:8px 0; border-bottom:1px solid {{c.bd2}};"><span style="width:90px; font-size:11.5px; color:{{c.tx3}};">이달 매출</span><span style="flex:1; font-size:11.5px; font-weight:600; color:{{c.pri}};">{{pd.monthSales}}</span></div>
+          <div style="display:flex; padding:8px 0; border-bottom:1px solid {{c.bd2}};"><span style="width:90px; font-size:11.5px; color:{{c.tx3}};">이달 판매</span><span style="flex:1; font-size:11.5px; font-weight:500;">{{pd.monthCnt}}</span></div>
+          <div style="display:flex; padding:8px 0;"><span style="width:90px; font-size:11.5px; color:{{c.tx3}};">재고 상태</span><span style="flex:1; font-size:11.5px; font-weight:500; color:{{pd.statusColor}};">{{pd.statusText}}</span></div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{orderModalOpen}}" hint-placeholder-val="{{false}}">
+  <div style="position:fixed; inset:0; background:rgba(10,12,16,.5); z-index:30; display:flex; align-items:center; justify-content:center; padding:20px; animation:vmFadeIn .15s;">
+    <div style="width:100%; max-width:460px; max-height:88vh; overflow-y:auto; background:{{c.sf}}; border-radius:20px; padding:22px 20px 20px; animation:vmSheetUp .2s;">
+      <div style="font-size:15px; font-weight:700; margin-bottom:5px;">신상품 입고 요청</div>
+      <div style="font-size:11.5px; color:{{c.tx3}}; margin-bottom:14px; line-height:1.5;">등록되었으나 현재 자판기에 미입고된 상품입니다. 선택 후 수량을 지정해 DM으로 주문 요청하세요.</div>
+      <sc-for list="{{unstocked}}" as="p" hint-placeholder-count="5">
+        <div style="display:flex; align-items:center; gap:10px; padding:11px; background:{{c.pageBg}}; border-radius:10px; margin-bottom:7px;">
+          <div onclick="{{p.toggle}}" style="width:20px; height:20px; border:2px solid {{p.ckBd}}; border-radius:5px; flex-shrink:0; cursor:pointer; display:flex; align-items:center; justify-content:center; background:{{p.ckBg}}; color:#fff; font-size:12px; font-weight:700;">{{p.ckMark}}</div>
+          <div style="width:38px; height:38px; border-radius:9px; background:{{p.catLt}}; color:{{p.catColor}}; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M9 2h6v3.2l3 4.3V20a2 2 0 01-2 2H8a2 2 0 01-2-2V9.5l3-4.3V2zm2 2v2.6L8 10.6V20h8v-9.4l-3-4.3V4h-2z"/></svg></div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:11.5px; font-weight:600;">{{p.name}}</div>
+            <div style="font-size:9.5px; color:{{c.tx3}};">{{p.type}} · {{p.sub}} · {{p.priceLabel}}</div>
+            <div onclick="{{p.openDetail}}" style="font-size:9px; color:{{c.pri}}; cursor:pointer; font-weight:600; padding:2px 6px; border:1px solid {{c.pri}}; border-radius:4px; background:transparent; margin-top:4px; display:inline-block;">상세정보</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+            <button onclick="{{p.dec}}" style="width:25px; height:25px; border-radius:7px; border:1px solid {{c.bd}}; background:{{c.sf}}; font-size:14px; font-weight:600; color:{{c.tx2}}; cursor:pointer; font-family:inherit;">−</button>
+            <span style="font-size:12.5px; font-weight:600; min-width:18px; text-align:center; font-variant-numeric:tabular-nums;">{{p.qty}}</span>
+            <button onclick="{{p.inc}}" style="width:25px; height:25px; border-radius:7px; border:1px solid {{c.bd}}; background:{{c.sf}}; font-size:14px; font-weight:600; color:{{c.tx2}}; cursor:pointer; font-family:inherit;">+</button>
+          </div>
+        </div>
+      </sc-for>
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button onclick="{{closeOrderModal}}" style="flex:1; height:42px; border-radius:10px; font-size:13px; font-weight:600; border:none; cursor:pointer; font-family:inherit; background:{{c.pageBg}}; color:{{c.tx2}};">취소</button>
+        <button onclick="{{sendOrder}}" style="flex:1; height:42px; border-radius:10px; font-size:13px; font-weight:600; border:none; cursor:pointer; font-family:inherit; background:{{c.pri}}; color:#fff;">DM 주문요청</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{dmComposeOpen}}" hint-placeholder-val="{{false}}">
+  <div style="position:fixed; inset:0; background:rgba(10,12,16,.5); z-index:30; display:flex; align-items:center; justify-content:center; padding:20px; animation:vmFadeIn .15s;">
+    <div style="width:100%; max-width:420px; background:{{c.sf}}; border-radius:20px; padding:22px 20px 20px; animation:vmSheetUp .2s;">
+      <div style="font-size:15px; font-weight:700; margin-bottom:16px;">새 DM 작성</div>
+      <div style="margin-bottom:11px;"><div style="font-size:11.5px; font-weight:600; color:{{c.tx2}}; margin-bottom:5px;">받는 사람</div><div style="height:38px; border:1.5px solid {{c.bd}}; border-radius:9px; background:{{c.inpBg}}; display:flex; align-items:center; justify-content:space-between; padding:0 12px; font-size:12px; color:{{c.tx3}};">선택하세요 <span>▾</span></div></div>
+      <div style="margin-bottom:11px;"><div style="font-size:11.5px; font-weight:600; color:{{c.tx2}}; margin-bottom:5px;">제목</div><div style="height:38px; border:1.5px solid {{c.bd}}; border-radius:9px; background:{{c.inpBg}}; display:flex; align-items:center; padding:0 12px; font-size:12px; color:{{c.tx3}};">제목을 입력하세요</div></div>
+      <div style="margin-bottom:16px;"><div style="font-size:11.5px; font-weight:600; color:{{c.tx2}}; margin-bottom:5px;">내용</div><div style="height:70px; border:1.5px solid {{c.bd}}; border-radius:9px; background:{{c.inpBg}}; padding:9px 12px; font-size:12px; color:{{c.tx3}};">메시지 내용을 입력하세요...</div></div>
+      <div style="display:flex; gap:10px;">
+        <button onclick="{{closeDmCompose}}" style="flex:1; height:42px; border-radius:10px; font-size:13px; font-weight:600; border:none; cursor:pointer; font-family:inherit; background:{{c.pageBg}}; color:{{c.tx2}};">취소</button>
+        <button onclick="{{sendDm}}" style="flex:1; height:42px; border-radius:10px; font-size:13px; font-weight:600; border:none; cursor:pointer; font-family:inherit; background:{{c.pri}}; color:#fff;">DM 발송</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{calOpen}}" hint-placeholder-val="{{false}}">
+  <div style="position:fixed; inset:0; background:rgba(10,12,16,.5); z-index:35; display:flex; align-items:center; justify-content:center; padding:20px; animation:vmFadeIn .15s;">
+    <div style="width:100%; max-width:360px; background:{{c.sf}}; border-radius:20px; padding:20px; animation:vmSheetUp .2s;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+        <button onclick="{{calPrev}}" style="width:30px; height:30px; border-radius:9px; border:1px solid {{c.bd}}; background:{{c.sf}}; color:{{c.tx2}}; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div style="font-size:14.5px; font-weight:700;">{{calMonthLabel}}</div>
+        <button onclick="{{calNext}}" style="width:30px; height:30px; border-radius:9px; border:1px solid {{c.bd}}; background:{{c.sf}}; color:{{c.tx2}}; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:4px;">
+        <sc-for list="{{calDowLabels}}" as="w" hint-placeholder-count="7">
+          <div style="text-align:center; font-size:10.5px; font-weight:600; color:{{c.tx3}}; padding:4px 0;">{{w}}</div>
+        </sc-for>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px;">
+        <sc-for list="{{calDays}}" as="d" hint-placeholder-count="35">
+          <div onclick="{{d.pick}}" style="aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:12px; cursor:pointer; background:{{d.bg}}; color:{{d.color}}; font-weight:{{d.weight}}; border-radius:{{d.radius}}; font-variant-numeric:tabular-nums;">{{d.label}}</div>
+        </sc-for>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:14px; padding:10px 12px; background:{{c.pageBg}}; border-radius:10px;">
+        <span style="font-size:11.5px; font-weight:600; color:{{c.tx2}};">{{calRangeLabel}}</span>
+        <span onclick="{{calReset}}" style="font-size:11px; color:{{c.pri}}; font-weight:600; cursor:pointer;">초기화</span>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button onclick="{{calClose}}" style="flex:1; height:42px; border-radius:10px; font-size:13px; font-weight:600; border:none; cursor:pointer; font-family:inherit; background:{{c.pageBg}}; color:{{c.tx2}};">취소</button>
+        <button onclick="{{calApply}}" style="flex:1; height:42px; border-radius:10px; font-size:13px; font-weight:600; border:none; cursor:pointer; font-family:inherit; background:{{calApplyBg}}; color:{{calApplyColor}};">적용</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{toastMsg}}" hint-placeholder-val="{{false}}">
+  <div style="position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:{{c.tx1}}; color:{{c.sf}}; padding:12px 22px; border-radius:11px; font-size:12.5px; font-weight:600; z-index:40; animation:vmToast 2.4s ease forwards; white-space:nowrap;">{{toastMsg}}</div>
+</sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+var MACH_BASE = [
+  {id:'100234', name:'강남역 1번출구', addr:'서울 강남구 강남대로 396 지하1층', status:'정상', statusKey:'ok', todaySalesN:285000, salesCountN:142, stockCur:42, stockMax:56, operator:'킴스클럽_강남점', imei:'1A:E1:EE:23:19:38', manager:'박매니저', phone:'02-1234-5678', installed:'2025.10.13', lastConn:'2026-08-03 19:06:09'},
+  {id:'100235', name:'신논현 GS타워', addr:'서울 서초구 강남대로 507 GS타워 1층', status:'고장', statusKey:'err', todaySalesN:0, salesCountN:0, stockCur:38, stockMax:56, operator:'GS타워_관리단', imei:'2B:F2:DD:14:07:29', manager:'김서브', phone:'02-2345-6789', installed:'2025.09.02', lastConn:'2026-08-03 11:42:03'},
+  {id:'100236', name:'역삼 센트럴파크', addr:'서울 강남구 역삼로 180 센트럴파크 B1', status:'재고부족', statusKey:'warn', todaySalesN:198200, salesCountN:99, stockCur:12, stockMax:56, operator:'센트럴파크_시설팀', imei:'3C:A3:CC:05:28:11', manager:'박매니저', phone:'02-3456-7890', installed:'2025.11.20', lastConn:'2026-08-03 19:02:47'},
+  {id:'100237', name:'삼성 코엑스몰', addr:'서울 강남구 영동대로 513 코엑스몰 B1', status:'오프라인', statusKey:'off', todaySalesN:0, salesCountN:0, stockCur:0, stockMax:56, operator:'코엑스몰_운영사', imei:'4D:B4:BB:36:39:22', manager:'테스트매니저', phone:'02-4567-8901', installed:'2025.08.15', lastConn:'2026-08-02 22:15:30'}
+];
+var MACH_RANK_RAW = [['강남역 1번출구','₩285,000','142건'],['신논현 GS타워','₩234,500','118건'],['역삼 센트럴파크','₩198,200','99건'],['삼성 코엑스몰','₩176,800','91건'],['선릉 테헤란로','₩154,000','78건']];
+var PROD_RANK_RAW = [['수분크림 50ml','312건'],['선크림 SPF50+ 60ml','287건'],['시카 세럼 30ml','245건'],['벨벳 립스틱 #레드','198건'],['글로우 파운데이션 30ml','176건']];
+var CATEGORIES = ['전체','스킨케어','메이크업','클렌징','선케어'];
+var CAT_COLORS = {'스킨케어':{c:'#2E5CE6', lt:'#E7EEFF'}, '메이크업':{c:'#D6467D', lt:'#FCEAF1'}, '클렌징':{c:'#12A594', lt:'#E4F7F4'}, '선케어':{c:'#C6841F', lt:'#FBF1DF'}};
+var ALL_PRODUCTS = [
+  {id:'G-10042', name:'수분크림 50ml', type:'스킨케어', sub:'보습', code:'CLS023560', sellP:28000, shelfLife:720, desc:'고보습 수분크림, 히알루론산 함유', status:'selling', salesAmt:1568000, salesLabel:'₩1,568K', monthSales:'₩1,568,000', monthCnt:'56건', stock:'42/56'},
+  {id:'G-10043', name:'선크림 SPF50+ 60ml', type:'선케어', sub:'자외선차단', code:'CLS023561', sellP:22000, shelfLife:540, desc:'SPF50+ PA++++ 자외선차단 선크림', status:'selling', salesAmt:1254000, salesLabel:'₩1,254K', monthSales:'₩1,254,000', monthCnt:'57건', stock:'38/56'},
+  {id:'G-10044', name:'시카 세럼 30ml', type:'스킨케어', sub:'진정', code:'CLS023562', sellP:35000, shelfLife:730, desc:'시카 성분 진정 세럼, 민감피부용', status:'selling', salesAmt:980000, salesLabel:'₩980K', monthSales:'₩980,000', monthCnt:'28건', stock:'35/56'},
+  {id:'G-10045', name:'벨벳 립스틱 #레드', type:'메이크업', sub:'립', code:'CLS023563', sellP:18000, shelfLife:365, desc:'벨벳 텍스처 롱래스팅 립스틱 레드', status:'lowstock', salesAmt:756000, salesLabel:'₩756K', monthSales:'₩756,000', monthCnt:'42건', stock:'3/56'},
+  {id:'G-10046', name:'글로우 파운데이션 30ml', type:'메이크업', sub:'베이스', code:'CLS023564', sellP:32000, shelfLife:540, desc:'자연광 글로우 파운데이션, 촉촉한 밀착', status:'selling', salesAmt:640000, salesLabel:'₩640K', monthSales:'₩640,000', monthCnt:'20건', stock:'28/56'},
+  {id:'G-10047', name:'히알루론 마스크팩 (5매)', type:'스킨케어', sub:'마스크', code:'CLS023565', sellP:15000, shelfLife:730, desc:'히알루론산 집중보습 마스크팩 5매입', status:'lowstock', salesAmt:345000, salesLabel:'₩345K', monthSales:'₩345,000', monthCnt:'23건', stock:'2/56'},
+  {id:'G-10048', name:'폼클렌저 150ml', type:'클렌징', sub:'폼', code:'CLS023566', sellP:12000, shelfLife:730, desc:'약산성 저자극 클렌징 폼', status:'selling', salesAmt:288000, salesLabel:'₩288K', monthSales:'₩288,000', monthCnt:'24건', stock:'18/56'}
+];
+var UNSTOCKED = [
+  {id:'G-10049', name:'아이크림 25ml', type:'스킨케어', sub:'아이', code:'CLS023570', sellP:38000, shelfLife:540, desc:'아이크림 안티에이징 집중 케어'},
+  {id:'G-10050', name:'토너 200ml', type:'스킨케어', sub:'토너', code:'CLS023571', sellP:16000, shelfLife:730, desc:'저자극 pH밸런싱 토너'},
+  {id:'G-10051', name:'BB크림 40ml', type:'메이크업', sub:'베이스', code:'CLS023572', sellP:25000, shelfLife:365, desc:'자연스러운 커버력 BB크림 SPF35'},
+  {id:'G-10052', name:'클렌징오일 200ml', type:'클렌징', sub:'오일', code:'CLS023573', sellP:19000, shelfLife:730, desc:'딥클렌징 오일, 워터프루프 메이크업 제거'},
+  {id:'G-10053', name:'선스틱 SPF50+', type:'선케어', sub:'스틱형', code:'CLS023574', sellP:15000, shelfLife:540, desc:'휴대용 선스틱 SPF50+ PA++++'}
+];
+var CHAT_DATA = {
+  admin: {name:'시스템 관리자', role:'통합관리자', roleKey:'a', unread:1, time:'10분 전', lastMsg:'새 자판기 배정 요청이 승인되었습니다.', msgs:[
+    {who:'them', txt:'안녕하세요, 자판기 배정 요청 건 확인되었습니다.', time:'오전 9:12'},
+    {who:'them', txt:'새 자판기 배정 요청이 승인되었습니다.', time:'오전 9:30'},
+    {who:'me', txt:'확인했습니다. 감사합니다!', time:'오전 9:35'}
+  ]},
+  sub: {name:'김서브', role:'서브관리자', roleKey:'b', unread:1, time:'1시간 전', lastMsg:'역삼 센트럴파크 보충 일정을 확인해주세요.', msgs:[
+    {who:'them', txt:'역삼 센트럴파크 재고 보충 일정 확인 부탁드립니다.', time:'오전 10:05'},
+    {who:'me', txt:'확인 중입니다. 오늘 오후에 방문 예정입니다.', time:'오전 10:12'},
+    {who:'them', txt:'감사합니다. 보충 일정을 확인해주세요.', time:'오전 10:15'}
+  ]},
+  mgr: {name:'박매니저', role:'매장관리자', roleKey:'c', unread:0, time:'어제', lastMsg:'네, 확인했습니다. 감사합니다.', msgs:[
+    {who:'me', txt:'역삼 자판기 보충 완료되었나요?', time:'어제 14:20'},
+    {who:'them', txt:'네, 확인했습니다. 감사합니다.', time:'어제 14:35'}
+  ]}
+};
+var NOTIF_DATA = [
+  {type:'재고부족', unread:true, title:'재고 부족 알림', desc:'역삼 센트럴파크 자판기 재고가 부족합니다. 12/56 슬롯만 남아있습니다.', meta:'역삼 센트럴파크 · 자판기 100236', time:'5분 전'},
+  {type:'상태변경', unread:true, title:'장비 상태 변경', desc:'신논현 GS타워 자판기가 오프라인에서 고장 상태로 변경되었습니다.', meta:'신논현 GS타워 · 자판기 100235', time:'23분 전'},
+  {type:'보충완료', unread:false, title:'보충 완료', desc:'강남역 1번출구 자판기 재고가 보충되었습니다. 56/56 슬롯 가용.', meta:'강남역 1번출구 · 자판기 100234', time:'1시간 전'},
+  {type:'재고부족', unread:false, title:'재고 부족 알림', desc:'선릉 테헤란로 수분크림 50ml 재고가 2개 남았습니다.', meta:'선릉 테헤란로 · 자판기 100238', time:'2시간 전'},
+  {type:'상태변경', unread:false, title:'장비 상태 변경', desc:'삼성 코엑스몰 자판기가 정상에서 오프라인으로 변경되었습니다.', meta:'삼성 코엑스몰 · 자판기 100237', time:'3시간 전'}
+];
+var USERS_DATA = [
+  {name:'관리자', meta:'admin@vmms.local · 본사 운영팀', badge:'최고관리자', badgeKey:'admin'},
+  {name:'테스트매니저', meta:'test@vmms.local · 강남지점', badge:'매장관리자', badgeKey:'manager'},
+  {name:'매니저1', meta:'manager1@test.com · 서초지점', badge:'매장관리자', badgeKey:'manager'},
+  {name:'신규매니저', meta:'newmanager@vmms.test', badge:'승인대기', badgeKey:'pending'},
+  {name:'박매니저', meta:'park.manager@vmms.kr · 역삼지점', badge:'매장관리자', badgeKey:'manager'}
+];
+
+class Component extends DCLogic {
+  state = {
+    screen: 'dashboard', theme: 'light', width: (typeof window !== 'undefined' ? window.innerWidth : 1280),
+    machinesTab: 'manage', detailMachineIdx: 0, detailMode: 'info',
+    messagesTab: 'notif', activeChat: null, myView: 'main',
+    periodSel: null, prodCategory: '전체', notifFilter: '전체', dmFilter: '전체',
+    productDetail: null, orderModalOpen: false, dmComposeOpen: false,
+    orderQtys: {}, msPeriod: {}, slots: [], toastMsg: '',
+    calOpen: null, calYear: 2026, calMonth: 7, rangeStart: null, rangeEnd: null,
+    dashRange: null, msRange: {}
+  };
+
+  fmtDate(d) { return d.y + '.' + String(d.m + 1).padStart(2, '0') + '.' + String(d.d).padStart(2, '0'); }
+  dateNum(d) { return d.y * 10000 + d.m * 100 + d.d; }
+  daysBetween(a, b) {
+    var da = new Date(a.y, a.m, a.d), db = new Date(b.y, b.m, b.d);
+    return Math.round((db - da) / 86400000) + 1;
+  }
+
+  componentDidMount() {
+    this._onResize = () => this.setState({ width: window.innerWidth });
+    window.addEventListener('resize', this._onResize);
+    var slots = [];
+    for (var i = 0; i < 56; i++) {
+      var rnd = Math.random(), state, cur;
+      if (rnd < 0.12) { state = 'empty'; cur = 0; }
+      else if (rnd < 0.28) { state = 'low'; cur = Math.floor(Math.random()*3)+1; }
+      else { state = 'ok'; cur = Math.floor(Math.random()*5)+5; }
+      var r = Math.floor(i/8)+1, col = (i%8)+1;
+      slots.push({ label: r+'-'+col, state: state, cur: cur, max: 10 });
+    }
+    this.setState({ slots: slots });
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); }
+
+  toast(msg) {
+    this.setState({ toastMsg: msg });
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => this.setState({ toastMsg: '' }), 2400);
+  }
+
+  colors() {
+    var d = this.state.theme === 'dark';
+    return d ? {
+      bg:'#0E1015', pageBg:'#15171D', sf:'#181B22', tx1:'#F2F3F6', tx2:'#A7ACB8', tx3:'#666C79',
+      bd:'#262A33', bd2:'#1E212A', pri:'#5B8CFF', priLt:'#1B2540', ok:'#34D399', okLt:'#123328',
+      err:'#F87171', errLt:'#3A1E20', warn:'#F5B860', warnLt:'#332510', off:'#6B7280', inpBg:'#20232B'
+    } : {
+      bg:'#F5F6F8', pageBg:'#F5F6F8', sf:'#FFFFFF', tx1:'#14161A', tx2:'#5B6270', tx3:'#9AA0AC',
+      bd:'#E7E9EE', bd2:'#EFF1F4', pri:'#2E5CE6', priLt:'#EAF0FF', ok:'#1FA971', okLt:'#E8F7F0',
+      err:'#E5484D', errLt:'#FDEBEC', warn:'#DB8B1F', warnLt:'#FBF1DF', off:'#9AA0AC', inpBg:'#F5F6F8'
+    };
+  }
+
+  activeStyle(active, c) {
+    return active ? { bg: c.pri, color: '#fff', bd: c.pri } : { bg: c.sf, color: c.tx2, bd: c.bd };
+  }
+
+  statusColorFor(key, c) {
+    return key === 'ok' ? c.ok : key === 'err' ? c.err : key === 'warn' ? c.warn : c.off;
+  }
+
+  renderVals() {
+    var st = this.state, c = this.colors();
+    var isDesktop = st.width >= 1024, isTablet = st.width >= 768 && st.width < 1024, isMobile = !isDesktop;
+    var twoCol = isDesktop || isTablet;
+    var isLogin = st.screen === 'login';
+
+    var go = (s) => () => { this.setState({ screen: s, activeChat: null, myView: 'main' }); };
+
+    var navKeys = ['dashboard','machines','messages','mypage'];
+    var screenToNav = { dashboard:'dashboard', machines:'machines', detail:'machines', messages:'messages', mypage:'mypage' };
+    var activeNav = screenToNav[st.screen];
+    var navBg = {}, navColor = {}, navWeight = {};
+    navKeys.forEach((k) => {
+      var on = k === activeNav;
+      navBg[k] = on ? c.priLt : 'transparent';
+      navColor[k] = on ? c.pri : (isDesktop ? c.tx2 : c.tx3);
+      navWeight[k] = on ? '700' : '500';
+    });
+
+    var hasUnread = NOTIF_DATA.some((n) => n.unread) || Object.values(CHAT_DATA).some((ch) => ch.unread > 0);
+
+    // machines
+    var machines = MACH_BASE.map((m, idx) => {
+      var stockLow = m.stockCur > 0 && m.stockCur <= m.stockMax * 0.25;
+      var curLabel = st.msPeriod[m.id] || '오늘';
+      var periods = ['오늘','일주일','월간','날짜지정'].map((label) => {
+        var sel = curLabel === label;
+        var s = this.activeStyle(sel, c);
+        return { label: label, bg: s.bg, color: s.color, bd: s.bd, select: () => {
+          if (label === '날짜지정') {
+            var ex = st.msRange[m.id];
+            this.setState({ calOpen: m.id, calYear: ex ? ex.start.y : 2026, calMonth: ex ? ex.start.m : 7, rangeStart: ex ? ex.start : null, rangeEnd: ex ? ex.end : null });
+          } else {
+            var mp = Object.assign({}, st.msPeriod); mp[m.id] = label; this.setState({ msPeriod: mp });
+          }
+        } };
+      });
+      var mRange = st.msRange[m.id];
+      var mMult = curLabel === '일주일' ? 6.4 : curLabel === '월간' ? 27.2 : (curLabel === '날짜지정' && mRange) ? this.daysBetween(mRange.start, mRange.end) : 1;
+      var periodNote = curLabel === '날짜지정' && mRange ? this.fmtDate(mRange.start) + ' ~ ' + this.fmtDate(mRange.end) : curLabel;
+      return {
+        id: m.id, name: m.name, addr: m.addr, status: m.status,
+        dotColor: this.statusColorFor(m.statusKey, c),
+        todaySales: '₩' + m.todaySalesN.toLocaleString(),
+        salesCount: m.salesCountN + '건',
+        periodSales: '₩' + Math.round(m.todaySalesN * mMult).toLocaleString(),
+        periodCount: Math.round(m.salesCountN * mMult) + '건',
+        periodNote: periodNote,
+        stock: m.stockCur + '/' + m.stockMax,
+        stockColor: stockLow ? c.warn : c.tx1,
+        periods: periods,
+        openInfo: () => this.setState({ screen: 'detail', detailMachineIdx: idx, detailMode: 'info' }),
+        openInfoStop: (e) => { e.stopPropagation(); this.setState({ screen: 'detail', detailMachineIdx: idx, detailMode: 'info' }); },
+        openInventoryStop: (e) => { e.stopPropagation(); this.setState({ screen: 'detail', detailMachineIdx: idx, detailMode: 'inventory' }); }
+      };
+    });
+
+    var dm = MACH_BASE[st.detailMachineIdx];
+    var detMachine = {
+      name: dm.name, id: '장비 번호 ' + dm.id, operator: dm.operator, status: dm.status,
+      dotColor: this.statusColorFor(dm.statusKey, c),
+      todaySales: '₩' + dm.todaySalesN.toLocaleString(), salesCount: dm.salesCountN + '건',
+      stock: dm.stockCur + '/' + dm.stockMax,
+      infoRows: [
+        { label:'장비 번호', value: dm.id }, { label:'장비 이름', value: dm.name }, { label:'IMEI', value: dm.imei },
+        { label:'운영사업자', value: dm.operator }, { label:'관리자명', value: dm.manager }, { label:'연락처', value: dm.phone },
+        { label:'입고일자', value: dm.installed }, { label:'설치 주소', value: dm.addr }, { label:'마지막 연결', value: dm.lastConn }
+      ]
+    };
+
+    var slots = (st.slots || []).map((s) => {
+      var bg = s.state === 'ok' ? c.pri : s.state === 'low' ? c.warn : c.bd;
+      var fg = s.state === 'empty' ? c.tx3 : '#fff';
+      return { label: s.label, bg: bg, fg: fg, stockLabel: s.cur + '/' + s.max };
+    });
+
+    // dashboard period
+    var dr = st.dashRange;
+    var drDays = dr ? this.daysBetween(dr.start, dr.end) : 0;
+    var periodMap = {
+      week: { labelS:'주간 매출액', labelC:'주간 판매건수', s:'₩8,740,200', ct:'5,832건' },
+      month: { labelS:'8월 누적 매출', labelC:'8월 누적 판매', s:'₩3,748,500', ct:'2,541건' },
+      custom: dr ? {
+        labelS: '매출액 (' + this.fmtDate(dr.start) + ' ~ ' + this.fmtDate(dr.end) + ')',
+        labelC: drDays + '일간 판매 건수',
+        s: '₩' + (drDays * 1043500).toLocaleString(),
+        ct: (drDays * 697).toLocaleString() + '건'
+      } : null
+    };
+    var periodBg = {}, periodColor = {}, periodBd = {};
+    ['week','month','custom'].forEach((k) => {
+      var s = this.activeStyle(st.periodSel === k, c);
+      periodBg[k] = s.bg; periodColor[k] = s.color; periodBd[k] = s.bd;
+    });
+    var curPeriod = st.periodSel ? periodMap[st.periodSel] : null;
+
+    var openCal = (target) => () => {
+      var existing = target === 'dash' ? st.dashRange : st.msRange[target];
+      this.setState({
+        calOpen: target,
+        calYear: existing ? existing.start.y : 2026,
+        calMonth: existing ? existing.start.m : 7,
+        rangeStart: existing ? existing.start : null,
+        rangeEnd: existing ? existing.end : null
+      });
+    };
+
+    var calDays = [], calMonthLabel = '', calRangeLabel = '선택된 기간이 없습니다', calCanApply = false;
+    if (st.calOpen) {
+      var y = st.calYear, mo = st.calMonth;
+      calMonthLabel = y + '년 ' + (mo + 1) + '월';
+      var firstDow = new Date(y, mo, 1).getDay();
+      var daysInMonth = new Date(y, mo + 1, 0).getDate();
+      var sNum = st.rangeStart ? this.dateNum(st.rangeStart) : null;
+      var eNum = st.rangeEnd ? this.dateNum(st.rangeEnd) : null;
+      for (var bi = 0; bi < firstDow; bi++) calDays.push({ key: 'b' + bi, label: '', bg: 'transparent', color: 'transparent', pick: () => {}, radius: '9px', weight: '400' });
+      for (var dnum = 1; dnum <= daysInMonth; dnum++) {
+        (function (self, dd) {
+          var cur = { y: y, m: mo, d: dd }, n = self.dateNum(cur);
+          var isStart = sNum === n, isEnd = eNum === n;
+          var inRange = sNum && eNum && n > sNum && n < eNum;
+          var edge = isStart || isEnd;
+          calDays.push({
+            key: 'd' + dd, label: String(dd),
+            bg: edge ? c.pri : inRange ? c.priLt : 'transparent',
+            color: edge ? '#fff' : inRange ? c.pri : c.tx1,
+            weight: edge ? '700' : '500', radius: '9px',
+            pick: () => {
+              if (!st.rangeStart || (st.rangeStart && st.rangeEnd)) self.setState({ rangeStart: cur, rangeEnd: null });
+              else if (self.dateNum(cur) < self.dateNum(st.rangeStart)) self.setState({ rangeStart: cur, rangeEnd: st.rangeStart });
+              else self.setState({ rangeEnd: cur });
+            }
+          });
+        })(this, dnum);
+      }
+      if (st.rangeStart) calRangeLabel = this.fmtDate(st.rangeStart) + (st.rangeEnd ? ' ~ ' + this.fmtDate(st.rangeEnd) : ' ~ 종료일 선택');
+      calCanApply = !!(st.rangeStart && st.rangeEnd);
+    }
+
+    var applyCal = () => {
+      if (!st.rangeStart || !st.rangeEnd) return;
+      var range = { start: st.rangeStart, end: st.rangeEnd };
+      if (st.calOpen === 'dash') this.setState({ dashRange: range, periodSel: 'custom', calOpen: null });
+      else {
+        var mr = Object.assign({}, st.msRange); mr[st.calOpen] = range;
+        var mp = Object.assign({}, st.msPeriod); mp[st.calOpen] = '날짜지정';
+        this.setState({ msRange: mr, msPeriod: mp, calOpen: null });
+      }
+      this.toast(this.fmtDate(range.start) + ' ~ ' + this.fmtDate(range.end) + ' 기간이 적용되었습니다');
+    };
+
+    var machRanks = MACH_RANK_RAW.map((r, i) => ({ rank: i+1, name: r[0], value: r[1], sub: r[2], rankBg: i < 3 ? c.pri : c.priLt, rankColor: i < 3 ? '#fff' : c.pri }));
+    var prodRanksTop = PROD_RANK_RAW.map((r, i) => ({ rank: i+1, name: r[0], value: r[1], sub: '', rankBg: i < 3 ? c.pri : c.priLt, rankColor: i < 3 ? '#fff' : c.pri }));
+
+    // machines tab
+    var tabBd = {}, tabColor = {};
+    ['manage','sales','products'].forEach((k) => {
+      var on = st.machinesTab === k;
+      tabBd[k] = on ? c.pri : 'transparent'; tabColor[k] = on ? c.pri : c.tx3;
+    });
+
+    var categories = CATEGORIES.map((cat) => {
+      var s = this.activeStyle(st.prodCategory === cat, c);
+      return { label: cat, bg: s.bg, color: s.color, bd: s.bd, select: () => this.setState({ prodCategory: cat }) };
+    });
+
+    var filteredProducts = (st.prodCategory === '전체' ? ALL_PRODUCTS.slice() : ALL_PRODUCTS.filter((p) => p.type === st.prodCategory));
+    filteredProducts.sort((a, b) => b.salesAmt - a.salesAmt);
+    var openProdDetail = (p, stocked) => () => this.setState({ productDetail: { p: p, stocked: stocked } });
+    var products = filteredProducts.map((p, i) => {
+      var cat = CAT_COLORS[p.type];
+      return {
+        rank: i+1, rankBg: i < 3 ? c.pri : c.priLt, rankColor: i < 3 ? '#fff' : c.pri,
+        catColor: cat.c, catLt: cat.lt, name: p.name, priceLabel: '₩' + p.sellP.toLocaleString(),
+        type: p.type, sub: p.sub, sales: p.salesLabel,
+        statusColor: p.status === 'selling' ? c.ok : c.warn, statusText: p.status === 'selling' ? '판매중' : '재고부족',
+        openDetail: openProdDetail(p, true)
+      };
+    });
+
+    // detail tabs
+    var detTabBd = {}, detTabBg = {}, detTabColor = {};
+    ['info','inventory'].forEach((k) => {
+      var on = st.detailMode === k;
+      var s = this.activeStyle(on, c);
+      detTabBd[k] = s.bd; detTabBg[k] = s.bg; detTabColor[k] = s.color;
+    });
+
+    // messages
+    var msgTabBg = {}, msgTabColor = {};
+    ['notif','dm'].forEach((k) => {
+      var on = st.messagesTab === k;
+      msgTabBg[k] = on ? c.sf : 'transparent'; msgTabColor[k] = on ? c.tx1 : c.tx2;
+    });
+    var notifFilterOpts = ['전체','재고부족','상태변경','보충완료'];
+    var notifFilters = notifFilterOpts.map((f) => {
+      var s = this.activeStyle(st.notifFilter === f, c);
+      return { label: f, bg: s.bg, color: s.color, bd: s.bd, select: () => this.setState({ notifFilter: f }) };
+    });
+    var filteredNotif = st.notifFilter === '전체' ? NOTIF_DATA : NOTIF_DATA.filter((n) => n.type === st.notifFilter);
+    var notifications = filteredNotif.map((n) => ({
+      title: n.title, desc: n.desc, meta: n.meta, time: n.time,
+      bg: n.unread ? c.priLt : c.sf, titleWeight: n.unread ? '700' : '600',
+      isWarn: n.type === '재고부족', isChange: n.type === '상태변경', isCheck: n.type === '보충완료',
+      iconBg: n.type === '재고부족' ? c.warnLt : n.type === '상태변경' ? c.errLt : c.okLt,
+      iconColor: n.type === '재고부족' ? c.warn : n.type === '상태변경' ? c.err : c.ok
+    }));
+    var notifUnreadCount = NOTIF_DATA.filter((n) => n.unread).length;
+
+    var dmFilterOpts = ['전체','관리자','서브관리자','매장관리자'];
+    var dmFilters = dmFilterOpts.map((f) => {
+      var s = this.activeStyle(st.dmFilter === f, c);
+      return { label: f, bg: s.bg, color: s.color, bd: s.bd, select: () => this.setState({ dmFilter: f }) };
+    });
+    var roleMatch = { '관리자':'admin', '서브관리자':'sub', '매장관리자':'mgr' };
+    var chatKeys = Object.keys(CHAT_DATA).filter((k) => st.dmFilter === '전체' || roleMatch[st.dmFilter] === k);
+    var roleColors = { a: { bg: c.priLt, color: c.pri, avBg: c.priLt, avColor: c.pri }, b: { bg: c.warnLt, color: '#8a5a12', avBg: c.warnLt, avColor: '#8a5a12' }, c: { bg: c.okLt, color: c.ok, avBg: c.okLt, avColor: c.ok } };
+    var chats = chatKeys.map((k) => {
+      var ch = CHAT_DATA[k], rc = roleColors[ch.roleKey];
+      return {
+        initial: ch.name.charAt(0), avBg: rc.avBg, avColor: rc.avColor, name: ch.name,
+        role: ch.role, roleBg: rc.bg, roleColor: rc.color, lastMsg: ch.lastMsg,
+        lastColor: ch.unread > 0 ? c.tx1 : c.tx3, lastWeight: ch.unread > 0 ? '500' : '400',
+        time: ch.time, hasUnread: ch.unread > 0, unread: ch.unread,
+        open: () => this.setState({ activeChat: k })
+      };
+    });
+    var totalChats = Object.keys(CHAT_DATA).length, unreadChats = Object.values(CHAT_DATA).filter((ch) => ch.unread > 0).length;
+    var dmUnreadCount = unreadChats;
+
+    var activeChatData = null;
+    if (st.activeChat) {
+      var ac = CHAT_DATA[st.activeChat];
+      activeChatData = {
+        name: ac.name, role: ac.role,
+        msgs: ac.msgs.map((m) => ({
+          txt: m.txt, time: m.time, align: m.who === 'me' ? 'flex-end' : 'flex-start',
+          bg: m.who === 'me' ? c.pri : c.sf, color: m.who === 'me' ? '#fff' : c.tx1,
+          blr: m.who === 'me' ? '15px' : '4px', brr: m.who === 'me' ? '4px' : '15px'
+        }))
+      };
+    }
+
+    // my/users
+    var badgeColors = { admin: { bg: c.priLt, color: c.pri }, manager: { bg: c.okLt, color: c.ok }, pending: { bg: c.warnLt, color: c.warn } };
+    var userAv = { admin: { bg: c.priLt, color: c.pri }, manager: { bg: c.okLt, color: c.ok }, pending: { bg: c.warnLt, color: c.warn } };
+    var users = USERS_DATA.map((u) => {
+      var bc = badgeColors[u.badgeKey], av = userAv[u.badgeKey];
+      return { initial: u.name.charAt(0), name: u.name, meta: u.meta, badge: u.badge, badgeBg: bc.bg, badgeColor: bc.color, avBg: av.bg, avColor: av.color };
+    });
+
+    // order modal
+    var toggleQty = (id) => () => {
+      var q = Object.assign({}, st.orderQtys);
+      q[id] = q[id] > 0 ? 0 : 1;
+      this.setState({ orderQtys: q });
+    };
+    var stepQty = (id, delta) => () => {
+      var q = Object.assign({}, st.orderQtys);
+      q[id] = Math.max(0, Math.min(99, (q[id] || 0) + delta));
+      this.setState({ orderQtys: q });
+    };
+    var unstocked = UNSTOCKED.map((p) => {
+      var cat = CAT_COLORS[p.type], qty = st.orderQtys[p.id] || 0;
+      return {
+        name: p.name, type: p.type, sub: p.sub, priceLabel: '₩' + p.sellP.toLocaleString(),
+        catColor: cat.c, catLt: cat.lt, qty: qty,
+        ckBd: qty > 0 ? c.pri : c.bd, ckBg: qty > 0 ? c.pri : 'transparent', ckMark: qty > 0 ? '✓' : '',
+        toggle: toggleQty(p.id), inc: stepQty(p.id, 1), dec: stepQty(p.id, -1),
+        openDetail: () => this.setState({ orderModalOpen: false, productDetail: { p: p, stocked: false, fromOrder: true } })
+      };
+    });
+
+    // product detail
+    var pd = null;
+    if (st.productDetail) {
+      var p = st.productDetail.p, cat = CAT_COLORS[p.type];
+      pd = {
+        name: p.name, type: p.type, sub: p.sub, code: p.code, priceLabel: '₩' + p.sellP.toLocaleString(),
+        shelfLifeLabel: p.shelfLife + '일', desc: p.desc, catColor: cat.c, catLt: cat.lt,
+        stocked: !!st.productDetail.stocked,
+        monthSales: p.monthSales, monthCnt: p.monthCnt,
+        statusColor: p.status === 'selling' ? c.ok : c.warn, statusText: (p.status === 'selling' ? '판매중' : '재고부족') + ' (' + p.stock + ')'
+      };
+    }
+
+    var screenTitles = { dashboard:'홈', machines:'자판기', detail:'상세보기', messages:'메시지', mypage:'MY' };
+    var machinesTab = st.machinesTab;
+
+    return {
+      c: c, isLogin: isLogin, isApp: !isLogin, isDesktop: isDesktop, isMobile: isMobile,
+      isDark: st.theme === 'dark', isLight: st.theme !== 'dark', themeLabel: st.theme === 'dark' ? '라이트 모드' : '다크 모드',
+      login: () => this.setState({ screen: 'dashboard' }), logout: () => this.setState({ screen: 'login' }),
+      toggleTheme: () => this.setState({ theme: st.theme === 'dark' ? 'light' : 'dark' }),
+      goDashboard: go('dashboard'), goMachines: () => this.setState({ screen: 'machines' }), goMessages: go('messages'), goMy: go('mypage'),
+      navBg: navBg, navColor: navColor, navWeight: navWeight, hasUnread: hasUnread,
+      screenTitle: screenTitles[st.screen], padX: isDesktop ? '28px' : isTablet ? '22px' : '16px',
+      devCount: 8, devOk: 5, devErr: 1, devWarn: 2,
+      contentMax: isDesktop ? '1180px' : isTablet ? '920px' : '640px',
+      contentPad: isDesktop ? '28px' : isTablet ? '22px' : '16px',
+      bottomPad: isMobile ? '0px' : '24px',
+
+      isDashboard: st.screen === 'dashboard', isMachines: st.screen === 'machines', isDetail: st.screen === 'detail',
+      isMessages: st.screen === 'messages', isMy: st.screen === 'mypage',
+
+      dashTopCols: isDesktop ? '1.3fr 1fr' : isTablet ? '1fr 1fr' : '1fr', dashRankCols: twoCol ? '1fr 1fr' : '1fr',
+      periodBg: periodBg, periodColor: periodColor, periodBd: periodBd,
+      hasPeriod: !!curPeriod, noPeriod: !curPeriod,
+      periodLabelSales: curPeriod ? curPeriod.labelS : '', periodLabelCount: curPeriod ? curPeriod.labelC : '',
+      periodSalesVal: curPeriod ? curPeriod.s : '', periodCountVal: curPeriod ? curPeriod.ct : '',
+      setPeriodWeek: () => this.setState({ periodSel: st.periodSel === 'week' ? null : 'week' }),
+      setPeriodMonth: () => this.setState({ periodSel: st.periodSel === 'month' ? null : 'month' }),
+      setPeriodCustom: openCal('dash'),
+      calOpen: !!st.calOpen, calDays: calDays, calMonthLabel: calMonthLabel, calRangeLabel: calRangeLabel,
+      calDowLabels: ['일','월','화','수','목','금','토'],
+      calApplyBg: calCanApply ? c.pri : c.bd, calApplyColor: calCanApply ? '#fff' : c.tx3,
+      calPrev: () => { var m2 = st.calMonth - 1, y2 = st.calYear; if (m2 < 0) { m2 = 11; y2--; } this.setState({ calMonth: m2, calYear: y2 }); },
+      calNext: () => { var m2 = st.calMonth + 1, y2 = st.calYear; if (m2 > 11) { m2 = 0; y2++; } this.setState({ calMonth: m2, calYear: y2 }); },
+      calReset: () => this.setState({ rangeStart: null, rangeEnd: null }),
+      calClose: () => this.setState({ calOpen: null }),
+      calApply: applyCal,
+      machRanks: machRanks, prodRanks: prodRanksTop,
+
+      tabColor: tabColor, tabBorder: tabBd,
+      setTabManage: () => this.setState({ machinesTab: 'manage' }), setTabSales: () => this.setState({ machinesTab: 'sales' }), setTabProducts: () => this.setState({ machinesTab: 'products' }),
+      tabIsManage: machinesTab === 'manage', tabIsSales: machinesTab === 'sales', tabIsProducts: machinesTab === 'products',
+      machGridCols: twoCol ? 'repeat(2,1fr)' : '1fr', prodGridCols: twoCol ? 'repeat(2,1fr)' : '1fr',
+      machines: machines, categories: categories, products: products,
+
+      backToMachines: () => this.setState({ screen: 'machines' }), detMachine: detMachine,
+      setDetailInfo: () => this.setState({ detailMode: 'info' }), setDetailInventory: () => this.setState({ detailMode: 'inventory' }),
+      detTabBd: detTabBd, detTabBg: detTabBg, detTabColor: detTabColor,
+      detailIsInfo: st.detailMode === 'info', detailIsInventory: st.detailMode === 'inventory',
+      slots: slots, slotCols: 8,
+
+      chatOpen: !!st.activeChat, chatClosed: !st.activeChat, activeChatData: activeChatData, closeChat: () => this.setState({ activeChat: null }),
+      msgTabBg: msgTabBg, msgTabColor: msgTabColor, setMsgNotif: () => this.setState({ messagesTab: 'notif' }), setMsgDm: () => this.setState({ messagesTab: 'dm' }),
+      msgIsNotif: st.messagesTab === 'notif', msgIsDm: st.messagesTab === 'dm',
+      unreadNotif: notifUnreadCount > 0, notifUnreadCount: notifUnreadCount, unreadDm: dmUnreadCount > 0, dmUnreadCount: dmUnreadCount,
+      notifFilters: notifFilters, notifications: notifications,
+      dmFilters: dmFilters, chats: chats, chatSummary: totalChats + '개 대화 · ' + unreadChats + '개 읽지 않음',
+      listGridCols: twoCol ? 'repeat(2,1fr)' : '1fr',
+
+      myIsMain: st.myView === 'main', myIsUsers: st.myView === 'users',
+      openUsers: () => this.setState({ myView: 'users' }), closeUsers: () => this.setState({ myView: 'main' }),
+      users: users,
+
+      orderModalOpen: !!st.orderModalOpen, dmComposeOpen: !!st.dmComposeOpen,
+      showFabAdd: st.screen === 'machines' && machinesTab === 'products' && !st.orderModalOpen,
+      showFabDm: st.screen === 'messages' && !st.activeChat && st.messagesTab === 'dm' && !st.dmComposeOpen,
+      fabBottom: isMobile ? '80px' : '30px',
+      openOrderModal: () => { this.setState({ orderModalOpen: true, orderQtys: {} }); },
+      closeOrderModal: () => this.setState({ orderModalOpen: false }),
+      unstocked: unstocked,
+      sendOrder: () => {
+        var picked = UNSTOCKED.filter((p) => (st.orderQtys[p.id] || 0) > 0);
+        this.setState({ orderModalOpen: false });
+        this.toast(picked.length > 0 ? 'DM 주문요청이 발송되었습니다 (' + picked.length + '개 상품)' : '선택된 상품이 없습니다');
+      },
+      openDmCompose: () => this.setState({ dmComposeOpen: true }), closeDmCompose: () => this.setState({ dmComposeOpen: false }),
+      sendDm: () => { this.setState({ dmComposeOpen: false }); this.toast('DM이 발송되었습니다'); },
+
+      productDetailOpen: !!st.productDetail, pd: pd,
+      closeProductDetail: () => {
+        var fromOrder = st.productDetail && st.productDetail.fromOrder;
+        this.setState({ productDetail: null, orderModalOpen: fromOrder ? true : st.orderModalOpen });
+      },
+      toastMsg: st.toastMsg
+    };
+  }
+}
+
+</script>
+</body>
+</html>

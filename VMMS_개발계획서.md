@@ -129,12 +129,26 @@ VMMS
 
 ### 5.1 인증 & 계정 관리 (고객 백엔드 자체 구현)
 
+#### 계정 정책
+| 역할 | 명칭 | 권한 범위 | 비고 |
+|------|------|----------|------|
+| **admin** | 통합관리자 | 플랫폼 전체 자판기·상품 조회, manager 계정 등록·승인·관리, 자판기 할당 | 시스템 초기 시드 계정 |
+| **manager** | 매장관리자 | 할당된 자판기·상품만 조회·관리 | 다수 계정, admin 승인 후 활성화 |
+
+#### 가입·승인 흐름
+```
+[manager 가입 신청] → pending → [admin 승인] → active (+ 자판기 할당)
+                              → [admin 거절] → disabled
+```
+
 | 기능 | 설명 | 비고 |
 |------|------|------|
-| 매장관리자 신청 | 사업자 정보, 담당자 정보 입력 후 승인 요청 | |
+| 매장관리자 신청 | 이메일, 비밀번호, 이름, 전화번호, 부서 선택 후 승인 요청 | role=manager, status=pending |
 | 승인 상태 확인 | 대기/승인/반려 상태 확인 | |
-| 로그인 | ID/PW → JWT 발급 | |
-| 역할 기반 접근 | API Key + Role로 기기 측 호출 시 필드 제어 | 매입가는 슈퍼관리자만 노출 |
+| 로그인 | ID/PW → JWT 발급 (active 상태만) | |
+| admin 사용자 관리 | 전체 사용자 목록, 승인/거절/비활성화/재활성화 | admin 전용 |
+| admin 자판기 할당 | manager별 접근 가능 자판기 지정 | admin 전용 |
+| 역할 기반 데이터 필터링 | admin=전체 데이터, manager=할당된 자판기만 | 서버에서 강제 적용 |
 
 ### 5.2 자판기 관리 (기기 측 API 연동)
 
@@ -294,6 +308,19 @@ VMMS
 | POST | `/api/auth/refresh` | 토큰 갱신 | `{ refreshToken }` | `{ accessToken, refreshToken }` |
 | POST | `/api/auth/logout` | 로그아웃 | - | `{ success }` |
 | PUT | `/api/auth/password` | 비밀번호 변경 | `{ currentPassword, newPassword }` | `{ success }` |
+
+#### 6.2.1-1 Admin 관리 API (admin 전용)
+
+| Method | Endpoint | 설명 | Request Body | Response |
+|--------|----------|------|-------------|----------|
+| GET | `/api/admin/users` | 전체 사용자 목록 | - | `{ data: User[] }` |
+| GET | `/api/admin/users/pending` | 승인 대기 목록 | - | `{ data: User[] }` |
+| PUT | `/api/admin/users/:id/approve` | 가입 승인 → active/manager | - | `{ data: User }` |
+| PUT | `/api/admin/users/:id/reject` | 가입 거절 → disabled | `{ reason? }` | `{ data: User }` |
+| PUT | `/api/admin/users/:id/disable` | 계정 비활성화 | - | `{ data: User }` |
+| PUT | `/api/admin/users/:id/enable` | 계정 재활성화 | - | `{ data: User }` |
+| GET | `/api/admin/users/:id/machines` | 할당된 자판기 조회 | - | `{ data: { userId, funIds } }` |
+| PUT | `/api/admin/users/:id/machines` | 자판기 할당 설정 | `{ funIds: number[] }` | `{ data: { userId, funIds } }` |
 
 #### 6.2.2 대시보드/집계 API (자체 집계)
 

@@ -15,6 +15,7 @@ dist/
 
 # OS
 .DS_Store
+.thumbnail
 
 # TypeScript build info
 *.tsbuildinfo

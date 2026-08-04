@@ -15,25 +15,20 @@ export interface SalesStat {
   statDate?: string; // 통계 일자
 }
 
-/** countInfo 요청 파라미터 */
+/** countInfo 요청 파라미터 (statType 제거됨 — 鑫之源 2026-05-29 회신) */
 export interface SalesQueryParams {
   appId: number;
-  statType: SalesStatType;
-  startDate?: string; // yyyy-MM-dd
-  endDate?: string; // yyyy-MM-dd
-  funId?: number;
-  deptId?: number;
+  startTime: number; // 밀리초 타임스탬프
+  endTime: number; // 밀리초 타임스탬프
+  goodsId?: number;
 }
-
-/** 통계 구분 */
-export type SalesStatType = 'day' | 'week' | 'month' | 'year' | 'goods';
 
 /** 금액 분(分) → 원(元) 변환 */
 export function fenToYuan(fen: number): number {
   return Math.round(fen) / 100;
 }
 
-/** 원(元) 포맷팅 (예: ¥8,420) */
-export function formatMoney(yuan: number): string {
-  return `¥${yuan.toLocaleString('ko-KR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+/** 금액 포맷팅 (예: ₩8,420) */
+export function formatMoney(amount: number): string {
+  return `₩${amount.toLocaleString('ko-KR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 }

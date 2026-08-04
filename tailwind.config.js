@@ -3,7 +3,31 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["'Pretendard'", '-apple-system', 'BlinkMacSystemFont', "'Segoe UI'", 'Roboto', "'Noto Sans KR'", 'sans-serif'],
+      },
       colors: {
+        /* Semantic tokens — reference CSS custom properties */
+        bg: 'var(--c-bg)',
+        'page-bg': 'var(--c-page-bg)',
+        sf: 'var(--c-sf)',
+        tx1: 'var(--c-tx1)',
+        tx2: 'var(--c-tx2)',
+        tx3: 'var(--c-tx3)',
+        bd: 'var(--c-bd)',
+        bd2: 'var(--c-bd2)',
+        pri: 'var(--c-pri)',
+        'pri-lt': 'var(--c-pri-lt)',
+        ok: 'var(--c-ok)',
+        'ok-lt': 'var(--c-ok-lt)',
+        err: 'var(--c-err)',
+        'err-lt': 'var(--c-err-lt)',
+        warn: 'var(--c-warn)',
+        'warn-lt': 'var(--c-warn-lt)',
+        off: 'var(--c-off)',
+        'inp-bg': 'var(--c-inp-bg)',
+
+        /* Legacy palette — keep until Phase 6 purge */
         primary: {
           50: '#EBF5FF',
           100: '#CCE5FF',
@@ -75,8 +99,11 @@ export default {
         'touch': '44px',
       },
       height: {
-        'header': '52px',
+        'header': '60px',
         'bottom-nav': '60px',
+      },
+      width: {
+        'sidebar': '236px',
       },
     },
   },

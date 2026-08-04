@@ -16,6 +16,7 @@ export interface Machine {
   funWaring: number; // 재고 예경값
   temperature: number;
   goodsRoadCount: number;
+  hasLowStock?: boolean;
 }
 
 /** getFunById 응답 — 설비 상세 */

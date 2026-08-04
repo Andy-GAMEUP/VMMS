@@ -14,9 +14,13 @@ const RegisterStatusPage = lazy(() => import('@/pages/auth/RegisterStatusPage'))
 const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage'));
 const MachineListPage = lazy(() => import('@/pages/machines/MachineListPage'));
 const MachineDetailPage = lazy(() => import('@/pages/machines/MachineDetailPage'));
-const NoticesPage = lazy(() => import('@/pages/messages/NoticesPage'));
+const MessagesPage = lazy(() => import('@/pages/messages/MessagesPage'));
+const DMPage = lazy(() => import('@/pages/messages/DMPage'));
 const MyPage = lazy(() => import('@/pages/my/MyPage'));
 const SalesSummaryPage = lazy(() => import('@/pages/sales/SalesSummaryPage'));
+const ProductListPage = lazy(() => import('@/pages/products/ProductListPage'));
+const ProductNewPage = lazy(() => import('@/pages/products/ProductNewPage'));
+const UserManagePage = lazy(() => import('@/pages/admin/UserManagePage'));
 
 function PageLoader() {
   return (
@@ -24,6 +28,13 @@ function PageLoader() {
       <div className="w-8 h-8 border-3 border-primary-500 border-t-transparent rounded-full animate-spin" />
     </div>
   );
+}
+
+/** Admin 전용 라우트 가드 */
+function AdminRoute({ children }: { children: React.ReactNode }) {
+  const user = useAuthStore((s) => s.user);
+  if (user?.role !== 'admin') return <Navigate to="/dashboard" replace />;
+  return <>{children}</>;
 }
 
 /** 인증 필요 라우트 가드 — AppShell + SSE 연결 포함 */
@@ -85,9 +96,14 @@ export default function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/machines" element={<MachineListPage />} />
           <Route path="/machines/:id" element={<MachineDetailPage />} />
-          <Route path="/messages" element={<NoticesPage />} />
+          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/messages/:roomId" element={<DMPage />} />
+          <Route path="/notifications" element={<Navigate to="/messages" replace />} />
+          <Route path="/products" element={<ProductListPage />} />
+          <Route path="/products/new" element={<ProductNewPage />} />
           <Route path="/my" element={<MyPage />} />
           <Route path="/sales" element={<SalesSummaryPage />} />
+          <Route path="/admin/users" element={<AdminRoute><UserManagePage /></AdminRoute>} />
         </Route>
 
         {/* Fallback */}

@@ -47,7 +47,8 @@ export class XzyClient {
 
     const { data } = await this.httpV11.post(`/${method}`, body);
 
-    if (data.code !== 0) {
+    const successCodes = ['00000', '200'];
+    if (!successCodes.includes(String(data.code))) {
       throw new XzyApiError(method, data.code, data.msg);
     }
     return data.data as T;
@@ -63,7 +64,8 @@ export class XzyClient {
 
     const { data } = await this.httpV12.post(`/${method}`, body);
 
-    if (data.code !== 0) {
+    const successCodes = ['00000', '200'];
+    if (!successCodes.includes(String(data.code))) {
       throw new XzyApiError(method, data.code, data.msg);
     }
     return data.data as T;
@@ -87,22 +89,22 @@ export class XzyClient {
   }
 
   /** 상품 목록 (페이징) */
-  async getProducts(params: { pageNum?: number; pageSize?: number; funId?: number } = {}) {
+  async getProducts(params: { current?: number; size?: number; funId?: number } = {}) {
     return this.callV11('getGoodsById', {
-      pageNum: params.pageNum ?? 1,
-      pageSize: params.pageSize ?? 20,
+      current: params.current ?? 1,
+      size: params.size ?? 20,
       ...(params.funId ? { funId: params.funId } : {}),
     });
   }
 
   /** 사용자 조회 */
-  async getUsers(params: { userAccount?: string; userPhone?: string; deptId?: number; userStatus?: number } = {}) {
+  async getUsers(params: { userName?: string; phone?: string; deptId?: number; status?: number } = {}) {
     return this.callV12('getUserInfo', params);
   }
 
   /** 사용자 추가 (배치) */
-  async addUsers(userListJson: string) {
-    return this.callV12('addUserInfo', { userListJson });
+  async addUsers(userList: string) {
+    return this.callV12('addUserInfo', { userList });
   }
 
   /** 부서 조회 */
@@ -115,13 +117,12 @@ export class XzyClient {
     return this.callV12('addDeptInfo', { deptName, parentId });
   }
 
-  /** 매출 통계 */
+  /** 매출 통계 (statType 제거됨 — 鑫之源 2026-05-29 회신) */
   async getSalesStats(params: {
-    statType: string;
-    startDate?: string;
-    endDate?: string;
+    startTime: number;
+    endTime: number;
+    goodsId?: number;
     funId?: number;
-    deptId?: number;
   }) {
     return this.callV12('countInfo', params);
   }

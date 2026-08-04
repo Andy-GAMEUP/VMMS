@@ -34,19 +34,34 @@ export function createAuthRoutes(xzy: XzyClient): Router {
   // ─── POST /register ────────────────────────────────────
   router.post('/register', async (req: Request, res: Response) => {
     try {
-      const { email, password, name, phone, deptId } = req.body;
+      const { email, password, name, phone, accountType, deptId, businessName, parentDeptId } = req.body;
 
-      // 입력 검증
-      if (!email || !password || !name || !phone || deptId === undefined) {
+      // 공통 필수 항목 검증
+      if (!email || !password || !name || !phone || !accountType) {
         res.status(400).json({
           success: false,
-          error: '필수 항목을 모두 입력해주세요. (email, password, name, phone, deptId)',
+          error: '필수 항목을 모두 입력해주세요. (email, password, name, phone, accountType)',
         });
+        return;
+      }
+
+      if (!['sub_admin', 'business'].includes(accountType)) {
+        res.status(400).json({ success: false, error: '유효하지 않은 계정 유형입니다.' });
         return;
       }
 
       if (password.length < 6) {
         res.status(400).json({ success: false, error: '비밀번호는 6자 이상이어야 합니다.' });
+        return;
+      }
+
+      // 유형별 필수 항목 검증
+      if (accountType === 'sub_admin' && !deptId) {
+        res.status(400).json({ success: false, error: '소속 부서를 선택해주세요.' });
+        return;
+      }
+      if (accountType === 'business' && !businessName) {
+        res.status(400).json({ success: false, error: '가맹점/매장명을 입력해주세요.' });
         return;
       }
 
@@ -56,15 +71,20 @@ export function createAuthRoutes(xzy: XzyClient): Router {
         return;
       }
 
-      // 부서명 조회 (鑫之源 API)
+      // 부서명 조회 (sub_admin: 기존 부서 / business: 상위 부서 또는 미지정)
       let deptName = '미지정';
-      try {
-        const depts = await xzy.getDepartments({ deptId: Number(deptId) });
-        if (Array.isArray(depts) && depts.length > 0) {
-          deptName = depts[0].deptName || '미지정';
+      const resolvedDeptId = accountType === 'sub_admin' ? Number(deptId) : 0;
+      if (accountType === 'sub_admin' && deptId) {
+        try {
+          const depts = await xzy.getDepartments({ deptId: Number(deptId) });
+          if (Array.isArray(depts) && depts.length > 0) {
+            deptName = depts[0].deptName || '미지정';
+          }
+        } catch {
+          // 부서 조회 실패 시 기본값 사용
         }
-      } catch {
-        // 부서 조회 실패 시 기본값 사용
+      } else if (accountType === 'business') {
+        deptName = businessName; // 승인 전까지 가맹점명을 표시
       }
 
       const passwordHash = await hashPassword(password);
@@ -75,18 +95,24 @@ export function createAuthRoutes(xzy: XzyClient): Router {
         passwordHash,
         name,
         phone,
-        role: 'viewer', // 기본 역할: viewer (admin이 승격)
-        deptId: Number(deptId),
+        role: 'manager',
+        accountType,
+        deptId: resolvedDeptId,
         deptName,
-        status: 'pending', // admin 승인 대기
+        status: 'pending',
         createdAt: Date.now(),
         lastLoginAt: null,
         refreshToken: null,
+        ...(accountType === 'business' && {
+          businessName,
+          parentDeptId: parentDeptId ? Number(parentDeptId) : 0,
+        }),
       };
 
       userStore.create(newUser);
 
-      console.log(`  [AUTH] 신규 가입: ${email} (${name}) → pending`);
+      const typeLabel = accountType === 'sub_admin' ? 'Sub Admin' : '사업자';
+      console.log(`  [AUTH] 신규 가입: ${email} (${name}) [${typeLabel}] → pending`);
 
       res.status(201).json({
         success: true,

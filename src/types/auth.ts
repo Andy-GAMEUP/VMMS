@@ -59,7 +59,10 @@ export interface XzyDeptCreateDTO {
 // ===== VMMS 자체 인증 타입 =====
 
 /** VMMS 사용자 역할 */
-export type UserRole = 'admin' | 'manager' | 'viewer';
+export type UserRole = 'admin' | 'manager';
+
+/** 계정 유형: sub_admin(조직 내 관리자), business(가맹점/사업자) */
+export type AccountType = 'sub_admin' | 'business';
 
 /** VMMS 자체 사용자 (BFF DB 저장) */
 export interface VmmsUser {
@@ -68,11 +71,15 @@ export interface VmmsUser {
   name: string;
   phone: string;
   role: UserRole;
+  accountType: AccountType;
   deptId: number; // 鑫之源 부서 ID → 데이터 접근 범위
   deptName: string; // 표시용 (getDeptInfo에서 조회)
   status: 'active' | 'pending' | 'disabled';
   createdAt: number;
   lastLoginAt: number | null;
+  // 사업자(business) 전용 필드
+  businessName?: string; // 가맹점/매장명 → addDeptInfo의 deptName
+  parentDeptId?: number; // 상위 부서 ID → addDeptInfo의 parentId
 }
 
 /** 로그인 요청 */
@@ -88,13 +95,16 @@ export interface LoginResponse {
   user: VmmsUser;
 }
 
-/** 회원가입 요청 */
+/** 회원가입 요청 (공통) */
 export interface RegisterRequest {
   email: string;
   password: string;
   name: string;
   phone: string;
-  deptId: number;
+  accountType: AccountType;
+  deptId?: number; // sub_admin 전용: 기존 부서 선택
+  businessName?: string; // business 전용: 가맹점/매장명
+  parentDeptId?: number; // business 전용: 상위 부서 ID
 }
 
 /** JWT Payload */
@@ -116,7 +126,6 @@ export interface AuthState {
 
 /** 역할별 권한 */
 export const ROLE_PERMISSIONS: Record<UserRole, { label: string; canManageUsers: boolean; allDeptAccess: boolean; canEdit: boolean }> = {
-  admin: { label: '관리자', canManageUsers: true, allDeptAccess: true, canEdit: true },
+  admin: { label: '통합관리자', canManageUsers: true, allDeptAccess: true, canEdit: true },
   manager: { label: '매장관리자', canManageUsers: false, allDeptAccess: false, canEdit: true },
-  viewer: { label: '뷰어', canManageUsers: false, allDeptAccess: false, canEdit: false },
 };

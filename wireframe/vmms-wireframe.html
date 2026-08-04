@@ -1,0 +1,1242 @@
+<meta charset="UTF-8">
+<title>VMMS Wireframe Prototype</title>
+<style>
+:root {
+  --pri: #4A90D9;
+  --pri-dk: #357ABD;
+  --pri-lt: #E8F0FA;
+  --ok: #34C759;
+  --err: #FF3B30;
+  --warn: #FF9500;
+  --off: #8E8E93;
+  --bg: #F2F4F7;
+  --sf: #FFFFFF;
+  --tx1: #1A1D23;
+  --tx2: #5A6170;
+  --tx3: #8C92A1;
+  --bd: #E2E5EB;
+  --bd2: #ECEEF2;
+  --card-sh: 0 1px 3px rgba(26,29,35,.06);
+  --phone-sh: 0 20px 60px rgba(26,29,35,.15);
+  --page-bg: #F7F8FB;
+  --inp-bg: #F5F6F8;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#111318;--sf:#1C1F26;--tx1:#E8EAF0;--tx2:#9BA1B0;--tx3:#636A78;
+  --bd:#2E323B;--bd2:#262930;--card-sh:0 1px 3px rgba(0,0,0,.2);
+  --phone-sh:0 20px 60px rgba(0,0,0,.4);--pri-lt:#1E2A3D;--page-bg:#15171D;--inp-bg:#24272F;
+}}
+:root[data-theme="dark"]{
+  --bg:#111318;--sf:#1C1F26;--tx1:#E8EAF0;--tx2:#9BA1B0;--tx3:#636A78;
+  --bd:#2E323B;--bd2:#262930;--card-sh:0 1px 3px rgba(0,0,0,.2);
+  --phone-sh:0 20px 60px rgba(0,0,0,.4);--pri-lt:#1E2A3D;--page-bg:#15171D;--inp-bg:#24272F;
+}
+:root[data-theme="light"]{
+  --bg:#F2F4F7;--sf:#FFFFFF;--tx1:#1A1D23;--tx2:#5A6170;--tx3:#8C92A1;
+  --bd:#E2E5EB;--bd2:#ECEEF2;--card-sh:0 1px 3px rgba(26,29,35,.06);
+  --phone-sh:0 20px 60px rgba(26,29,35,.15);--pri-lt:#E8F0FA;--page-bg:#F7F8FB;--inp-bg:#F5F6F8;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx1);display:flex;flex-direction:column;align-items:center;padding:20px 16px 40px;min-height:100vh}
+.hdr{text-align:center;margin-bottom:16px}
+.hdr h1{font-size:20px;font-weight:700;letter-spacing:-.3px}
+.hdr p{font-size:12px;color:var(--tx2);margin-top:4px}
+.top-nav{display:flex;gap:3px;margin-bottom:16px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:3px;flex-wrap:wrap;justify-content:center;box-shadow:var(--card-sh)}
+.top-nav button{font-family:inherit;font-size:11px;font-weight:600;padding:7px 10px;border:none;border-radius:7px;cursor:pointer;background:transparent;color:var(--tx2);transition:all .2s;white-space:nowrap}
+.top-nav button:hover{background:var(--bd2)}
+.top-nav button.on{background:var(--pri);color:#fff}
+
+/* Phone */
+.phone{width:375px;height:812px;background:var(--sf);border-radius:40px;box-shadow:var(--phone-sh);border:1px solid var(--bd);overflow:hidden;position:relative;flex-shrink:0}
+.sbar{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 8px;font-size:12px;font-weight:600;background:var(--sf);color:var(--tx1);transition:background .2s,color .2s}
+.sbar.blue{background:#4A90D9;color:#fff}
+.sbar .t{font-size:15px;font-weight:700}
+.content{height:calc(812px - 54px - 56px);overflow-y:auto;overflow-x:hidden;background:var(--page-bg);scroll-behavior:smooth}
+.content::-webkit-scrollbar{display:none}
+.content.full{height:calc(812px - 54px)}
+.bnav{height:56px;background:var(--sf);border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:space-around;padding:0 8px}
+.bnav .ni{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:var(--tx3);cursor:pointer;transition:color .15s}
+.bnav .ni.on{color:var(--pri)}
+.bnav .ni svg{width:22px;height:22px}
+
+/* Screens */
+.scr{display:none;min-height:100%}
+.scr.on{display:block}
+
+/* Common header bar */
+.hbar{height:56px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 16px;gap:8px}
+.hbar .tl{font-size:17px;font-weight:700;flex:1}
+.hbar .back{cursor:pointer;flex-shrink:0}
+.devs{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:var(--tx2);font-variant-numeric:tabular-nums}
+.devs .dd{display:flex;align-items:center;gap:3px}
+.dt{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dt.g{background:var(--ok)}.dt.r{background:var(--err)}.dt.o{background:var(--warn)}
+.bell{position:relative;width:22px;height:22px;flex-shrink:0;cursor:pointer}
+.bell .bg{position:absolute;top:-2px;right:-2px;width:14px;height:14px;border-radius:50%;background:var(--err);color:#fff;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+/* Tabs - segment control style */
+.tabs{display:flex;background:var(--page-bg);padding:3px;margin:0 16px;border-radius:9px;gap:2px}
+.tabs button{flex:1;padding:8px 0;text-align:center;font-size:12px;font-weight:600;color:var(--tx2);border-radius:7px;cursor:pointer;font-family:inherit;border:none;background:transparent;transition:all .15s;position:relative}
+.tabs button.on{background:var(--sf);color:var(--tx1);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tbadge{position:absolute;top:1px;right:8px;min-width:14px;height:14px;padding:0 3px;border-radius:7px;background:var(--err);color:#fff;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+/* Underline tabs (for machine page) */
+.utabs{display:flex;border-bottom:2px solid var(--bd);margin:0}
+.utabs button{flex:1;padding:12px 0 10px;text-align:center;font-size:13px;font-weight:600;color:var(--tx3);cursor:pointer;font-family:inherit;border:none;background:transparent;transition:all .15s;position:relative}
+.utabs button.on{color:var(--pri)}
+.utabs button.on::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:var(--pri);border-radius:1px}
+
+/* Pills */
+.pills{display:flex;gap:6px;padding:8px 16px;overflow-x:auto}
+.pills::-webkit-scrollbar{display:none}
+.pill{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;border:1.5px solid var(--bd);background:var(--sf);color:var(--tx2);font-family:inherit;cursor:pointer;transition:all .15s}
+.pill.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+
+/* Cards */
+.card{margin:0 16px 10px;background:var(--sf);border-radius:12px;padding:14px;box-shadow:var(--card-sh)}
+
+/* ===== LOGIN ===== */
+.login-top{background:linear-gradient(180deg,#4A90D9,#357ABD);padding:36px 24px 24px;text-align:center;color:#fff}
+.login-logo{width:60px;height:60px;border-radius:16px;background:rgba(255,255,255,.2);margin:0 auto 10px;display:flex;align-items:center;justify-content:center}
+.login-top h2{font-size:22px;font-weight:800;letter-spacing:2px}
+.login-top p{font-size:12px;opacity:.8;margin-top:3px}
+.login-form{background:var(--sf);border-radius:20px 20px 0 0;padding:22px 20px 16px}
+.login-form h3{font-size:17px;font-weight:700;margin-bottom:16px}
+.lf-field{margin-bottom:12px}
+.lf-label{font-size:12px;font-weight:600;color:var(--tx2);margin-bottom:3px;display:block}
+.lf-input{width:100%;height:42px;border:1.5px solid var(--bd);border-radius:8px;background:var(--inp-bg);padding:0 12px;font-size:13px;color:var(--tx3);display:flex;align-items:center}
+.lf-check{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2);margin-bottom:12px}
+.lf-check span:first-child{width:16px;height:16px;border:1.5px solid var(--bd);border-radius:3px;display:inline-block;background:var(--inp-bg)}
+.lf-btn{width:100%;height:42px;border-radius:8px;background:var(--pri);color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:inherit}
+.lf-reg{text-align:center;font-size:12px;color:var(--tx3);margin-top:14px}
+.lf-reg a{color:var(--pri);font-weight:600;text-decoration:none}
+.lf-dev{border-top:1px dashed var(--bd);margin-top:16px;padding-top:12px;text-align:center}
+.lf-dev p{font-size:10px;color:var(--tx3);margin-bottom:8px}
+.lf-dev-row{display:flex;gap:8px}
+.lf-dev-btn{flex:1;height:32px;border:1px solid var(--bd);border-radius:7px;background:var(--inp-bg);font-size:11px;font-weight:500;color:var(--tx2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:inherit}
+
+/* ===== DASHBOARD ===== */
+.greet{padding:14px 16px 0}
+.greet .nm{font-size:17px;font-weight:700}
+.greet .nm b{color:var(--pri);font-weight:700}
+.greet .mt{font-size:12px;color:var(--tx3);margin-top:2px}
+.sales-card{margin:10px 16px;border-radius:14px;padding:18px;color:#fff;background:linear-gradient(135deg,#4A90D9,#357ABD)}
+.sales-card .sl{font-size:11px;opacity:.75;margin-bottom:3px}
+.sales-card .sv{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+.sc-cmp{display:flex;gap:8px;margin-top:14px}
+.sc-cmp>div{flex:1;background:rgba(255,255,255,.12);border-radius:10px;padding:10px}
+.sc-cmp .cl{font-size:10px;opacity:.8}
+.sc-cmp .cv{font-size:15px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums}
+.sc-cmp .cu{font-size:10px;opacity:.7;margin-left:2px}
+.sc-cmp .cy{font-size:10px;opacity:.55;margin-top:4px;font-variant-numeric:tabular-nums}
+.sc-cmp .cd{font-size:9px;font-weight:600;padding:2px 5px;border-radius:4px;margin-top:3px;display:inline-block}
+.cd.up{background:rgba(52,199,89,.25);color:#A8FFD0}
+.cd.dn{background:rgba(255,59,48,.25);color:#FFB3AE}
+.per-btns{display:flex;gap:6px;padding:0 16px;margin-bottom:14px}
+.per-btn{flex:1;padding:8px 0;border-radius:8px;border:1.5px solid var(--bd);background:var(--sf);font-size:12px;font-weight:600;color:var(--tx2);text-align:center;font-family:inherit;cursor:pointer;transition:all .15s}
+.per-btn.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.per-expand{margin:0 16px 12px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:12px;display:none}
+.per-expand.on{display:block}
+.per-dates{display:flex;gap:8px;margin-bottom:10px;align-items:center}
+.per-dates input{flex:1;height:34px;border:1px solid var(--bd);border-radius:6px;padding:0 8px;font-size:12px;font-family:inherit;background:var(--inp-bg);color:var(--tx1)}
+.per-dates span{color:var(--tx3);font-size:12px}
+.per-result{display:flex;gap:8px}
+.per-result>div{flex:1;text-align:center;padding:8px;border-radius:8px}
+.per-result .pr-l{font-size:10px;color:var(--tx3)}
+.per-result .pr-v{font-size:16px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.stitle{font-size:14px;font-weight:700;padding:0 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.stitle .ml{font-size:10px;font-weight:500;color:var(--tx3);background:var(--page-bg);padding:2px 7px;border-radius:4px}
+.rk-list{padding:0 16px;margin-bottom:14px}
+.rk-item{display:flex;align-items:center;gap:9px;padding:9px 10px;background:var(--sf);border-radius:9px;margin-bottom:5px;box-shadow:var(--card-sh)}
+.rk-n{width:20px;height:20px;border-radius:5px;background:var(--pri-lt);color:var(--pri);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rk-n.top{background:var(--pri);color:#fff}
+.rk-nm{flex:1;font-size:12px;font-weight:500}
+.rk-v{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.rk-s{font-size:9px;color:var(--tx3);margin-left:3px}
+
+/* ===== MACHINES ===== */
+.mc-card{margin:0 16px 10px;background:var(--sf);border-radius:12px;padding:12px;box-shadow:var(--card-sh);cursor:pointer;transition:transform .1s}
+.mc-card:active{transform:scale(.98)}
+.mc-hd{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.mc-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.mc-inf{flex:1}
+.mc-nm{font-size:13px;font-weight:600}
+.mc-id{font-size:10px;color:var(--tx3);margin-top:1px}
+.mc-addr{font-size:10px;color:var(--tx2);margin-top:2px}
+.mc-arr{color:var(--tx3);font-size:16px}
+.mc-sts{display:flex;gap:5px}
+.mc-st{flex:1;text-align:center;padding:7px 0;background:var(--page-bg);border-radius:7px}
+.mc-st .sl{font-size:9px;color:var(--tx3)}
+.mc-st .sv{font-size:13px;font-weight:700;margin-top:1px;font-variant-numeric:tabular-nums}
+.mc-acts{display:flex;gap:5px;margin-top:8px}
+.mc-acts button{flex:1;padding:7px 0;text-align:center;font-size:11px;font-weight:600;border-radius:7px;font-family:inherit;border:none;cursor:pointer}
+.mc-acts .p{background:var(--pri);color:#fff}
+.mc-acts .s{background:var(--pri-lt);color:var(--pri)}
+
+/* ===== DETAIL ===== */
+.det-id{background:linear-gradient(135deg,#4A90D9,#357ABD);color:#fff;padding:18px 16px}
+.det-id .di-r{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.det-id .di-ic{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px}
+.det-id .di-nm{font-size:16px;font-weight:700}
+.det-id .di-sub{font-size:11px;opacity:.75;margin-top:2px}
+.det-id .di-st{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;background:rgba(52,199,89,.25);padding:4px 10px;border-radius:6px;color:#A8FFD0}
+.det-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:10px 16px}
+.det-grid .dg{background:var(--sf);border-radius:9px;padding:10px;box-shadow:var(--card-sh)}
+.det-grid .dg .dl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px}
+.det-grid .dg .dv{font-size:13px;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums}
+/* Detail info list */
+.det-info{padding:10px 16px 16px}
+.det-info-item{display:flex;padding:11px 0;border-bottom:1px solid var(--bd2)}
+.det-info-item:last-child{border-bottom:none}
+.det-info-item .dil{width:90px;font-size:11px;color:var(--tx3);flex-shrink:0;font-weight:500}
+.det-info-item .div{flex:1;font-size:12px;font-weight:500}
+/* Slot grid */
+.sg-sec{padding:10px 16px 16px}
+.sg-hd{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.sg-leg{display:flex;gap:8px;font-size:9px;color:var(--tx3)}
+.sg-leg span{display:flex;align-items:center;gap:2px}
+.sg-leg .sq{width:7px;height:7px;border-radius:2px}
+.sg-leg .sq.a{background:var(--pri)}.sg-leg .sq.b{background:var(--warn)}.sg-leg .sq.c{background:var(--bd)}
+.sg{display:grid;grid-template-columns:repeat(8,1fr);gap:2px}
+.sc{aspect-ratio:1;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;position:relative;cursor:pointer;transition:transform .12s;font-variant-numeric:tabular-nums}
+.sc:hover{transform:scale(1.1);z-index:2}
+.sc.a{background:var(--pri)}.sc.b{background:var(--warn)}.sc.c{background:var(--bd);color:var(--tx3)}
+.sc .c1{font-size:7px;font-weight:700}.sc .c2{font-size:6px;opacity:.8;margin-top:1px}
+.sc .pop{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--sf);border:1px solid var(--bd);border-radius:7px;padding:8px 10px;box-shadow:0 4px 12px rgba(0,0,0,.15);white-space:nowrap;z-index:10;color:var(--tx1)}
+.sc:hover .pop{display:block}
+.pop .p1{font-size:10px;font-weight:600}.pop .p2{font-size:9px;color:var(--pri);margin-top:1px}.pop .p3{font-size:9px;color:var(--tx3);margin-top:1px}
+
+/* ===== MESSAGES ===== */
+.n-item{display:flex;align-items:flex-start;gap:9px;padding:11px 16px;border-bottom:1px solid var(--bd2);cursor:pointer;transition:background .15s}
+.n-item:active{background:var(--bd2)}
+.n-item.ur{background:var(--pri-lt)}
+.n-ic{font-size:15px;margin-top:1px;flex-shrink:0}
+.n-bd{flex:1;min-width:0}
+.n-tt{font-size:12px;font-weight:600}.n-tt.ur{font-weight:700}
+.n-ds{font-size:11px;color:var(--tx3);margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.n-mt{font-size:9px;color:var(--tx3);margin-top:3px}
+.n-tm{font-size:9px;color:var(--tx3);flex-shrink:0;margin-top:1px}
+.n-dot{width:6px;height:6px;border-radius:50%;background:var(--pri);flex-shrink:0;margin-top:5px}
+
+.ch-item{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--bd2);cursor:pointer;transition:background .15s}
+.ch-item:active{background:var(--bd2)}
+.ch-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.ch-av.a{background:#DBEAFE;color:#4A90D9}.ch-av.b{background:#EDE9FE;color:#7C3AED}.ch-av.c{background:#D1FAE5;color:#059669}
+.ch-inf{flex:1;min-width:0}
+.ch-nr{display:flex;align-items:center;gap:5px}
+.ch-nm{font-size:13px;font-weight:600}
+.ch-rb{font-size:9px;font-weight:600;padding:1px 5px;border-radius:3px}
+.ch-rb.a{background:#DBEAFE;color:#1E40AF}.ch-rb.b{background:#EDE9FE;color:#5B21B6}.ch-rb.c{background:#D1FAE5;color:#065F46}
+.ch-lm{font-size:11px;color:var(--tx3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-lm.ur{color:var(--tx2);font-weight:500}
+.ch-rt{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.ch-tm{font-size:9px;color:var(--tx3)}
+.ch-ub{min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--pri);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+/* Chat detail sub-page */
+.chat-detail-hdr{display:flex;align-items:center;gap:8px;padding:14px 16px;background:var(--sf);border-bottom:1px solid var(--bd)}
+.chat-detail-hdr .back-btn{cursor:pointer;flex-shrink:0}
+.chat-detail-hdr .cd-name{font-size:15px;font-weight:700;flex:1}
+.chat-detail-hdr .cd-role{font-size:10px;color:var(--tx3)}
+.chat-msgs{flex:1;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.chat-bubble{max-width:75%;padding:10px 14px;border-radius:14px;font-size:12px;line-height:1.5}
+.chat-bubble.them{background:var(--sf);color:var(--tx1);border-bottom-left-radius:4px;align-self:flex-start;box-shadow:var(--card-sh)}
+.chat-bubble.me{background:var(--pri);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.chat-bubble .cb-time{font-size:9px;opacity:.6;margin-top:4px}
+.chat-input-bar{display:flex;gap:8px;padding:10px 16px;background:var(--sf);border-top:1px solid var(--bd)}
+.chat-input-bar .ci-inp{flex:1;height:36px;border:1px solid var(--bd);border-radius:18px;padding:0 14px;font-size:12px;background:var(--inp-bg);color:var(--tx1)}
+.chat-input-bar .ci-send{width:36px;height:36px;border-radius:50%;background:var(--pri);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* ===== MY ===== */
+.my-prof{display:flex;align-items:center;gap:12px;padding:14px;margin:10px 16px;background:var(--sf);border-radius:12px;box-shadow:var(--card-sh)}
+.my-av{width:48px;height:48px;border-radius:50%;background:var(--pri-lt);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--pri)}
+.my-nm{font-size:15px;font-weight:700}
+.my-dp{font-size:11px;color:var(--tx2);margin-top:1px}
+.my-em{font-size:10px;color:var(--tx3);margin-top:1px}
+.my-rl{color:var(--pri);font-weight:600;font-size:10px;margin-left:3px}
+.my-admin{margin:0 16px 8px;background:var(--sf);border-radius:12px;box-shadow:var(--card-sh);overflow:hidden;cursor:pointer}
+.my-admin-btn{display:flex;align-items:center;gap:9px;padding:13px 16px;width:100%}
+.my-admin-btn .ai{font-size:16px}.my-admin-btn .al{flex:1;font-size:13px;font-weight:600;color:var(--pri)}.my-admin-btn .ah{font-size:10px;color:var(--tx3)}
+.my-menu{margin:0 16px 8px;background:var(--sf);border-radius:12px;box-shadow:var(--card-sh);overflow:hidden}
+.my-mi{display:flex;align-items:center;gap:9px;padding:13px 16px;border-bottom:1px solid var(--bd2);cursor:pointer}
+.my-mi:last-child{border-bottom:none}
+.my-mi .mi{font-size:15px;flex-shrink:0}.my-mi .ml{flex:1;font-size:12px;font-weight:500}.my-mi .ms{font-size:10px;color:var(--tx3)}.my-mi .ma{color:var(--tx3);font-size:14px}
+.my-logout{margin:0 16px;padding:12px 0;text-align:center;background:var(--sf);border-radius:12px;box-shadow:var(--card-sh);color:var(--err);font-size:13px;font-weight:600;cursor:pointer}
+
+/* User manage sub */
+.um-hdr{display:flex;align-items:center;gap:8px;padding:14px 16px;background:var(--sf);border-bottom:1px solid var(--bd)}
+.um-hdr .back-btn{cursor:pointer;flex-shrink:0}
+.um-hdr .um-t{font-size:15px;font-weight:700;flex:1}
+.um-card{margin:8px 16px;background:var(--sf);border-radius:10px;padding:12px;box-shadow:var(--card-sh);display:flex;align-items:center;gap:10px}
+.um-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.um-inf{flex:1}
+.um-nm{font-size:13px;font-weight:600}
+.um-meta{font-size:10px;color:var(--tx3);margin-top:1px}
+.um-badge{font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px}
+.um-badge.admin{background:#DBEAFE;color:#1E40AF}.um-badge.manager{background:#D1FAE5;color:#065F46}.um-badge.pending{background:#FEF3C7;color:#92400E}
+
+/* FAB */
+.fab{position:absolute;bottom:68px;right:16px;width:42px;height:42px;border-radius:50%;background:var(--pri);color:#fff;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(74,144,217,.4);cursor:pointer;z-index:5;border:none;font-size:20px;font-weight:700}
+.fab.on{display:flex}
+
+/* Machine sales sub */
+.sales-sub{padding:16px}
+.sales-sub .ss-card{background:var(--sf);border-radius:10px;padding:14px;box-shadow:var(--card-sh);margin-bottom:10px}
+.ss-card .ss-l{font-size:10px;color:var(--tx3);margin-bottom:4px}
+.ss-card .ss-v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.ss-card .ss-d{font-size:10px;margin-top:3px}
+/* Per-machine sales accordion */
+.ms-item{background:var(--sf);border-radius:10px;padding:12px;box-shadow:var(--card-sh);margin-bottom:8px}
+.ms-hd{display:flex;align-items:center;gap:8px}
+.ms-hd .ms-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ms-hd .ms-nm{flex:1;font-size:12px;font-weight:600}
+.ms-hd .ms-val{font-size:13px;font-weight:700;color:var(--pri);font-variant-numeric:tabular-nums}
+.ms-hd .ms-cnt{font-size:10px;color:var(--tx3);margin-left:4px}
+.ms-per{display:flex;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd2)}
+.ms-per button{flex:1;padding:5px 0;border-radius:6px;border:1px solid var(--bd);background:var(--sf);font-size:10px;font-weight:500;color:var(--tx2);font-family:inherit;cursor:pointer}
+.ms-per button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+
+/* Products with status dots */
+.prod-sub{padding:12px 16px;position:relative;min-height:400px}
+.prod-rank-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.prh-title{font-size:14px;font-weight:700}
+.prh-sub{font-size:10px;color:var(--tx3);font-weight:500}
+.prod-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--sf);border-radius:9px;margin-bottom:6px;box-shadow:var(--card-sh)}
+.prod-item .pi-rank{width:22px;height:22px;border-radius:6px;background:var(--pri-lt);color:var(--pri);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.prod-item .pi-rank.top{background:var(--pri);color:#fff}
+.prod-item .pi-img{width:50px;height:50px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden}
+.prod-item .pi-inf{flex:1;min-width:0}
+.prod-item .pi-nm{font-size:12px;font-weight:600}
+.prod-item .pi-pr{font-size:11px;color:var(--pri);margin-top:1px;font-variant-numeric:tabular-nums}
+.prod-item .pi-cat{font-size:9px;color:var(--tx3);margin-top:1px}
+.prod-item .pi-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.prod-item .pi-sales{font-size:10px;font-weight:600;color:var(--tx2);font-variant-numeric:tabular-nums}
+.prod-item .pi-status{display:flex;align-items:center;gap:3px;font-size:9px;color:var(--tx3)}
+.prod-item .pi-status .sd{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.prod-item .pi-btn{font-size:9px;color:var(--pri);cursor:pointer;font-weight:600;padding:3px 6px;border:1px solid var(--pri);border-radius:4px;background:transparent;font-family:inherit;white-space:nowrap}
+
+/* Product detail sub-page */
+.pd-hdr{display:flex;align-items:center;gap:8px;padding:14px 16px;background:var(--sf);border-bottom:1px solid var(--bd)}
+.pd-hdr .back-btn{cursor:pointer;flex-shrink:0}
+.pd-hdr .pd-t{font-size:15px;font-weight:700;flex:1}
+.pd-hero{text-align:center;padding:20px;background:var(--sf)}
+.pd-hero .pd-img{width:120px;height:120px;border-radius:20px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:52px}
+.pd-hero .pd-name{font-size:16px;font-weight:700}
+.pd-hero .pd-cat{font-size:11px;color:var(--tx3);margin-top:3px}
+.pd-hero .pd-price{font-size:18px;font-weight:700;color:var(--pri);margin-top:4px;font-variant-numeric:tabular-nums}
+.pd-section{padding:0 16px 12px}
+.pd-section-title{font-size:12px;font-weight:700;color:var(--tx2);padding:10px 0 6px;border-bottom:1px solid var(--bd2);margin-bottom:6px}
+.pd-row{display:flex;padding:7px 0;border-bottom:1px solid var(--bd2)}
+.pd-row:last-child{border-bottom:none}
+.pd-row .pdl{width:85px;font-size:11px;color:var(--tx3);flex-shrink:0}
+.pd-row .pdv{flex:1;font-size:11px;font-weight:500}
+
+/* Order modal (미입고 상품 주문) */
+.modal-overlay{display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:20;align-items:flex-end;justify-content:center}
+.modal-overlay.on{display:flex}
+.modal-sheet{width:100%;background:var(--sf);border-radius:16px 16px 0 0;padding:20px 16px 24px;max-height:85%;overflow-y:auto}
+.modal-sheet::-webkit-scrollbar{display:none}
+.modal-sheet .ms-bar{width:36px;height:4px;border-radius:2px;background:var(--bd);margin:0 auto 12px}
+.modal-sheet h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.modal-sheet .ms-desc{font-size:11px;color:var(--tx3);margin-bottom:12px}
+.order-item{display:flex;align-items:center;gap:8px;padding:10px;background:var(--page-bg);border-radius:8px;margin-bottom:6px}
+.order-item .oi-ck{width:18px;height:18px;border:2px solid var(--bd);border-radius:4px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--sf)}
+.order-item .oi-ck.checked{background:var(--pri);border-color:var(--pri);color:#fff;font-size:11px;font-weight:700}
+.order-item .oi-img{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.order-item .oi-inf{flex:1;min-width:0}
+.order-item .oi-nm{font-size:11px;font-weight:600}
+.order-item .oi-cat{font-size:9px;color:var(--tx3)}
+.order-item .oi-qty{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.order-item .oi-qty button{width:24px;height:24px;border-radius:6px;border:1px solid var(--bd);background:var(--sf);font-size:13px;font-weight:600;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.order-item .oi-qty span{font-size:12px;font-weight:600;min-width:20px;text-align:center;font-variant-numeric:tabular-nums}
+.oi-detail-btn{font-size:9px;color:var(--pri);cursor:pointer;font-weight:600;padding:2px 5px;border:1px solid var(--pri);border-radius:3px;background:transparent;font-family:inherit;margin-top:3px;display:inline-block}
+.mf-actions{display:flex;gap:8px;margin-top:14px}
+.mf-actions button{flex:1;height:38px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:inherit}
+.mf-actions .cancel{background:var(--page-bg);color:var(--tx2)}
+.mf-actions .send{background:var(--pri);color:#fff}
+
+/* DM compose modal */
+.dm-compose-modal{display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:20;align-items:flex-end;justify-content:center}
+.dm-compose-modal.on{display:flex}
+.dm-sheet{width:100%;background:var(--sf);border-radius:16px 16px 0 0;padding:20px 16px 24px}
+.dm-sheet .ms-bar{width:36px;height:4px;border-radius:2px;background:var(--bd);margin:0 auto 12px}
+.dm-sheet h3{font-size:15px;font-weight:700;margin-bottom:14px}
+.mf-field{margin-bottom:10px}
+.mf-label{font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:3px;display:block}
+.mf-input{width:100%;height:36px;border:1.5px solid var(--bd);border-radius:7px;background:var(--inp-bg);padding:0 10px;font-size:12px;display:flex;align-items:center;color:var(--tx3)}
+.mf-textarea{width:100%;height:64px;border:1.5px solid var(--bd);border-radius:7px;background:var(--inp-bg);padding:8px 10px;font-size:12px;color:var(--tx3);resize:none;display:flex;align-items:flex-start}
+.mf-select{width:100%;height:36px;border:1.5px solid var(--bd);border-radius:7px;background:var(--inp-bg);padding:0 10px;font-size:12px;color:var(--tx3);display:flex;align-items:center;justify-content:space-between}
+
+/* Empty state */
+.empty-st{text-align:center;padding:40px 20px;color:var(--tx3)}
+.empty-st .ei{font-size:28px;margin-bottom:8px}
+.empty-st .et{font-size:13px;font-weight:500;color:var(--tx2)}
+.empty-st .es{font-size:11px;margin-top:4px}
+</style>
+
+<div class="hdr">
+  <h1>VMMS Wireframe Prototype</h1>
+  <p>전체 화면 와이어프레임 — 탭을 클릭하여 각 화면을 확인하세요</p>
+</div>
+
+<nav class="top-nav" id="topNav">
+  <button data-s="login">Login</button>
+  <button data-s="dashboard" class="on">Dashboard</button>
+  <button data-s="machines">Machines</button>
+  <button data-s="detail">Detail</button>
+  <button data-s="messages">Messages</button>
+  <button data-s="mypage">MY</button>
+</nav>
+
+<div class="phone">
+  <div class="sbar" id="sbar">
+    <span class="t">9:41</span>
+    <span style="display:flex;gap:4px;align-items:center">
+      <svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx=".5" opacity=".3"/><rect x="4" y="2" width="3" height="9" rx=".5" opacity=".5"/><rect x="8" y="1" width="3" height="10" rx=".5" opacity=".7"/><rect x="12" y="0" width="3" height="11" rx=".5"/></svg>
+      <svg width="22" height="10" viewBox="0 0 22 10" fill="currentColor"><rect x="0" y="1" width="18" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1"/><rect x="1.5" y="2.5" width="12" height="5" rx=".5" fill="var(--ok)"/><rect x="19" y="3" width="2" height="4" rx=".5" opacity=".3"/></svg>
+    </span>
+  </div>
+
+  <div class="content" id="content">
+
+    <!-- ========== LOGIN ========== -->
+    <div class="scr" id="s-login">
+      <div class="login-top">
+        <div class="login-logo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></div>
+        <h2>VMMS</h2>
+        <p>스마트 자판기 관리 솔루션</p>
+      </div>
+      <div class="login-form">
+        <h3>로그인</h3>
+        <div class="lf-field"><span class="lf-label">이메일</span><div class="lf-input">email@example.com</div></div>
+        <div class="lf-field"><span class="lf-label">비밀번호</span><div class="lf-input">••••••••</div></div>
+        <div class="lf-check"><span></span>자동로그인</div>
+        <button class="lf-btn" id="loginBtn">로그인</button>
+        <div class="lf-reg">계정이 없으신가요? <a href="javascript:void(0)">매장관리자 신청</a></div>
+        <div class="lf-dev">
+          <p>DEV — 테스트 계정 빠른 로그인</p>
+          <div class="lf-dev-row">
+            <div class="lf-dev-btn" data-goto="dashboard">Admin</div>
+            <div class="lf-dev-btn" data-goto="dashboard">Manager</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== DASHBOARD ========== -->
+    <div class="scr on" id="s-dashboard">
+      <div class="hbar">
+        <span class="tl">VMMS</span>
+        <div class="devs"><b>8</b><div class="dd"><span class="dt g"></span>5</div><div class="dd"><span class="dt r"></span>1</div><div class="dd"><span class="dt o"></span>2</div></div>
+        <div class="bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="bg">3</div></div>
+      </div>
+      <div class="greet"><div class="nm">안녕하세요! <b>관리자</b> 님</div><div class="mt">최고관리자 · 2026.08.03 (월)</div></div>
+      <div class="sales-card">
+        <div class="sl">오늘 매출</div><div class="sv">₩1,248,500</div>
+        <div class="sc-cmp">
+          <div>
+            <div class="cl">오늘 매출액</div>
+            <div class="cv">₩1,248,500</div>
+            <div class="cy">어제: ₩1,109,778</div>
+            <div class="cd up">▲ 12.5%</div>
+          </div>
+          <div>
+            <div class="cl">오늘 판매건수</div>
+            <div class="cv">847<span class="cu">건</span></div>
+            <div class="cy">어제: 875건</div>
+            <div class="cd dn">▼ 3.2%</div>
+          </div>
+        </div>
+      </div>
+      <div class="per-btns" id="perBtns">
+        <button class="per-btn" data-per="week">일주일</button>
+        <button class="per-btn" data-per="month">월별</button>
+        <button class="per-btn" data-per="custom">날짜지정</button>
+      </div>
+      <div class="per-expand" id="perWeek"><div class="per-result"><div style="background:var(--pri-lt)"><div class="pr-l">주간 매출액</div><div class="pr-v" style="color:var(--pri)">₩8,740,200</div></div><div style="background:var(--page-bg)"><div class="pr-l">주간 판매건수</div><div class="pr-v">5,832건</div></div></div></div>
+      <div class="per-expand" id="perMonth"><div class="per-result"><div style="background:var(--pri-lt)"><div class="pr-l">8월 누적 매출</div><div class="pr-v" style="color:var(--pri)">₩3,748,500</div></div><div style="background:var(--page-bg)"><div class="pr-l">8월 누적 판매</div><div class="pr-v">2,541건</div></div></div></div>
+      <div class="per-expand" id="perCustom"><div class="per-dates"><input type="date" value="2026-07-01"><span>~</span><input type="date" value="2026-07-31"></div><div class="per-result"><div style="background:var(--pri-lt)"><div class="pr-l">매출액</div><div class="pr-v" style="color:var(--pri)">₩32,150,000</div></div><div style="background:var(--page-bg)"><div class="pr-l">판매 건수</div><div class="pr-v">21,480건</div></div></div></div>
+
+      <div class="stitle"><span>자판기 매출 순위</span><span class="ml">2026년 8월</span></div>
+      <div class="rk-list" id="machRank"></div>
+      <div class="stitle"><span>인기 상품 순위</span><span class="ml">2026년 8월</span></div>
+      <div class="rk-list" id="prodRank"></div>
+    </div>
+
+    <!-- ========== MACHINES ========== -->
+    <div class="scr" id="s-machines">
+      <div class="hbar">
+        <span class="tl">자판기</span>
+        <div class="devs"><b>8</b><div class="dd"><span class="dt g"></span>5</div><div class="dd"><span class="dt r"></span>1</div><div class="dd"><span class="dt o"></span>2</div></div>
+        <div class="bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="bg">3</div></div>
+      </div>
+      <div class="utabs" id="mTabs">
+        <button class="on" data-mt="manage">자판기관리</button>
+        <button data-mt="sales">매출현황</button>
+        <button data-mt="products">상품정보</button>
+      </div>
+      <!-- 자판기관리 -->
+      <div class="mt-pane on" id="mt-manage" style="padding-top:10px">
+        <div class="mc-card">
+          <div class="mc-hd"><div class="mc-dot" style="background:var(--ok)"></div><div class="mc-inf"><div class="mc-nm">강남역 1번출구</div><div class="mc-id">자판기 번호: 100234 · 정상</div><div class="mc-addr">서울 강남구 강남대로 396 지하1층</div></div><div class="mc-arr">›</div></div>
+          <div class="mc-sts"><div class="mc-st"><div class="sl">오늘매출</div><div class="sv">₩285K</div></div><div class="mc-st"><div class="sl">재고</div><div class="sv">42/56</div></div><div class="mc-st"><div class="sl">판매</div><div class="sv">142건</div></div></div>
+          <div class="mc-acts"><button class="p" data-detail="info">상세보기</button><button class="s" data-detail="inventory">재고 확인</button></div>
+        </div>
+        <div class="mc-card">
+          <div class="mc-hd"><div class="mc-dot" style="background:var(--err)"></div><div class="mc-inf"><div class="mc-nm">신논현 GS타워</div><div class="mc-id">자판기 번호: 100235 · 고장</div><div class="mc-addr">서울 서초구 강남대로 507 GS타워 1층</div></div><div class="mc-arr">›</div></div>
+          <div class="mc-sts"><div class="mc-st"><div class="sl">오늘매출</div><div class="sv">₩0</div></div><div class="mc-st"><div class="sl">재고</div><div class="sv">38/56</div></div><div class="mc-st"><div class="sl">판매</div><div class="sv">0건</div></div></div>
+          <div class="mc-acts"><button class="p" data-detail="info">상세보기</button><button class="s" data-detail="inventory">재고 확인</button></div>
+        </div>
+        <div class="mc-card">
+          <div class="mc-hd"><div class="mc-dot" style="background:var(--warn)"></div><div class="mc-inf"><div class="mc-nm">역삼 센트럴파크</div><div class="mc-id">자판기 번호: 100236 · 재고부족</div><div class="mc-addr">서울 강남구 역삼로 180 센트럴파크 B1</div></div><div class="mc-arr">›</div></div>
+          <div class="mc-sts"><div class="mc-st"><div class="sl">오늘매출</div><div class="sv">₩198K</div></div><div class="mc-st"><div class="sl">재고</div><div class="sv" style="color:var(--warn)">12/56</div></div><div class="mc-st"><div class="sl">판매</div><div class="sv">99건</div></div></div>
+          <div class="mc-acts"><button class="p" data-detail="info">상세보기</button><button class="s" data-detail="inventory">재고 확인</button></div>
+        </div>
+        <div class="mc-card">
+          <div class="mc-hd"><div class="mc-dot" style="background:var(--off)"></div><div class="mc-inf"><div class="mc-nm">삼성 코엑스몰</div><div class="mc-id">자판기 번호: 100237 · 오프라인</div><div class="mc-addr">서울 강남구 영동대로 513 코엑스몰 B1</div></div><div class="mc-arr">›</div></div>
+          <div class="mc-sts"><div class="mc-st"><div class="sl">오늘매출</div><div class="sv">₩0</div></div><div class="mc-st"><div class="sl">재고</div><div class="sv">--</div></div><div class="mc-st"><div class="sl">판매</div><div class="sv">0건</div></div></div>
+          <div class="mc-acts"><button class="p" data-detail="info">상세보기</button><button class="s" data-detail="inventory">재고 확인</button></div>
+        </div>
+      </div>
+      <!-- 매출현황 -->
+      <div class="mt-pane" id="mt-sales" style="display:none">
+        <div class="sales-sub">
+          <div style="display:flex;gap:8px;margin-bottom:12px">
+            <div class="ss-card" style="flex:1;margin:0"><div class="ss-l">금일 총 매출</div><div class="ss-v" style="color:var(--pri);font-size:18px">₩483,200</div></div>
+            <div class="ss-card" style="flex:1;margin:0"><div class="ss-l">금일 판매건수</div><div class="ss-v" style="font-size:18px">241건</div></div>
+          </div>
+          <div class="stitle" style="padding:0;margin-bottom:10px"><span>자판기별 매출 현황</span></div>
+          <div class="ms-item">
+            <div class="ms-hd"><div class="ms-dot" style="background:var(--ok)"></div><div class="ms-nm">강남역 1번출구</div><div class="ms-val">₩285,000</div><div class="ms-cnt">142건</div></div>
+            <div class="ms-per"><button class="on">오늘</button><button>일주일</button><button>월간</button><button>날짜지정</button></div>
+          </div>
+          <div class="ms-item">
+            <div class="ms-hd"><div class="ms-dot" style="background:var(--warn)"></div><div class="ms-nm">역삼 센트럴파크</div><div class="ms-val">₩198,200</div><div class="ms-cnt">99건</div></div>
+            <div class="ms-per"><button class="on">오늘</button><button>일주일</button><button>월간</button><button>날짜지정</button></div>
+          </div>
+          <div class="ms-item">
+            <div class="ms-hd"><div class="ms-dot" style="background:var(--err)"></div><div class="ms-nm">신논현 GS타워</div><div class="ms-val">₩0</div><div class="ms-cnt">0건</div></div>
+            <div class="ms-per"><button class="on">오늘</button><button>일주일</button><button>월간</button><button>날짜지정</button></div>
+          </div>
+          <div class="ms-item">
+            <div class="ms-hd"><div class="ms-dot" style="background:var(--off)"></div><div class="ms-nm">삼성 코엑스몰</div><div class="ms-val">₩0</div><div class="ms-cnt">0건</div></div>
+            <div class="ms-per"><button class="on">오늘</button><button>일주일</button><button>월간</button><button>날짜지정</button></div>
+          </div>
+        </div>
+      </div>
+      <!-- #4~8: 상품정보 — API 카테고리, 매출순위 정렬, 제품정보보기, FAB 추가 -->
+      <div class="mt-pane" id="mt-products" style="display:none">
+        <div class="prod-sub" id="prodList">
+          <div class="pills" style="padding:8px 0 12px" id="prodPills"></div>
+          <div class="prod-rank-hdr"><span class="prh-title">매출순위</span><span class="prh-sub" id="prodRankPeriod">2026년 8월 기준</span></div>
+          <div id="prodItems"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== DETAIL ========== -->
+    <div class="scr" id="s-detail">
+      <div class="hbar">
+        <svg class="back" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-goto="machines"><path d="M15 18l-6-6 6-6"/></svg>
+        <span class="tl" id="detTitle">상세보기</span>
+        <div class="devs"><b>8</b><div class="dd"><span class="dt g"></span>5</div><div class="dd"><span class="dt r"></span>1</div><div class="dd"><span class="dt o"></span>2</div></div>
+        <div class="bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="bg">3</div></div>
+      </div>
+      <div class="det-id">
+        <div class="di-r"><div class="di-ic">🏭</div><div><div class="di-nm">자판기3_20251013</div><div class="di-sub">장비 번호: 20251013 · 킴스클럽_강서점</div></div></div>
+        <div class="di-st"><span class="dt g" style="width:6px;height:6px"></span>정상 운영 중</div>
+      </div>
+      <!-- 자판기 상세보기 — 鑫之源 웹관리시스템 API 필드 기준 -->
+      <div id="detInfo">
+        <div class="det-grid">
+          <div class="dg"><div class="dl">금일 매출</div><div class="dv" style="color:var(--pri)">₩285,000</div></div>
+          <div class="dg"><div class="dl">금일 판매</div><div class="dv">142건</div></div>
+        </div>
+        <div class="det-info">
+          <div class="det-info-item"><span class="dil">장비 번호</span><span class="div">20251013</span></div>
+          <div class="det-info-item"><span class="dil">장비 이름</span><span class="div">자판기3_20251013</span></div>
+          <div class="det-info-item"><span class="dil">IMEI</span><span class="div">1A:E1:EE:23:19:38</span></div>
+          <div class="det-info-item"><span class="dil">운영사업자</span><span class="div">킴스클럽_강서점</span></div>
+          <div class="det-info-item"><span class="dil">관리자명</span><span class="div">박매니저</span></div>
+          <div class="det-info-item"><span class="dil">연락처</span><span class="div">02-1234-5678</span></div>
+          <div class="det-info-item"><span class="dil">입고일자</span><span class="div">2025.10.13</span></div>
+          <div class="det-info-item"><span class="dil">설치 주소</span><span class="div">서울 강서구 공항대로 247 (킴스클럽 강서점 1F)</span></div>
+          <div class="det-info-item"><span class="dil">장비 상태</span><span class="div" style="color:var(--ok)">● 정상</span></div>
+          <div class="det-info-item"><span class="dil">마지막 연결</span><span class="div">2026-08-03 19:06:09</span></div>
+        </div>
+      </div>
+      <!-- #3: 자판기 재고확인 — 슬롯별 재고 -->
+      <div id="detInventory" style="display:none">
+        <div class="det-grid">
+          <div class="dg"><div class="dl">총 슬롯</div><div class="dv">56개 (7×8)</div></div>
+          <div class="dg"><div class="dl">현재 재고</div><div class="dv" style="color:var(--ok)">42/56</div></div>
+        </div>
+        <div class="sg-sec">
+          <div class="sg-hd"><span>슬롯 현황 (7×8)</span><div class="sg-leg"><span><div class="sq a"></div>정상</span><span><div class="sq b"></div>부족</span><span><div class="sq c"></div>빈슬롯</span></div></div>
+          <div class="sg" id="slotGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== MESSAGES ========== -->
+    <div class="scr" id="s-messages">
+      <div id="msgMain">
+        <div class="hbar">
+          <span class="tl">메시지</span>
+          <div class="devs"><b>8</b><div class="dd"><span class="dt g"></span>5</div><div class="dd"><span class="dt r"></span>1</div><div class="dd"><span class="dt o"></span>2</div></div>
+          <div class="bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="bg">3</div></div>
+        </div>
+        <div style="padding-top:10px">
+          <div class="tabs" id="msgTabs">
+            <button class="on" data-mg="notif">알림<span class="tbadge">5</span></button>
+            <button data-mg="dm">DM<span class="tbadge">2</span></button>
+          </div>
+        </div>
+        <!-- 알림 -->
+        <div class="mg-pane on" id="mg-notif">
+          <div class="pills" id="notifPills"><button class="pill on">📋 전체</button><button class="pill">⚠️ 재고부족</button><button class="pill">⚡ 상태변경</button><button class="pill">✅ 보충완료</button></div>
+          <div style="display:flex;justify-content:flex-end;padding:2px 16px 6px"><span style="font-size:11px;color:var(--pri);cursor:pointer">모두 읽음</span></div>
+          <div class="n-item ur"><span class="n-ic">⚠️</span><div class="n-bd"><div class="n-tt ur">재고 부족 알림</div><div class="n-ds">역삼 센트럴파크 자판기 재고가 부족합니다. 12/56 슬롯만 남아있습니다.</div><div class="n-mt">역삼 센트럴파크 · 자판기 100236</div></div><span class="n-tm">5분 전</span><div class="n-dot"></div></div>
+          <div class="n-item ur"><span class="n-ic">⚡</span><div class="n-bd"><div class="n-tt ur">장비 상태 변경</div><div class="n-ds">신논현 GS타워 자판기가 오프라인에서 고장 상태로 변경되었습니다.</div><div class="n-mt">신논현 GS타워 · 자판기 100235</div></div><span class="n-tm">23분 전</span><div class="n-dot"></div></div>
+          <div class="n-item"><span class="n-ic">✅</span><div class="n-bd"><div class="n-tt">보충 완료</div><div class="n-ds">강남역 1번출구 자판기 재고가 보충되었습니다. 56/56 슬롯 가용.</div><div class="n-mt">강남역 1번출구 · 자판기 100234</div></div><span class="n-tm">1시간 전</span></div>
+          <div class="n-item"><span class="n-ic">⚠️</span><div class="n-bd"><div class="n-tt">재고 부족 알림</div><div class="n-ds">선릉 테헤란로 수분크림 50ml 재고가 2개 남았습니다.</div><div class="n-mt">선릉 테헤란로 · 자판기 100238</div></div><span class="n-tm">2시간 전</span></div>
+          <div class="n-item"><span class="n-ic">⚡</span><div class="n-bd"><div class="n-tt">장비 상태 변경</div><div class="n-ds">삼성 코엑스몰 자판기가 정상에서 오프라인으로 변경되었습니다.</div><div class="n-mt">삼성 코엑스몰 · 자판기 100237</div></div><span class="n-tm">3시간 전</span></div>
+        </div>
+        <!-- DM -->
+        <div class="mg-pane" id="mg-dm" style="display:none">
+          <div style="padding:6px 16px;font-size:11px;color:var(--tx3)">3개 대화 · 2개 읽지 않음</div>
+          <div class="pills" id="dmPills"><button class="pill on">전체</button><button class="pill">관리자</button><button class="pill">서브관리자</button><button class="pill">매장관리자</button></div>
+          <div class="ch-item" data-chat="admin"><div class="ch-av a">관</div><div class="ch-inf"><div class="ch-nr"><span class="ch-nm">시스템 관리자</span><span class="ch-rb a">통합관리자</span></div><div class="ch-lm ur">새 자판기 배정 요청이 승인되었습니다.</div></div><div class="ch-rt"><span class="ch-tm">10분 전</span><div class="ch-ub">1</div></div></div>
+          <div class="ch-item" data-chat="sub"><div class="ch-av b">김</div><div class="ch-inf"><div class="ch-nr"><span class="ch-nm">김서브</span><span class="ch-rb b">서브관리자</span></div><div class="ch-lm ur">역삼 센트럴파크 보충 일정을 확인해주세요.</div></div><div class="ch-rt"><span class="ch-tm">1시간 전</span><div class="ch-ub">1</div></div></div>
+          <div class="ch-item" data-chat="mgr"><div class="ch-av c">박</div><div class="ch-inf"><div class="ch-nr"><span class="ch-nm">박매니저</span><span class="ch-rb c">매장관리자</span></div><div class="ch-lm">네, 확인했습니다. 감사합니다.</div></div><div class="ch-rt"><span class="ch-tm">어제</span></div></div>
+        </div>
+      </div>
+      <!-- Chat detail sub-page -->
+      <div id="msgChat" style="display:none">
+        <div class="chat-detail-hdr">
+          <svg class="back-btn" id="chatBack" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer"><path d="M15 18l-6-6 6-6"/></svg>
+          <span class="cd-name" id="chatName">시스템 관리자</span>
+          <span class="cd-role" id="chatRole">통합관리자</span>
+        </div>
+        <div class="chat-msgs" id="chatMsgs"></div>
+        <div class="chat-input-bar">
+          <div class="ci-inp" style="display:flex;align-items:center;color:var(--tx3)">메시지 입력...</div>
+          <div class="ci-send"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== MYPAGE ========== -->
+    <div class="scr" id="s-mypage">
+      <div id="myMain">
+        <div class="hbar">
+          <span class="tl">MY</span>
+          <div class="devs"><b>8</b><div class="dd"><span class="dt g"></span>5</div><div class="dd"><span class="dt r"></span>1</div><div class="dd"><span class="dt o"></span>2</div></div>
+          <div class="bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="bg">3</div></div>
+        </div>
+        <div class="my-prof"><div class="my-av">관</div><div><div class="my-nm">관리자</div><div class="my-dp">본사 운영팀<span class="my-rl">(최고관리자)</span></div><div class="my-em">admin@vmms.local</div></div></div>
+        <div class="my-admin" id="myAdminBtn"><div class="my-admin-btn"><span class="ai">👥</span><span class="al">사용자 관리</span><span class="ah">관리자 전용</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pri)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div></div>
+        <div class="my-menu">
+          <div class="my-mi"><span class="mi">👤</span><span class="ml">내 정보 수정</span><span class="ma">›</span></div>
+          <div class="my-mi"><span class="mi">🔔</span><span class="ml">알림 설정</span><span class="ma">›</span></div>
+          <div class="my-mi"><span class="mi">🌐</span><span class="ml">언어 설정</span><span class="ma">›</span></div>
+          <div class="my-mi"><span class="mi">ℹ️</span><span class="ml">앱 정보</span><span class="ms">v0.1.0</span><span class="ma">›</span></div>
+        </div>
+        <div class="my-logout" id="myLogout">로그아웃</div>
+      </div>
+      <div id="myUsers" style="display:none">
+        <div class="um-hdr">
+          <svg class="back-btn" id="umBack" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer"><path d="M15 18l-6-6 6-6"/></svg>
+          <span class="um-t">사용자 관리</span>
+        </div>
+        <div class="pills" style="padding-top:12px"><button class="pill on">전체</button><button class="pill">관리자</button><button class="pill">매장관리자</button><button class="pill">승인대기</button></div>
+        <div style="padding:8px 16px 4px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:var(--tx3)">5명의 사용자</span><span style="font-size:11px;color:var(--pri);cursor:pointer">+ 사용자 추가</span></div>
+        <div class="um-card"><div class="um-av" style="background:#DBEAFE;color:#4A90D9">관</div><div class="um-inf"><div class="um-nm">관리자</div><div class="um-meta">admin@vmms.local · 본사 운영팀</div></div><span class="um-badge admin">최고관리자</span></div>
+        <div class="um-card"><div class="um-av" style="background:#D1FAE5;color:#059669">테</div><div class="um-inf"><div class="um-nm">테스트매니저</div><div class="um-meta">test@vmms.local · 강남지점</div></div><span class="um-badge manager">매장관리자</span></div>
+        <div class="um-card"><div class="um-av" style="background:#D1FAE5;color:#059669">매</div><div class="um-inf"><div class="um-nm">매니저1</div><div class="um-meta">manager1@test.com · 서초지점</div></div><span class="um-badge manager">매장관리자</span></div>
+        <div class="um-card"><div class="um-av" style="background:#FEF3C7;color:#92400E">신</div><div class="um-inf"><div class="um-nm">신규매니저</div><div class="um-meta">newmanager@vmms.test</div></div><span class="um-badge pending">승인대기</span></div>
+        <div class="um-card"><div class="um-av" style="background:#D1FAE5;color:#059669">박</div><div class="um-inf"><div class="um-nm">박매니저</div><div class="um-meta">park.manager@vmms.kr · 역삼지점</div></div><span class="um-badge manager">매장관리자</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FABs (direct children of .phone for fixed positioning) -->
+  <button class="fab" id="fabAddProduct">+</button>
+  <button class="fab" id="fabDmCompose" style="display:none">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg>
+  </button>
+
+  <!-- Product detail sub-page (overlay inside phone) — 鑫之源 웹시스템 필드 기준 -->
+  <div id="prodDetailSub" style="display:none;position:absolute;top:54px;left:0;right:0;bottom:56px;background:var(--page-bg);z-index:15;overflow-y:auto">
+    <div class="pd-hdr">
+      <svg class="back-btn" id="pdBack" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer"><path d="M15 18l-6-6 6-6"/></svg>
+      <span class="pd-t">제품 상세정보</span>
+    </div>
+    <div class="pd-hero">
+      <div class="pd-img" id="pdImg" style="background:linear-gradient(135deg,#FFE0EC,#FFC1D6)">💧</div>
+      <div class="pd-name" id="pdName">수분크림 50ml</div>
+      <div class="pd-cat" id="pdCat">스킨케어 · 보습</div>
+      <div class="pd-price" id="pdPrice">₩28,000</div>
+    </div>
+    <div class="pd-section">
+      <div class="pd-section-title">상품 기본정보</div>
+      <div class="pd-row"><span class="pdl">상품 유형</span><span class="pdv" id="pdTypeName">스킨케어</span></div>
+      <div class="pd-row"><span class="pdl">상품 이름</span><span class="pdv" id="pdGoodsName">수분크림 50ml</span></div>
+      <div class="pd-row"><span class="pdl">판매 가격</span><span class="pdv" id="pdSellPrice" style="color:var(--pri);font-weight:600">₩28,000</span></div>
+      <div class="pd-row"><span class="pdl">유통기한</span><span class="pdv" id="pdShelfLife">720일</span></div>
+      <div class="pd-row"><span class="pdl">상품 코드</span><span class="pdv" id="pdCode">CLS023560</span></div>
+    </div>
+    <div class="pd-section">
+      <div class="pd-section-title">상품 이미지</div>
+      <div style="display:flex;gap:12px;padding:6px 0">
+        <div style="text-align:center"><div class="pd-thumb" id="pdThumb" style="width:80px;height:80px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(135deg,#FFE0EC,#FFC1D6)">💧</div><div style="font-size:9px;color:var(--tx3);margin-top:3px">상품 이미지</div></div>
+        <div style="text-align:center"><div class="pd-thumb" id="pdDetailImg" style="width:80px;height:80px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--bd2);color:var(--tx3)">상세</div><div style="font-size:9px;color:var(--tx3);margin-top:3px">상세 이미지</div></div>
+      </div>
+    </div>
+    <div class="pd-section">
+      <div class="pd-section-title">상품 설명</div>
+      <div class="pd-desc" id="pdDesc" style="font-size:12px;color:var(--tx2);padding:6px 0;line-height:1.6">고보습 수분크림, 히알루론산 함유</div>
+    </div>
+    <div class="pd-section" id="pdSalesSection">
+      <div class="pd-section-title">판매 현황</div>
+      <div class="pd-row"><span class="pdl">이달 매출</span><span class="pdv" id="pdMonthSales" style="color:var(--pri);font-weight:600">₩1,568,000</span></div>
+      <div class="pd-row"><span class="pdl">이달 판매</span><span class="pdv" id="pdMonthCount">56건</span></div>
+      <div class="pd-row"><span class="pdl">재고 상태</span><span class="pdv" id="pdStockStatus" style="color:var(--ok)">판매중 (42/56)</span></div>
+    </div>
+  </div>
+
+  <!-- Modals (overlay inside phone) -->
+  <div class="modal-overlay" id="orderModal">
+    <div class="modal-sheet">
+      <div class="ms-bar"></div>
+      <h3>신상품 입고 요청</h3>
+      <div class="ms-desc">API에 등록되었으나 현재 자판기에 미입고된 상품입니다. 상세정보를 확인하고, 선택 후 수량을 지정하여 DM 주문 요청하세요.</div>
+      <div id="orderItems"></div>
+      <div class="mf-actions">
+        <button class="cancel" id="orderCancel">취소</button>
+        <button class="send" id="orderSend">DM 주문요청</button>
+      </div>
+    </div>
+  </div>
+  <div class="dm-compose-modal" id="dmComposeModal">
+    <div class="dm-sheet">
+      <div class="ms-bar"></div>
+      <h3>새 DM 작성</h3>
+      <div class="mf-field"><span class="mf-label">받는 사람</span><div class="mf-select">선택하세요 <span style="font-size:14px">▾</span></div></div>
+      <div class="mf-field"><span class="mf-label">제목</span><div class="mf-input">제목을 입력하세요</div></div>
+      <div class="mf-field"><span class="mf-label">내용</span><div class="mf-textarea">메시지 내용을 입력하세요...</div></div>
+      <div class="mf-actions">
+        <button class="cancel" id="dmComposeCancel">취소</button>
+        <button class="send" id="dmComposeSend">DM 발송</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bnav" id="bnav">
+    <div class="ni on" data-nav="dashboard"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>홈</span></div>
+    <div class="ni" data-nav="machines"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M2 9h20"/><path d="M9 21V9"/></svg><span>자판기</span></div>
+    <div class="ni" data-nav="messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>메시지</span></div>
+    <div class="ni" data-nav="mypage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0113 0"/></svg><span>MY</span></div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+var machRanks = [
+  ['강남역 1번출구','₩285,000','142건'],['신논현 GS타워','₩234,500','118건'],
+  ['역삼 센트럴파크','₩198,200','99건'],['삼성 코엑스몰','₩176,800','91건'],
+  ['선릉 테헤란로','₩154,000','78건'],['잠실 롯데월드','₩142,300','72건'],
+  ['교대역 3번출구','₩128,700','65건'],['서초 법원단지','₩115,400','58건'],
+  ['양재 AT센터','₩98,600','50건'],['방배 서래마을','₩87,200','44건']
+];
+var prodRanks = [
+  ['수분크림 50ml','312건'],['선크림 SPF50+ 60ml','287건'],['시카 세럼 30ml','245건'],
+  ['벨벳 립스틱 #레드','198건'],['글로우 파운데이션 30ml','176건'],['히알루론 마스크팩','162건'],
+  ['폼클렌저 150ml','148건'],['아이크림 25ml','135건'],['토너 200ml','121건'],['BB크림 40ml','108건']
+];
+
+// #4: API 기반 카테고리 (goodsTypeName)
+var apiCategories = ['전체','스킨케어','메이크업','클렌징','선케어'];
+
+// #5: 상품 목록 — 鑫之源 웹시스템 필드 기반 (goodsTypeName, goodsName, oldGoodsPrice, 유통기한, 상품코드, fileUrl, goodsPresent)
+var allProducts = [
+  {id:'G-10042',name:'수분크림 50ml',type:'스킨케어',sub:'보습',code:'CLS023560',sellP:28000,shelfLife:720,emoji:'💧',bg:'linear-gradient(135deg,#FFE0EC,#FFC1D6)',desc:'고보습 수분크림, 히알루론산 함유',status:'selling',salesAmt:1568000,sales:'₩1,568K',stocked:true,monthSales:'₩1,568,000',monthCnt:'56건',stock:'42/56'},
+  {id:'G-10043',name:'선크림 SPF50+ 60ml',type:'선케어',sub:'자외선차단',code:'CLS023561',sellP:22000,shelfLife:540,emoji:'☀️',bg:'linear-gradient(135deg,#FFF3CD,#FFE69C)',desc:'SPF50+ PA++++ 자외선차단 선크림',status:'selling',salesAmt:1254000,sales:'₩1,254K',stocked:true,monthSales:'₩1,254,000',monthCnt:'57건',stock:'38/56'},
+  {id:'G-10044',name:'시카 세럼 30ml',type:'스킨케어',sub:'진정',code:'CLS023562',sellP:35000,shelfLife:730,emoji:'🧴',bg:'linear-gradient(135deg,#D4EDDA,#A3D9B1)',desc:'시카 성분 진정 세럼, 민감피부용',status:'selling',salesAmt:980000,sales:'₩980K',stocked:true,monthSales:'₩980,000',monthCnt:'28건',stock:'35/56'},
+  {id:'G-10045',name:'벨벳 립스틱 #레드',type:'메이크업',sub:'립',code:'CLS023563',sellP:18000,shelfLife:365,emoji:'💄',bg:'linear-gradient(135deg,#F8D7DA,#F1AEB5)',desc:'벨벳 텍스처 롱래스팅 립스틱 레드',status:'lowstock',salesAmt:756000,sales:'₩756K',stocked:true,monthSales:'₩756,000',monthCnt:'42건',stock:'3/56'},
+  {id:'G-10046',name:'글로우 파운데이션 30ml',type:'메이크업',sub:'베이스',code:'CLS023564',sellP:32000,shelfLife:540,emoji:'✨',bg:'linear-gradient(135deg,#E8DAEF,#D2B4DE)',desc:'자연광 글로우 파운데이션, 촉촉한 밀착',status:'selling',salesAmt:640000,sales:'₩640K',stocked:true,monthSales:'₩640,000',monthCnt:'20건',stock:'28/56'},
+  {id:'G-10047',name:'히알루론 마스크팩 (5매)',type:'스킨케어',sub:'마스크',code:'CLS023565',sellP:15000,shelfLife:730,emoji:'🧊',bg:'linear-gradient(135deg,#DBEAFE,#93C5FD)',desc:'히알루론산 집중보습 마스크팩 5매입',status:'lowstock',salesAmt:345000,sales:'₩345K',stocked:true,monthSales:'₩345,000',monthCnt:'23건',stock:'2/56'},
+  {id:'G-10048',name:'폼클렌저 150ml',type:'클렌징',sub:'폼',code:'CLS023566',sellP:12000,shelfLife:730,emoji:'🫧',bg:'linear-gradient(135deg,#FDE2E2,#FBBCBC)',desc:'약산성 저자극 클렌징 폼',status:'selling',salesAmt:288000,sales:'₩288K',stocked:true,monthSales:'₩288,000',monthCnt:'24건',stock:'18/56'}
+];
+
+// #8: 미입고 상품 (API에 등록되어 있으나 자판기에 미배정) — 웹시스템 필드 포함
+var unstockedProducts = [
+  {id:'G-10049',name:'아이크림 25ml',type:'스킨케어',sub:'아이',code:'CLS023570',emoji:'👁️',bg:'linear-gradient(135deg,#E0F2FE,#BAE6FD)',sellP:38000,shelfLife:540,desc:'아이크림 안티에이징 집중 케어',qty:0},
+  {id:'G-10050',name:'토너 200ml',type:'스킨케어',sub:'토너',code:'CLS023571',emoji:'🧪',bg:'linear-gradient(135deg,#ECFDF5,#A7F3D0)',sellP:16000,shelfLife:730,desc:'저자극 pH밸런싱 토너',qty:0},
+  {id:'G-10051',name:'BB크림 40ml',type:'메이크업',sub:'베이스',code:'CLS023572',emoji:'🎨',bg:'linear-gradient(135deg,#FEF3C7,#FDE68A)',sellP:25000,shelfLife:365,desc:'자연스러운 커버력 BB크림 SPF35',qty:0},
+  {id:'G-10052',name:'클렌징오일 200ml',type:'클렌징',sub:'오일',code:'CLS023573',emoji:'🫗',bg:'linear-gradient(135deg,#FCE7F3,#FBCFE8)',sellP:19000,shelfLife:730,desc:'딥클렌징 오일, 워터프루프 메이크업 제거',qty:0},
+  {id:'G-10053',name:'선스틱 SPF50+',type:'선케어',sub:'스틱형',code:'CLS023574',emoji:'🌤️',bg:'linear-gradient(135deg,#FEF9C3,#FDE047)',sellP:15000,shelfLife:540,desc:'휴대용 선스틱 SPF50+ PA++++',qty:0}
+];
+
+var slotProducts = [
+  {n:'수분크림 50ml',p:'₩28,000'},{n:'선크림 SPF50+',p:'₩22,000'},{n:'시카 세럼 30ml',p:'₩35,000'},
+  {n:'벨벳 립스틱',p:'₩18,000'},{n:'파운데이션 30ml',p:'₩32,000'},{n:'마스크팩 5매',p:'₩15,000'},
+  {n:'폼클렌저 150ml',p:'₩12,000'},{n:'아이크림 25ml',p:'₩38,000'},{n:'토너 200ml',p:'₩16,000'},{n:'BB크림 40ml',p:'₩25,000'}
+];
+var chatData = {
+  admin: {name:'시스템 관리자',role:'통합관리자',msgs:[
+    {who:'them',txt:'안녕하세요, 자판기 배정 요청 건 확인되었습니다.',time:'오전 9:12'},
+    {who:'them',txt:'새 자판기 배정 요청이 승인되었습니다.',time:'오전 9:30'},
+    {who:'me',txt:'확인했습니다. 감사합니다!',time:'오전 9:35'}
+  ]},
+  sub: {name:'김서브',role:'서브관리자',msgs:[
+    {who:'them',txt:'역삼 센트럴파크 재고 보충 일정 확인 부탁드립니다.',time:'오전 10:05'},
+    {who:'me',txt:'확인 중입니다. 오늘 오후에 방문 예정입니다.',time:'오전 10:12'},
+    {who:'them',txt:'감사합니다. 보충 일정을 확인해주세요.',time:'오전 10:15'}
+  ]},
+  mgr: {name:'박매니저',role:'매장관리자',msgs:[
+    {who:'me',txt:'역삼 자판기 보충 완료되었나요?',time:'어제 14:20'},
+    {who:'them',txt:'네, 확인했습니다. 감사합니다.',time:'어제 14:35'}
+  ]}
+};
+
+// ===== INIT =====
+function buildRanking(el, data) {
+  el.innerHTML = '';
+  data.forEach(function(d, i) {
+    var it = document.createElement('div');
+    it.className = 'rk-item';
+    it.innerHTML = '<div class="rk-n' + (i < 3 ? ' top' : '') + '">' + (i+1) + '</div>' +
+      '<div class="rk-nm">' + d[0] + '</div>' +
+      '<div class="rk-v">' + d[1] + (d[2] ? '<span class="rk-s">' + d[2] + '</span>' : '') + '</div>';
+    el.appendChild(it);
+  });
+}
+buildRanking(document.getElementById('machRank'), machRanks);
+buildRanking(document.getElementById('prodRank'), prodRanks);
+
+// #4: Build product category pills
+function buildProdPills() {
+  var el = document.getElementById('prodPills');
+  el.innerHTML = '';
+  apiCategories.forEach(function(cat) {
+    var btn = document.createElement('button');
+    btn.className = 'pill' + (cat === '전체' ? ' on' : '');
+    btn.textContent = cat;
+    btn.addEventListener('click', function() {
+      el.querySelectorAll('.pill').forEach(function(p) { p.classList.remove('on'); });
+      btn.classList.add('on');
+      renderProducts(cat);
+    });
+    el.appendChild(btn);
+  });
+}
+
+// #5: Render product list — 매출순위 내림차순 정렬, 순위번호 표시
+function renderProducts(filter) {
+  var el = document.getElementById('prodItems');
+  el.innerHTML = '';
+  var list = filter === '전체' ? allProducts.slice() : allProducts.filter(function(p) { return p.type === filter; });
+  list.sort(function(a, b) { return b.salesAmt - a.salesAmt; });
+  list.forEach(function(p, i) {
+    var statusColor = p.status === 'selling' ? 'var(--ok)' : 'var(--warn)';
+    var statusText = p.status === 'selling' ? '판매중' : '재고부족';
+    var origIdx = allProducts.indexOf(p);
+    var item = document.createElement('div');
+    item.className = 'prod-item';
+    item.innerHTML =
+      '<div class="pi-rank' + (i < 3 ? ' top' : '') + '">' + (i + 1) + '</div>' +
+      '<div class="pi-img" style="background:' + p.bg + '">' + p.emoji + '</div>' +
+      '<div class="pi-inf"><div class="pi-nm">' + p.name + '</div><div class="pi-pr">₩' + p.sellP.toLocaleString() + '</div><div class="pi-cat">' + p.type + ' · ' + p.sub + '</div></div>' +
+      '<div class="pi-right">' +
+        '<div class="pi-sales">' + p.sales + '</div>' +
+        '<div class="pi-status"><span class="sd" style="background:' + statusColor + '"></span>' + statusText + '</div>' +
+        '<button class="pi-btn" data-pidx="' + origIdx + '">제품정보</button>' +
+      '</div>';
+    el.appendChild(item);
+  });
+}
+
+buildProdPills();
+renderProducts('전체');
+
+// #6: Product detail sub-page — 웹시스템 필드 기준 + 미입고 상품도 지원
+function showProductDetail(p, isStocked) {
+  document.getElementById('pdImg').style.background = p.bg;
+  document.getElementById('pdImg').textContent = p.emoji;
+  document.getElementById('pdName').textContent = p.name;
+  document.getElementById('pdCat').textContent = p.type + ' · ' + p.sub;
+  document.getElementById('pdPrice').textContent = '₩' + p.sellP.toLocaleString();
+  document.getElementById('pdTypeName').textContent = p.type;
+  document.getElementById('pdGoodsName').textContent = p.name;
+  document.getElementById('pdSellPrice').textContent = '₩' + p.sellP.toLocaleString();
+  document.getElementById('pdShelfLife').textContent = (p.shelfLife || 0) + '일';
+  document.getElementById('pdCode').textContent = p.code || '';
+  document.getElementById('pdThumb').style.background = p.bg;
+  document.getElementById('pdThumb').textContent = p.emoji;
+  document.getElementById('pdDesc').textContent = p.desc || '';
+  var salesSec = document.getElementById('pdSalesSection');
+  if (isStocked) {
+    salesSec.style.display = '';
+    document.getElementById('pdMonthSales').textContent = p.monthSales || '₩0';
+    document.getElementById('pdMonthCount').textContent = p.monthCnt || '0건';
+    var stockColor = p.status === 'selling' ? 'var(--ok)' : 'var(--warn)';
+    var stockLabel = p.status === 'selling' ? '판매중' : '재고부족';
+    document.getElementById('pdStockStatus').textContent = stockLabel + ' (' + p.stock + ')';
+    document.getElementById('pdStockStatus').style.color = stockColor;
+  } else {
+    salesSec.style.display = 'none';
+  }
+  document.getElementById('prodDetailSub').style.display = '';
+  document.getElementById('fabAddProduct').classList.remove('on');
+}
+var pdBackSource = 'products';
+document.getElementById('prodItems').addEventListener('click', function(e) {
+  var btn = e.target.closest('.pi-btn');
+  if (!btn) return;
+  var idx = Number(btn.dataset.pidx);
+  var p = allProducts[idx];
+  if (!p) return;
+  pdBackSource = 'products';
+  showProductDetail(p, true);
+});
+document.getElementById('pdBack').addEventListener('click', function() {
+  document.getElementById('prodDetailSub').style.display = 'none';
+  if (pdBackSource === 'order') {
+    document.getElementById('orderModal').classList.add('on');
+  } else {
+    document.getElementById('fabAddProduct').classList.add('on');
+  }
+});
+
+// Slot grid
+var sg = document.getElementById('slotGrid');
+for (var r = 1; r <= 7; r++) {
+  for (var c = 1; c <= 8; c++) {
+    var cell = document.createElement('div');
+    var rnd = Math.random(), state, stock, mx = 10;
+    if (rnd < .12) { state = 'c'; stock = 0; }
+    else if (rnd < .28) { state = 'b'; stock = Math.floor(Math.random()*3)+1; }
+    else { state = 'a'; stock = Math.floor(Math.random()*5)+5; }
+    var pr = slotProducts[Math.floor(Math.random()*slotProducts.length)];
+    cell.className = 'sc ' + state;
+    cell.innerHTML = '<span class="c1">' + r + '-' + c + '</span><span class="c2">' + stock + '/' + mx + '</span>' +
+      (state !== 'c' ? '<div class="pop"><div class="p1">' + pr.n + '</div><div class="p2">' + pr.p + '</div><div class="p3">재고: ' + stock + '/' + mx + '</div></div>' : '');
+    sg.appendChild(cell);
+  }
+}
+
+// ===== NAVIGATION =====
+var content = document.getElementById('content');
+var sbar = document.getElementById('sbar');
+var bnav = document.getElementById('bnav');
+
+function go(id, opts) {
+  opts = opts || {};
+  if (id === 'messages') {
+    document.getElementById('msgMain').style.display = '';
+    document.getElementById('msgChat').style.display = 'none';
+    document.getElementById('dmComposeModal').classList.remove('on');
+  }
+  if (id === 'mypage') {
+    document.getElementById('myMain').style.display = '';
+    document.getElementById('myUsers').style.display = 'none';
+  }
+  // Close modals
+  document.getElementById('orderModal').classList.remove('on');
+  document.getElementById('prodDetailSub').style.display = 'none';
+  // Hide FABs
+  document.getElementById('fabAddProduct').classList.remove('on');
+  document.getElementById('fabDmCompose').style.display = 'none';
+  // Screens
+  document.querySelectorAll('.scr').forEach(function(s) { s.classList.toggle('on', s.id === 's-' + id); });
+  // Top nav
+  document.querySelectorAll('.top-nav button').forEach(function(b) { b.classList.toggle('on', b.dataset.s === id); });
+  // Bottom nav
+  bnav.querySelectorAll('.ni').forEach(function(n) { n.classList.toggle('on', n.dataset.nav === id); });
+  // Login special
+  var isLogin = id === 'login';
+  bnav.style.display = isLogin ? 'none' : '';
+  content.classList.toggle('full', isLogin);
+  sbar.classList.toggle('blue', isLogin);
+  content.scrollTop = 0;
+  // Machine tab switch
+  if (id === 'machines') {
+    if (opts.tab) {
+      var tabBtns = document.querySelectorAll('#mTabs button');
+      tabBtns.forEach(function(b) { b.classList.toggle('on', b.dataset.mt === opts.tab); });
+      document.querySelectorAll('.mt-pane').forEach(function(p) { p.style.display = p.id === 'mt-' + opts.tab ? '' : 'none'; p.classList.toggle('on', p.id === 'mt-' + opts.tab); });
+    }
+    updateMachineFab();
+  }
+  // #1: Detail view mode
+  if (id === 'detail') {
+    var mode = opts.detailMode || 'info';
+    document.getElementById('detTitle').textContent = mode === 'info' ? '상세보기' : '재고 확인';
+    document.getElementById('detInfo').style.display = mode === 'info' ? '' : 'none';
+    document.getElementById('detInventory').style.display = mode === 'inventory' ? '' : 'none';
+  }
+  // #9: DM FAB on messages DM tab
+  if (id === 'messages') {
+    var dmActive = document.querySelector('#msgTabs button[data-mg="dm"]');
+    if (dmActive && dmActive.classList.contains('on')) {
+      document.getElementById('fabDmCompose').style.display = 'flex';
+    }
+  }
+}
+
+// #1: Detail buttons (상세보기 vs 재고확인)
+document.addEventListener('click', function(e) {
+  var detBtn = e.target.closest('[data-detail]');
+  if (detBtn) {
+    e.stopPropagation();
+    go('detail', {detailMode: detBtn.dataset.detail});
+    return;
+  }
+  var el = e.target.closest('[data-goto]');
+  if (el) {
+    e.stopPropagation();
+    go(el.dataset.goto, {tab: el.dataset.tab});
+  }
+});
+
+// Top nav
+document.getElementById('topNav').addEventListener('click', function(e) {
+  var btn = e.target.closest('button');
+  if (btn) go(btn.dataset.s);
+});
+
+// Bottom nav
+bnav.addEventListener('click', function(e) {
+  var ni = e.target.closest('.ni');
+  if (ni) go(ni.dataset.nav);
+});
+
+// Login button
+document.getElementById('loginBtn').addEventListener('click', function() { go('dashboard'); });
+
+// Logout
+document.getElementById('myLogout').addEventListener('click', function() { go('login'); });
+
+// ===== MACHINE TABS (underline) =====
+function updateMachineFab() {
+  var activeTab = document.querySelector('#mTabs button.on');
+  var mt = activeTab ? activeTab.dataset.mt : '';
+  var fab = document.getElementById('fabAddProduct');
+  if (mt === 'products') {
+    fab.classList.add('on');
+  } else {
+    fab.classList.remove('on');
+  }
+}
+
+document.getElementById('mTabs').addEventListener('click', function(e) {
+  var btn = e.target.closest('button');
+  if (!btn) return;
+  this.querySelectorAll('button').forEach(function(b) { b.classList.remove('on'); });
+  btn.classList.add('on');
+  var mt = btn.dataset.mt;
+  document.querySelectorAll('.mt-pane').forEach(function(p) { p.style.display = p.id === 'mt-' + mt ? '' : 'none'; });
+  document.getElementById('prodDetailSub').style.display = 'none';
+  updateMachineFab();
+});
+
+// ===== PERIOD BUTTONS =====
+var perMap = {week:'perWeek',month:'perMonth',custom:'perCustom'};
+document.getElementById('perBtns').addEventListener('click', function(e) {
+  var btn = e.target.closest('.per-btn');
+  if (!btn) return;
+  var key = btn.dataset.per;
+  var wasOn = btn.classList.contains('on');
+  this.querySelectorAll('.per-btn').forEach(function(b) { b.classList.remove('on'); });
+  Object.values(perMap).forEach(function(id) { document.getElementById(id).classList.remove('on'); });
+  if (!wasOn) {
+    btn.classList.add('on');
+    document.getElementById(perMap[key]).classList.add('on');
+  }
+});
+
+// ===== MESSAGE TABS =====
+document.getElementById('msgTabs').addEventListener('click', function(e) {
+  var btn = e.target.closest('button');
+  if (!btn) return;
+  this.querySelectorAll('button').forEach(function(b) { b.classList.remove('on'); });
+  btn.classList.add('on');
+  var mg = btn.dataset.mg;
+  document.getElementById('mg-notif').style.display = mg === 'notif' ? '' : 'none';
+  document.getElementById('mg-dm').style.display = mg === 'dm' ? '' : 'none';
+  // #9: Show/hide DM compose FAB
+  document.getElementById('fabDmCompose').style.display = mg === 'dm' ? 'flex' : 'none';
+});
+
+// Chat detail
+document.querySelectorAll('.ch-item').forEach(function(item) {
+  item.addEventListener('click', function() {
+    var key = this.dataset.chat;
+    var data = chatData[key];
+    if (!data) return;
+    document.getElementById('chatName').textContent = data.name;
+    document.getElementById('chatRole').textContent = data.role;
+    var msgs = document.getElementById('chatMsgs');
+    msgs.innerHTML = '';
+    data.msgs.forEach(function(m) {
+      var d = document.createElement('div');
+      d.className = 'chat-bubble ' + m.who;
+      d.innerHTML = '<div>' + m.txt + '</div><div class="cb-time">' + m.time + '</div>';
+      msgs.appendChild(d);
+    });
+    document.getElementById('msgMain').style.display = 'none';
+    document.getElementById('msgChat').style.display = '';
+    document.getElementById('fabDmCompose').style.display = 'none';
+    content.scrollTop = 0;
+  });
+});
+document.getElementById('chatBack').addEventListener('click', function() {
+  document.getElementById('msgChat').style.display = 'none';
+  document.getElementById('msgMain').style.display = '';
+  var dmActive = document.querySelector('#msgTabs button[data-mg="dm"]');
+  if (dmActive && dmActive.classList.contains('on')) {
+    document.getElementById('fabDmCompose').style.display = 'flex';
+  }
+});
+
+// User manage
+document.getElementById('myAdminBtn').addEventListener('click', function() {
+  document.getElementById('myMain').style.display = 'none';
+  document.getElementById('myUsers').style.display = '';
+  content.scrollTop = 0;
+});
+document.getElementById('umBack').addEventListener('click', function() {
+  document.getElementById('myUsers').style.display = 'none';
+  document.getElementById('myMain').style.display = '';
+});
+
+// ===== PILL TOGGLES =====
+document.querySelectorAll('.pills').forEach(function(row) {
+  if (row.id === 'prodPills') return;
+  row.addEventListener('click', function(e) {
+    var pill = e.target.closest('.pill');
+    if (!pill) return;
+    row.querySelectorAll('.pill').forEach(function(p) { p.classList.remove('on'); });
+    pill.classList.add('on');
+  });
+});
+
+// ===== MACHINE SALES PER-MACHINE PERIOD BUTTONS =====
+document.querySelectorAll('.ms-per').forEach(function(row) {
+  row.addEventListener('click', function(e) {
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    row.querySelectorAll('button').forEach(function(b) { b.classList.remove('on'); });
+    btn.classList.add('on');
+  });
+});
+
+// ===== #7+8: PRODUCT ADD FAB → Order modal (상세정보 보기 포함) =====
+function buildOrderItems() {
+  var el = document.getElementById('orderItems');
+  el.innerHTML = '';
+  unstockedProducts.forEach(function(p, i) {
+    p.qty = 0;
+    var item = document.createElement('div');
+    item.className = 'order-item';
+    item.innerHTML =
+      '<div class="oi-ck" data-oi="' + i + '"></div>' +
+      '<div class="oi-img" style="background:' + p.bg + '">' + p.emoji + '</div>' +
+      '<div class="oi-inf"><div class="oi-nm">' + p.name + '</div><div class="oi-cat">' + p.type + ' · ' + p.sub + ' · ₩' + p.sellP.toLocaleString() + '</div>' +
+      '<button class="oi-detail-btn" data-oi="' + i + '">상세정보</button></div>' +
+      '<div class="oi-qty"><button class="oq-minus" data-oi="' + i + '">−</button><span class="oq-val" id="oqv' + i + '">0</span><button class="oq-plus" data-oi="' + i + '">+</button></div>';
+    el.appendChild(item);
+  });
+}
+
+document.getElementById('fabAddProduct').addEventListener('click', function() {
+  buildOrderItems();
+  document.getElementById('orderModal').classList.add('on');
+});
+
+document.getElementById('orderItems').addEventListener('click', function(e) {
+  // 상세정보 버튼
+  var detBtn = e.target.closest('.oi-detail-btn');
+  if (detBtn) {
+    var di = Number(detBtn.dataset.oi);
+    var p = unstockedProducts[di];
+    if (p) {
+      pdBackSource = 'order';
+      document.getElementById('orderModal').classList.remove('on');
+      showProductDetail(p, false);
+    }
+    return;
+  }
+  var ck = e.target.closest('.oi-ck');
+  if (ck) {
+    ck.classList.toggle('checked');
+    if (ck.classList.contains('checked')) {
+      ck.textContent = '✓';
+      var idx = Number(ck.dataset.oi);
+      if (unstockedProducts[idx].qty === 0) {
+        unstockedProducts[idx].qty = 1;
+        document.getElementById('oqv' + idx).textContent = '1';
+      }
+    } else {
+      ck.textContent = '';
+    }
+    return;
+  }
+  var plus = e.target.closest('.oq-plus');
+  if (plus) {
+    var i = Number(plus.dataset.oi);
+    unstockedProducts[i].qty = Math.min(unstockedProducts[i].qty + 1, 99);
+    document.getElementById('oqv' + i).textContent = unstockedProducts[i].qty;
+    var ckEl = document.querySelector('.oi-ck[data-oi="' + i + '"]');
+    if (!ckEl.classList.contains('checked')) { ckEl.classList.add('checked'); ckEl.textContent = '✓'; }
+    return;
+  }
+  var minus = e.target.closest('.oq-minus');
+  if (minus) {
+    var j = Number(minus.dataset.oi);
+    unstockedProducts[j].qty = Math.max(unstockedProducts[j].qty - 1, 0);
+    document.getElementById('oqv' + j).textContent = unstockedProducts[j].qty;
+    if (unstockedProducts[j].qty === 0) {
+      var ckEl2 = document.querySelector('.oi-ck[data-oi="' + j + '"]');
+      ckEl2.classList.remove('checked'); ckEl2.textContent = '';
+    }
+    return;
+  }
+});
+
+document.getElementById('orderCancel').addEventListener('click', function() {
+  document.getElementById('orderModal').classList.remove('on');
+});
+document.getElementById('orderSend').addEventListener('click', function() {
+  var selected = [];
+  unstockedProducts.forEach(function(p) {
+    if (p.qty > 0) selected.push(p.name + ' (₩' + p.sellP.toLocaleString() + ') × ' + p.qty + '개');
+  });
+  document.getElementById('orderModal').classList.remove('on');
+  if (selected.length > 0) {
+    var total = unstockedProducts.reduce(function(s, p) { return s + p.sellP * p.qty; }, 0);
+    alert('DM 주문요청이 발송되었습니다.\n\n' + selected.join('\n') + '\n\n예상 금액: ₩' + total.toLocaleString() + '\n\n메시지 탭에서 확인하세요.');
+  } else {
+    alert('선택된 상품이 없습니다.');
+  }
+});
+
+// ===== #9: DM COMPOSE =====
+document.getElementById('fabDmCompose').addEventListener('click', function() {
+  document.getElementById('dmComposeModal').classList.add('on');
+});
+document.getElementById('dmComposeCancel').addEventListener('click', function() {
+  document.getElementById('dmComposeModal').classList.remove('on');
+});
+document.getElementById('dmComposeSend').addEventListener('click', function() {
+  document.getElementById('dmComposeModal').classList.remove('on');
+  alert('DM이 발송되었습니다.');
+});
+
+// Bell → messages
+document.querySelectorAll('.bell').forEach(function(bell) {
+  bell.addEventListener('click', function() { go('messages'); });
+});
+</script>

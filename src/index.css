@@ -5,7 +5,7 @@
 /* ===== VMMS Design Tokens ===== */
 :root {
   /* Typography */
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
   --font-mono: 'SF Mono', 'Roboto Mono', 'Courier New', monospace;
 
   /* Safe area */
@@ -13,9 +13,51 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 
   /* Layout */
-  --header-h: 52px;
+  --header-h: 60px;
   --bottom-nav-h: 60px;
+  --sidebar-w: 236px;
   --page-mx: 16px;
+
+  /* Semantic Colors — Light */
+  --c-bg: #F5F6F8;
+  --c-page-bg: #F5F6F8;
+  --c-sf: #FFFFFF;
+  --c-tx1: #14161A;
+  --c-tx2: #5B6270;
+  --c-tx3: #9AA0AC;
+  --c-bd: #E7E9EE;
+  --c-bd2: #EFF1F4;
+  --c-pri: #2E5CE6;
+  --c-pri-lt: #EAF0FF;
+  --c-ok: #1FA971;
+  --c-ok-lt: #E8F7F0;
+  --c-err: #E5484D;
+  --c-err-lt: #FDEBEC;
+  --c-warn: #DB8B1F;
+  --c-warn-lt: #FBF1DF;
+  --c-off: #9AA0AC;
+  --c-inp-bg: #F5F6F8;
+}
+
+[data-theme="dark"] {
+  --c-bg: #0E1015;
+  --c-page-bg: #15171D;
+  --c-sf: #181B22;
+  --c-tx1: #F2F3F6;
+  --c-tx2: #A7ACB8;
+  --c-tx3: #666C79;
+  --c-bd: #262A33;
+  --c-bd2: #1E212A;
+  --c-pri: #5B8CFF;
+  --c-pri-lt: #1B2540;
+  --c-ok: #34D399;
+  --c-ok-lt: #123328;
+  --c-err: #F87171;
+  --c-err-lt: #3A1E20;
+  --c-warn: #F5B860;
+  --c-warn-lt: #332510;
+  --c-off: #6B7280;
+  --c-inp-bg: #20232B;
 }
 
 /* ===== Base Reset ===== */
@@ -28,7 +70,8 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-800;
+    background-color: var(--c-bg);
+    color: var(--c-tx1);
     overscroll-behavior-y: contain;
   }
 
@@ -50,14 +93,26 @@
 @layer components {
   /* Page container with safe area */
   .page {
-    @apply min-h-screen pb-[calc(var(--bottom-nav-h)+var(--safe-bottom))] pt-[var(--header-h)];
+    @apply min-h-screen pt-[var(--header-h)];
     padding-left: var(--page-mx);
     padding-right: var(--page-mx);
+    padding-bottom: calc(var(--bottom-nav-h) + var(--safe-bottom));
+  }
+
+  @media (min-width: 1024px) {
+    .page {
+      padding-top: 0;
+      padding-bottom: 24px;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
   }
 
   /* Card base */
   .card {
-    @apply bg-white rounded-card shadow-card p-sp-4;
+    background-color: var(--c-sf);
+    border: 1px solid var(--c-bd2);
+    @apply rounded-card shadow-card p-sp-4;
   }
 
   /* Stat card (Dashboard KPI) */
@@ -66,11 +121,13 @@
   }
 
   .stat-card-label {
-    @apply text-meta text-gray-500;
+    color: var(--c-tx3);
+    @apply text-meta;
   }
 
   .stat-card-value {
-    @apply text-money text-gray-900 font-money;
+    color: var(--c-tx1);
+    @apply text-money font-money;
   }
 
   /* Status dot */
@@ -78,10 +135,10 @@
     @apply w-2.5 h-2.5 rounded-full inline-block;
   }
 
-  .status-dot--online { @apply bg-success-500; }
-  .status-dot--offline { @apply bg-warning-500; }
-  .status-dot--fault { @apply bg-danger-500; }
-  .status-dot--stopped { @apply bg-gray-400; }
+  .status-dot--online { background-color: var(--c-ok); }
+  .status-dot--offline { background-color: var(--c-warn); }
+  .status-dot--fault { background-color: var(--c-err); }
+  .status-dot--stopped { background-color: var(--c-off); }
 
   /* Touch target minimum */
   .touch-target {
@@ -93,11 +150,11 @@
     @apply w-12 h-14 rounded-lg border-2 flex flex-col items-center justify-center text-xs font-semibold;
   }
 
-  .slot-cell--full { @apply border-success-500 bg-success-50 text-success-700; }
-  .slot-cell--mid { @apply border-gray-300 bg-gray-50 text-gray-600; }
-  .slot-cell--low { @apply border-warning-500 bg-warning-50 text-warning-600; }
-  .slot-cell--empty { @apply border-danger-500 bg-danger-50 text-danger-600; }
-  .slot-cell--none { @apply border-gray-200 bg-white text-gray-400; }
+  .slot-cell--full { border-color: var(--c-ok); background-color: var(--c-ok-lt); color: var(--c-ok); }
+  .slot-cell--mid { border-color: var(--c-bd); background-color: var(--c-page-bg); color: var(--c-tx2); }
+  .slot-cell--low { border-color: var(--c-warn); background-color: var(--c-warn-lt); color: var(--c-warn); }
+  .slot-cell--empty { border-color: var(--c-err); background-color: var(--c-err-lt); color: var(--c-err); }
+  .slot-cell--none { border-color: var(--c-bd); background-color: var(--c-sf); color: var(--c-tx3); }
 }
 
 /* ===== Utility Layer ===== */
@@ -105,4 +162,22 @@
   .safe-bottom {
     padding-bottom: calc(var(--safe-bottom) + var(--bottom-nav-h));
   }
+}
+
+/* ===== Animations ===== */
+@keyframes vmFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes vmSheetUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes vmToast {
+  0% { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  85% { opacity: 1; }
+  100% { opacity: 0; }
 }
