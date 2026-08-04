@@ -39,9 +39,8 @@ export function useRealtimeAlerts() {
     const { accessToken } = getStoredTokens();
     if (!accessToken) return;
 
-    // EventSource는 header를 커스텀할 수 없으므로 query param으로 토큰 전달
-    // 또는 쿠키 기반 → 여기서는 fetch를 이용한 SSE polyfill 패턴 사용
-    const url = `/api/notifications/stream`;
+    const base = import.meta.env.VITE_API_URL || '';
+    const url = `${base}/api/notifications/stream`;
 
     // fetch-based SSE (Authorization header 지원)
     const abortController = new AbortController();

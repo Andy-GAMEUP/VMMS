@@ -28,3 +28,4 @@ server/db/users.json
 
 # Logs
 *.log
+.vercel
