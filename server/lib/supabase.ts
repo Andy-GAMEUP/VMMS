@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-console.log('[BOOT] ENV keys available:', Object.keys(process.env).filter(k => k.startsWith('SUPA') || k.startsWith('JWT') || k.startsWith('XZY') || k === 'PORT' || k === 'NODE_ENV').join(', '));
+console.log('[BOOT] ALL ENV keys:', Object.keys(process.env).sort().join(', '));
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
