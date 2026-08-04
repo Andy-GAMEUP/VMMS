@@ -21,6 +21,7 @@ import { createChatRoutes } from './routes/chat.js';
 import { createDashboardRoutes } from './routes/dashboard.js';
 import { authMiddleware } from './lib/auth.js';
 import { hashPassword } from './lib/auth.js';
+import { StatusPoller } from './lib/statusPoller.js';
 import { userStore } from './db/userStore.js';
 import { chatStore } from './db/chatStore.js';
 
@@ -139,6 +140,12 @@ async function bootstrap() {
     console.warn('  [BOOT] XZY_AMQP_URL 미설정 → AMQP 비활성');
   }
 
+  // REST API 폴링 알림 (AMQP 보완/대체)
+  const pollerInterval = Number(process.env.POLLER_INTERVAL_MIN) || 5;
+  const poller = new StatusPoller(xzy, amqpConsumer, pollerInterval);
+  poller.start();
+  pollerRef = poller;
+
   app.listen(PORT, () => {
     console.log(`\n  VMMS BFF Server`);
     console.log(`  ─────────────────────────────`);
@@ -148,13 +155,17 @@ async function bootstrap() {
     console.log(`  SSE:     http://localhost:${PORT}/api/notifications/stream`);
     console.log(`  鑫之源:  appId=${process.env.XZY_APP_ID}`);
     console.log(`  AMQP:    ${process.env.XZY_AMQP_URL ? '연결 시도 중' : '비활성'}`);
+    console.log(`  Poller:  ${pollerInterval}분 간격`);
     console.log(`  ─────────────────────────────\n`);
   });
 }
 
-// Graceful shutdown
+// Graceful shutdown — poller 참조를 위해 모듈 스코프 변수 사용
+let pollerRef: StatusPoller | null = null;
+
 process.on('SIGINT', async () => {
   console.log('\n  [SHUTDOWN] Graceful shutdown...');
+  pollerRef?.stop();
   await amqpConsumer.stop();
   process.exit(0);
 });
