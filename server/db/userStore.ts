@@ -1,10 +1,8 @@
 /**
- * JSON 파일 기반 사용자 저장소
- * 경량 운영용 — 프로덕션 시 SQLite/PostgreSQL 전환 가능
+ * Supabase 기반 사용자 저장소
  */
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { supabase } from '../lib/supabase.js';
 
 export interface StoredUser {
   id: string;
@@ -20,77 +18,129 @@ export interface StoredUser {
   createdAt: number;
   lastLoginAt: number | null;
   refreshToken: string | null;
-  // business 전용
   businessName?: string;
   parentDeptId?: number;
 }
 
-const DB_PATH = join(import.meta.dirname, 'users.json');
-
-function readDB(): StoredUser[] {
-  if (!existsSync(DB_PATH)) {
-    writeFileSync(DB_PATH, '[]', 'utf8');
-    return [];
-  }
-  const raw = readFileSync(DB_PATH, 'utf8');
-  return JSON.parse(raw) as StoredUser[];
+interface DbRow {
+  id: string;
+  email: string;
+  password_hash: string;
+  name: string;
+  phone: string;
+  role: string;
+  account_type: string;
+  dept_id: number;
+  dept_name: string;
+  status: string;
+  created_at: number;
+  last_login_at: number | null;
+  refresh_token: string | null;
+  business_name: string | null;
+  parent_dept_id: number | null;
 }
 
-function writeDB(users: StoredUser[]): void {
-  writeFileSync(DB_PATH, JSON.stringify(users, null, 2), 'utf8');
+function rowToUser(r: DbRow): StoredUser {
+  return {
+    id: r.id,
+    email: r.email,
+    passwordHash: r.password_hash,
+    name: r.name,
+    phone: r.phone,
+    role: r.role as StoredUser['role'],
+    accountType: r.account_type as StoredUser['accountType'],
+    deptId: r.dept_id,
+    deptName: r.dept_name,
+    status: r.status as StoredUser['status'],
+    createdAt: r.created_at,
+    lastLoginAt: r.last_login_at,
+    refreshToken: r.refresh_token,
+    ...(r.business_name ? { businessName: r.business_name } : {}),
+    ...(r.parent_dept_id != null ? { parentDeptId: r.parent_dept_id } : {}),
+  };
+}
+
+function userToRow(u: StoredUser): Omit<DbRow, 'last_login_at' | 'refresh_token'> & { last_login_at: number | null; refresh_token: string | null } {
+  return {
+    id: u.id,
+    email: u.email,
+    password_hash: u.passwordHash,
+    name: u.name,
+    phone: u.phone,
+    role: u.role,
+    account_type: u.accountType,
+    dept_id: u.deptId,
+    dept_name: u.deptName,
+    status: u.status,
+    created_at: u.createdAt,
+    last_login_at: u.lastLoginAt,
+    refresh_token: u.refreshToken,
+    business_name: u.businessName ?? null,
+    parent_dept_id: u.parentDeptId ?? null,
+  };
 }
 
 export const userStore = {
-  /** 전체 사용자 조회 */
-  findAll(): StoredUser[] {
-    return readDB();
+  async findAll(): Promise<StoredUser[]> {
+    const { data, error } = await supabase.from('users').select('*');
+    if (error) throw error;
+    return (data as DbRow[]).map(rowToUser);
   },
 
-  /** ID로 조회 */
-  findById(id: string): StoredUser | undefined {
-    return readDB().find((u) => u.id === id);
+  async findById(id: string): Promise<StoredUser | undefined> {
+    const { data, error } = await supabase.from('users').select('*').eq('id', id).maybeSingle();
+    if (error) throw error;
+    return data ? rowToUser(data as DbRow) : undefined;
   },
 
-  /** 이메일로 조회 */
-  findByEmail(email: string): StoredUser | undefined {
-    return readDB().find((u) => u.email.toLowerCase() === email.toLowerCase());
+  async findByEmail(email: string): Promise<StoredUser | undefined> {
+    const { data, error } = await supabase.from('users').select('*').ilike('email', email).maybeSingle();
+    if (error) throw error;
+    return data ? rowToUser(data as DbRow) : undefined;
   },
 
-  /** 사용자 추가 */
-  create(user: StoredUser): StoredUser {
-    const users = readDB();
-    if (users.some((u) => u.email.toLowerCase() === user.email.toLowerCase())) {
-      throw new Error('이미 등록된 이메일입니다.');
-    }
-    users.push(user);
-    writeDB(users);
+  async create(user: StoredUser): Promise<StoredUser> {
+    const existing = await this.findByEmail(user.email);
+    if (existing) throw new Error('이미 등록된 이메일입니다.');
+    const { error } = await supabase.from('users').insert(userToRow(user));
+    if (error) throw error;
     return user;
   },
 
-  /** 사용자 업데이트 */
-  update(id: string, patch: Partial<StoredUser>): StoredUser | undefined {
-    const users = readDB();
-    const idx = users.findIndex((u) => u.id === id);
-    if (idx === -1) return undefined;
-    users[idx] = { ...users[idx], ...patch };
-    writeDB(users);
-    return users[idx];
+  async update(id: string, patch: Partial<StoredUser>): Promise<StoredUser | undefined> {
+    const dbPatch: Record<string, unknown> = {};
+    if (patch.email !== undefined) dbPatch.email = patch.email;
+    if (patch.passwordHash !== undefined) dbPatch.password_hash = patch.passwordHash;
+    if (patch.name !== undefined) dbPatch.name = patch.name;
+    if (patch.phone !== undefined) dbPatch.phone = patch.phone;
+    if (patch.role !== undefined) dbPatch.role = patch.role;
+    if (patch.accountType !== undefined) dbPatch.account_type = patch.accountType;
+    if (patch.deptId !== undefined) dbPatch.dept_id = patch.deptId;
+    if (patch.deptName !== undefined) dbPatch.dept_name = patch.deptName;
+    if (patch.status !== undefined) dbPatch.status = patch.status;
+    if (patch.lastLoginAt !== undefined) dbPatch.last_login_at = patch.lastLoginAt;
+    if (patch.refreshToken !== undefined) dbPatch.refresh_token = patch.refreshToken;
+    if (patch.businessName !== undefined) dbPatch.business_name = patch.businessName;
+    if (patch.parentDeptId !== undefined) dbPatch.parent_dept_id = patch.parentDeptId;
+
+    const { data, error } = await supabase.from('users').update(dbPatch).eq('id', id).select('*').maybeSingle();
+    if (error) throw error;
+    return data ? rowToUser(data as DbRow) : undefined;
   },
 
-  /** Refresh 토큰 저장 */
-  setRefreshToken(id: string, token: string | null): void {
-    this.update(id, { refreshToken: token });
+  async setRefreshToken(id: string, token: string | null): Promise<void> {
+    await this.update(id, { refreshToken: token });
   },
 
-  /** Refresh 토큰으로 조회 */
-  findByRefreshToken(token: string): StoredUser | undefined {
-    return readDB().find((u) => u.refreshToken === token);
+  async findByRefreshToken(token: string): Promise<StoredUser | undefined> {
+    const { data, error } = await supabase.from('users').select('*').eq('refresh_token', token).maybeSingle();
+    if (error) throw error;
+    return data ? rowToUser(data as DbRow) : undefined;
   },
 
-  /** 초기 admin 계정 생성 (최초 1회) */
   async seedAdmin(passwordHash: string): Promise<boolean> {
-    const users = readDB();
-    if (users.some((u) => u.role === 'admin')) return false;
+    const { data } = await supabase.from('users').select('id').eq('role', 'admin').limit(1);
+    if (data && data.length > 0) return false;
 
     const admin: StoredUser = {
       id: 'admin-001',
@@ -107,14 +157,12 @@ export const userStore = {
       lastLoginAt: null,
       refreshToken: null,
     };
-    users.push(admin);
-    writeDB(users);
+    await this.create(admin);
     console.log('  [DB] Admin 계정 생성: admin@vmms.local');
     return true;
   },
 
   async seedTestUsers(passwordHash: string): Promise<number> {
-    const users = readDB();
     const testAccounts: Omit<StoredUser, 'passwordHash'>[] = [
       {
         id: 'test-manager-001',
@@ -134,14 +182,11 @@ export const userStore = {
 
     let created = 0;
     for (const acct of testAccounts) {
-      if (!users.some((u) => u.email === acct.email)) {
-        users.push({ ...acct, passwordHash });
+      const existing = await this.findByEmail(acct.email);
+      if (!existing) {
+        await this.create({ ...acct, passwordHash });
         created++;
       }
-    }
-
-    if (created > 0) {
-      writeDB(users);
     }
     return created;
   },

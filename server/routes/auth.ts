@@ -66,7 +66,7 @@ export function createAuthRoutes(xzy: XzyClient): Router {
       }
 
       // 이메일 중복 확인
-      if (userStore.findByEmail(email)) {
+      if (await userStore.findByEmail(email)) {
         res.status(409).json({ success: false, error: '이미 등록된 이메일입니다.' });
         return;
       }
@@ -109,7 +109,7 @@ export function createAuthRoutes(xzy: XzyClient): Router {
         }),
       };
 
-      userStore.create(newUser);
+      await userStore.create(newUser);
 
       const typeLabel = accountType === 'sub_admin' ? 'Sub Admin' : '사업자';
       console.log(`  [AUTH] 신규 가입: ${email} (${name}) [${typeLabel}] → pending`);
@@ -135,7 +135,7 @@ export function createAuthRoutes(xzy: XzyClient): Router {
         return;
       }
 
-      const user = userStore.findByEmail(email);
+      const user = await userStore.findByEmail(email);
       if (!user) {
         res.status(401).json({ success: false, error: '이메일 또는 비밀번호가 올바르지 않습니다.' });
         return;
@@ -170,7 +170,7 @@ export function createAuthRoutes(xzy: XzyClient): Router {
       const refreshToken = createRefreshToken(payload);
 
       // refreshToken 저장 & 로그인 시각 갱신
-      userStore.update(user.id, {
+      await userStore.update(user.id, {
         refreshToken,
         lastLoginAt: Date.now(),
       });
@@ -192,7 +192,7 @@ export function createAuthRoutes(xzy: XzyClient): Router {
   });
 
   // ─── POST /refresh ──────────────────────────────────────
-  router.post('/refresh', (req: Request, res: Response) => {
+  router.post('/refresh', async (req: Request, res: Response) => {
     try {
       const { refreshToken } = req.body;
 
@@ -202,7 +202,7 @@ export function createAuthRoutes(xzy: XzyClient): Router {
       }
 
       // DB에서 refreshToken 검증
-      const user = userStore.findByRefreshToken(refreshToken);
+      const user = await userStore.findByRefreshToken(refreshToken);
       if (!user) {
         res.status(401).json({ success: false, error: '유효하지 않은 refreshToken입니다.' });
         return;
@@ -214,7 +214,7 @@ export function createAuthRoutes(xzy: XzyClient): Router {
         decoded = verifyRefreshToken(refreshToken);
       } catch {
         // 만료된 refreshToken → DB에서 제거
-        userStore.setRefreshToken(user.id, null);
+        await userStore.setRefreshToken(user.id, null);
         res.status(401).json({ success: false, error: 'refreshToken이 만료되었습니다. 다시 로그인해주세요.' });
         return;
       }
@@ -231,7 +231,7 @@ export function createAuthRoutes(xzy: XzyClient): Router {
       const newRefreshToken = createRefreshToken(payload);
 
       // 기존 refreshToken 교체 (rotation)
-      userStore.setRefreshToken(user.id, newRefreshToken);
+      await userStore.setRefreshToken(user.id, newRefreshToken);
 
       res.json({
         success: true,
@@ -247,10 +247,10 @@ export function createAuthRoutes(xzy: XzyClient): Router {
   });
 
   // ─── POST /logout ───────────────────────────────────────
-  router.post('/logout', authMiddleware, (req: Request, res: Response) => {
+  router.post('/logout', authMiddleware, async (req: Request, res: Response) => {
     try {
       const user = (req as AuthenticatedRequest).user;
-      userStore.setRefreshToken(user.userId, null);
+      await userStore.setRefreshToken(user.userId, null);
 
       console.log(`  [AUTH] 로그아웃: ${user.email}`);
 
@@ -262,10 +262,10 @@ export function createAuthRoutes(xzy: XzyClient): Router {
   });
 
   // ─── GET /me ────────────────────────────────────────────
-  router.get('/me', authMiddleware, (req: Request, res: Response) => {
+  router.get('/me', authMiddleware, async (req: Request, res: Response) => {
     try {
       const tokenUser = (req as AuthenticatedRequest).user;
-      const user = userStore.findById(tokenUser.userId);
+      const user = await userStore.findById(tokenUser.userId);
 
       if (!user) {
         res.status(404).json({ success: false, error: '사용자를 찾을 수 없습니다.' });

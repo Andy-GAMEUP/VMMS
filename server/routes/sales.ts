@@ -56,7 +56,7 @@ export function createSalesRoutes(xzy: XzyClient): Router {
       }));
 
       if (user.role !== 'admin') {
-        const assignedIds = machineAssignStore.getByUser(user.userId);
+        const assignedIds = await machineAssignStore.getByUser(user.userId);
         machines = machines.filter((m) => assignedIds.includes(m.funId));
       }
 

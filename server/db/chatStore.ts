@@ -1,21 +1,16 @@
 /**
- * JSON 파일 기반 채팅 저장소
- * - 채팅방 목록 + 메시지 관리
- * - 프로덕션 시 SQLite/PostgreSQL 전환 가능
+ * Supabase 기반 채팅 저장소
  */
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { supabase } from '../lib/supabase.js';
 
-/** 채팅방 */
 export interface ChatRoom {
   id: string;
-  participants: string[]; // userId 배열
+  participants: string[];
   createdAt: number;
   updatedAt: number;
 }
 
-/** 채팅 메시지 */
 export interface ChatMessage {
   id: string;
   roomId: string;
@@ -24,156 +19,147 @@ export interface ChatMessage {
   senderRole: string;
   text: string;
   timestamp: number;
-  readBy: string[]; // 읽은 userId 배열
+  readBy: string[];
 }
 
-// ===== 채팅방 저장소 =====
-const ROOMS_PATH = join(import.meta.dirname, 'chatRooms.json');
-const MESSAGES_PATH = join(import.meta.dirname, 'chatMessages.json');
-
-function readRooms(): ChatRoom[] {
-  if (!existsSync(ROOMS_PATH)) {
-    writeFileSync(ROOMS_PATH, '[]', 'utf8');
-    return [];
-  }
-  return JSON.parse(readFileSync(ROOMS_PATH, 'utf8')) as ChatRoom[];
+interface RoomRow {
+  id: string;
+  participants: string[];
+  created_at: number;
+  updated_at: number;
 }
 
-function writeRooms(rooms: ChatRoom[]): void {
-  writeFileSync(ROOMS_PATH, JSON.stringify(rooms, null, 2), 'utf8');
+interface MsgRow {
+  id: string;
+  room_id: string;
+  sender_id: string;
+  sender_name: string;
+  sender_role: string;
+  text: string;
+  timestamp: number;
+  read_by: string[];
 }
 
-function readMessages(): ChatMessage[] {
-  if (!existsSync(MESSAGES_PATH)) {
-    writeFileSync(MESSAGES_PATH, '[]', 'utf8');
-    return [];
-  }
-  return JSON.parse(readFileSync(MESSAGES_PATH, 'utf8')) as ChatMessage[];
+function rowToRoom(r: RoomRow): ChatRoom {
+  return { id: r.id, participants: r.participants, createdAt: r.created_at, updatedAt: r.updated_at };
 }
 
-function writeMessages(messages: ChatMessage[]): void {
-  writeFileSync(MESSAGES_PATH, JSON.stringify(messages, null, 2), 'utf8');
+function rowToMsg(r: MsgRow): ChatMessage {
+  return {
+    id: r.id, roomId: r.room_id, senderId: r.sender_id, senderName: r.sender_name,
+    senderRole: r.sender_role, text: r.text, timestamp: r.timestamp, readBy: r.read_by,
+  };
 }
 
 export const chatStore = {
-  // ===== 채팅방 =====
-
-  /** 전체 채팅방 조회 */
-  findAllRooms(): ChatRoom[] {
-    return readRooms();
+  async findAllRooms(): Promise<ChatRoom[]> {
+    const { data, error } = await supabase.from('chat_rooms').select('*').order('updated_at', { ascending: false });
+    if (error) throw error;
+    return (data as RoomRow[]).map(rowToRoom);
   },
 
-  /** 사용자가 참여한 채팅방 조회 */
-  findRoomsByUser(userId: string): ChatRoom[] {
-    return readRooms().filter((r) => r.participants.includes(userId));
+  async findRoomsByUser(userId: string): Promise<ChatRoom[]> {
+    const { data, error } = await supabase.from('chat_rooms').select('*').contains('participants', [userId]).order('updated_at', { ascending: false });
+    if (error) throw error;
+    return (data as RoomRow[]).map(rowToRoom);
   },
 
-  /** 채팅방 ID로 조회 */
-  findRoomById(roomId: string): ChatRoom | undefined {
-    return readRooms().find((r) => r.id === roomId);
+  async findRoomById(roomId: string): Promise<ChatRoom | undefined> {
+    const { data, error } = await supabase.from('chat_rooms').select('*').eq('id', roomId).maybeSingle();
+    if (error) throw error;
+    return data ? rowToRoom(data as RoomRow) : undefined;
   },
 
-  /** 두 사용자 간 1:1 채팅방 찾기 (없으면 undefined) */
-  findDirectRoom(userId1: string, userId2: string): ChatRoom | undefined {
-    return readRooms().find(
-      (r) =>
-        r.participants.length === 2 &&
-        r.participants.includes(userId1) &&
-        r.participants.includes(userId2),
-    );
+  async findDirectRoom(userId1: string, userId2: string): Promise<ChatRoom | undefined> {
+    const { data, error } = await supabase.from('chat_rooms').select('*')
+      .contains('participants', [userId1, userId2]);
+    if (error) throw error;
+    const match = (data as RoomRow[]).find(r => r.participants.length === 2);
+    return match ? rowToRoom(match) : undefined;
   },
 
-  /** 채팅방 생성 */
-  createRoom(participants: string[]): ChatRoom {
-    const rooms = readRooms();
-    const room: ChatRoom = {
-      id: `room-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+  async createRoom(participants: string[]): Promise<ChatRoom> {
+    const now = Date.now();
+    const room: RoomRow = {
+      id: `room-${now}-${Math.random().toString(36).slice(2, 6)}`,
       participants,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+      created_at: now,
+      updated_at: now,
     };
-    rooms.push(room);
-    writeRooms(rooms);
-    return room;
+    const { error } = await supabase.from('chat_rooms').insert(room);
+    if (error) throw error;
+    return rowToRoom(room);
   },
 
-  /** 채팅방 업데이트 시간 갱신 */
-  touchRoom(roomId: string): void {
-    const rooms = readRooms();
-    const idx = rooms.findIndex((r) => r.id === roomId);
-    if (idx !== -1) {
-      rooms[idx].updatedAt = Date.now();
-      writeRooms(rooms);
-    }
+  async touchRoom(roomId: string): Promise<void> {
+    await supabase.from('chat_rooms').update({ updated_at: Date.now() }).eq('id', roomId);
   },
 
-  // ===== 메시지 =====
-
-  /** 채팅방의 메시지 조회 (최신순, 페이징) */
-  findMessagesByRoom(roomId: string, limit = 50, before?: number): ChatMessage[] {
-    let messages = readMessages().filter((m) => m.roomId === roomId);
-    if (before) {
-      messages = messages.filter((m) => m.timestamp < before);
-    }
-    // 시간순 정렬 후 최근 N개
-    messages.sort((a, b) => a.timestamp - b.timestamp);
-    return messages.slice(-limit);
+  async findMessagesByRoom(roomId: string, limit = 50, before?: number): Promise<ChatMessage[]> {
+    let query = supabase.from('chat_messages').select('*').eq('room_id', roomId);
+    if (before) query = query.lt('timestamp', before);
+    const { data, error } = await query.order('timestamp', { ascending: true }).limit(limit);
+    if (error) throw error;
+    return (data as MsgRow[]).map(rowToMsg);
   },
 
-  /** 메시지 추가 */
-  addMessage(msg: Omit<ChatMessage, 'id'>): ChatMessage {
-    const messages = readMessages();
-    const newMsg: ChatMessage = {
-      ...msg,
-      id: `msg-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+  async addMessage(msg: Omit<ChatMessage, 'id'>): Promise<ChatMessage> {
+    const id = `msg-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const row: MsgRow = {
+      id,
+      room_id: msg.roomId,
+      sender_id: msg.senderId,
+      sender_name: msg.senderName,
+      sender_role: msg.senderRole,
+      text: msg.text,
+      timestamp: msg.timestamp,
+      read_by: msg.readBy,
     };
-    messages.push(newMsg);
-    writeMessages(messages);
-    // 채팅방 업데이트 시간 갱신
-    this.touchRoom(msg.roomId);
-    return newMsg;
+    const { error } = await supabase.from('chat_messages').insert(row);
+    if (error) throw error;
+    await this.touchRoom(msg.roomId);
+    return { ...msg, id };
   },
 
-  /** 메시지 읽음 처리 */
-  markAsRead(roomId: string, userId: string): number {
-    const messages = readMessages();
+  async markAsRead(roomId: string, userId: string): Promise<number> {
+    const { data, error } = await supabase.from('chat_messages').select('id, read_by')
+      .eq('room_id', roomId).not('sender_id', 'eq', userId);
+    if (error) throw error;
+
     let count = 0;
-    for (const msg of messages) {
-      if (msg.roomId === roomId && !msg.readBy.includes(userId)) {
-        msg.readBy.push(userId);
+    for (const row of data as { id: string; read_by: string[] }[]) {
+      if (!row.read_by.includes(userId)) {
+        const updated = [...row.read_by, userId];
+        await supabase.from('chat_messages').update({ read_by: updated }).eq('id', row.id);
         count++;
       }
     }
-    if (count > 0) writeMessages(messages);
     return count;
   },
 
-  /** 특정 사용자의 특정 채팅방 읽지 않은 메시지 수 */
-  countUnread(roomId: string, userId: string): number {
-    return readMessages().filter(
-      (m) => m.roomId === roomId && m.senderId !== userId && !m.readBy.includes(userId),
-    ).length;
+  async countUnread(roomId: string, userId: string): Promise<number> {
+    const { data, error } = await supabase.from('chat_messages').select('id, sender_id, read_by')
+      .eq('room_id', roomId).neq('sender_id', userId);
+    if (error) throw error;
+    return (data as { id: string; sender_id: string; read_by: string[] }[])
+      .filter(m => !m.read_by.includes(userId)).length;
   },
 
-  /** 채팅방의 마지막 메시지 조회 */
-  getLastMessage(roomId: string): ChatMessage | undefined {
-    const messages = readMessages().filter((m) => m.roomId === roomId);
-    messages.sort((a, b) => b.timestamp - a.timestamp);
-    return messages[0];
+  async getLastMessage(roomId: string): Promise<ChatMessage | undefined> {
+    const { data, error } = await supabase.from('chat_messages').select('*')
+      .eq('room_id', roomId).order('timestamp', { ascending: false }).limit(1).maybeSingle();
+    if (error) throw error;
+    return data ? rowToMsg(data as MsgRow) : undefined;
   },
 
-  /** 초기 시드 데이터 생성 */
-  seed(adminId: string, users: Array<{ id: string; name: string; role: string }>): void {
-    const rooms = readRooms();
-    if (rooms.length > 0) return; // 이미 시드됨
+  async seed(adminId: string, users: Array<{ id: string; name: string; role: string }>): Promise<void> {
+    const { data: existing } = await supabase.from('chat_rooms').select('id').limit(1);
+    if (existing && existing.length > 0) return;
 
-    // admin과 각 사용자 간 1:1 채팅방 생성
     for (const user of users) {
       if (user.id === adminId) continue;
-      const room = this.createRoom([adminId, user.id]);
-
-      // 시드 메시지
-      this.addMessage({
+      const room = await this.createRoom([adminId, user.id]);
+      await this.addMessage({
         roomId: room.id,
         senderId: adminId,
         senderName: '시스템 관리자',
@@ -183,7 +169,6 @@ export const chatStore = {
         readBy: [adminId],
       });
     }
-
     console.log(`  [CHAT] ${users.length - 1}개 채팅방 시드 완료`);
   },
 };

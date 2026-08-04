@@ -111,7 +111,7 @@ export function createMachineRoutes(xzy: XzyClient): Router {
       let machines = rawList.map(toMachine);
 
       if (user.role !== 'admin') {
-        const assignedIds = machineAssignStore.getByUser(user.userId);
+        const assignedIds = await machineAssignStore.getByUser(user.userId);
         machines = machines.filter((m) => assignedIds.includes(m.funId));
       }
 
@@ -141,7 +141,7 @@ export function createMachineRoutes(xzy: XzyClient): Router {
       }
 
       if (user.role !== 'admin') {
-        const assignedIds = machineAssignStore.getByUser(user.userId);
+        const assignedIds = await machineAssignStore.getByUser(user.userId);
         if (!assignedIds.includes(funId)) {
           res.status(403).json({ success: false, error: '접근 권한이 없는 자판기입니다.' });
           return;
@@ -167,7 +167,7 @@ export function createMachineRoutes(xzy: XzyClient): Router {
       }
 
       if (user.role !== 'admin') {
-        const assignedIds = machineAssignStore.getByUser(user.userId);
+        const assignedIds = await machineAssignStore.getByUser(user.userId);
         if (!assignedIds.includes(funId)) {
           res.status(403).json({ success: false, error: '접근 권한이 없는 자판기입니다.' });
           return;

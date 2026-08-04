@@ -1,61 +1,51 @@
 /**
- * 매장관리자(manager)별 자판기 할당 저장소
- * userId → funId[] 매핑
+ * Supabase 기반 자판기 할당 저장소
  */
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
-
-interface MachineAssignment {
-  [userId: string]: number[];
-}
-
-const DB_PATH = join(import.meta.dirname, 'machineAssignments.json');
-
-function readDB(): MachineAssignment {
-  if (!existsSync(DB_PATH)) {
-    writeFileSync(DB_PATH, '{}', 'utf8');
-    return {};
-  }
-  return JSON.parse(readFileSync(DB_PATH, 'utf8'));
-}
-
-function writeDB(data: MachineAssignment): void {
-  writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf8');
-}
+import { supabase } from '../lib/supabase.js';
 
 export const machineAssignStore = {
-  getByUser(userId: string): number[] {
-    return readDB()[userId] || [];
+  async getByUser(userId: string): Promise<number[]> {
+    const { data, error } = await supabase.from('machine_assignments').select('fun_id').eq('user_id', userId);
+    if (error) throw error;
+    return (data ?? []).map(r => r.fun_id);
   },
 
-  setForUser(userId: string, funIds: number[]): void {
-    const db = readDB();
-    db[userId] = [...new Set(funIds)];
-    writeDB(db);
+  async setForUser(userId: string, funIds: number[]): Promise<void> {
+    await supabase.from('machine_assignments').delete().eq('user_id', userId);
+    if (funIds.length === 0) return;
+    const rows = [...new Set(funIds)].map(fun_id => ({ user_id: userId, fun_id }));
+    const { error } = await supabase.from('machine_assignments').insert(rows);
+    if (error) throw error;
   },
 
-  addForUser(userId: string, funIds: number[]): void {
-    const db = readDB();
-    const existing = db[userId] || [];
-    db[userId] = [...new Set([...existing, ...funIds])];
-    writeDB(db);
+  async addForUser(userId: string, funIds: number[]): Promise<void> {
+    const existing = await this.getByUser(userId);
+    const newIds = funIds.filter(id => !existing.includes(id));
+    if (newIds.length === 0) return;
+    const rows = newIds.map(fun_id => ({ user_id: userId, fun_id }));
+    const { error } = await supabase.from('machine_assignments').insert(rows);
+    if (error) throw error;
   },
 
-  removeForUser(userId: string, funIds: number[]): void {
-    const db = readDB();
-    const existing = db[userId] || [];
-    db[userId] = existing.filter((id) => !funIds.includes(id));
-    writeDB(db);
+  async removeForUser(userId: string, funIds: number[]): Promise<void> {
+    const { error } = await supabase.from('machine_assignments').delete()
+      .eq('user_id', userId).in('fun_id', funIds);
+    if (error) throw error;
   },
 
-  removeUser(userId: string): void {
-    const db = readDB();
-    delete db[userId];
-    writeDB(db);
+  async removeUser(userId: string): Promise<void> {
+    await supabase.from('machine_assignments').delete().eq('user_id', userId);
   },
 
-  getAll(): MachineAssignment {
-    return readDB();
+  async getAll(): Promise<Record<string, number[]>> {
+    const { data, error } = await supabase.from('machine_assignments').select('*');
+    if (error) throw error;
+    const result: Record<string, number[]> = {};
+    for (const row of data ?? []) {
+      if (!result[row.user_id]) result[row.user_id] = [];
+      result[row.user_id].push(row.fun_id);
+    }
+    return result;
   },
 };

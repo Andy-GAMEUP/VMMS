@@ -51,10 +51,15 @@ const amqpConsumer = new AmqpConsumer({
 
 // ===== Express 앱 =====
 const app = express();
-const PORT = Number(process.env.BFF_PORT) || 4000;
+const PORT = Number(process.env.PORT) || Number(process.env.BFF_PORT) || 4000;
 
 // 미들웨어
-app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:3000'], credentials: true }));
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  ...(process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : []),
+];
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -122,8 +127,8 @@ async function bootstrap() {
   }
 
   // 채팅 시드 데이터
-  const allUsers = userStore.findAll();
-  chatStore.seed('admin-001', allUsers.map((u) => ({ id: u.id, name: u.name, role: u.role })));
+  const allUsers = await userStore.findAll();
+  await chatStore.seed('admin-001', allUsers.map((u) => ({ id: u.id, name: u.name, role: u.role })));
 
   // AMQP 연결 시작 (실패해도 서버는 기동)
   if (process.env.XZY_AMQP_URL) {

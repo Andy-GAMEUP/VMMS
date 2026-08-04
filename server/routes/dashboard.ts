@@ -22,7 +22,7 @@ export function createDashboardRoutes(xzy: XzyClient): Router {
       }));
 
       if (user.role !== 'admin') {
-        const assignedIds = machineAssignStore.getByUser(user.userId);
+        const assignedIds = await machineAssignStore.getByUser(user.userId);
         machines = machines.filter((m: any) => assignedIds.includes(m.funId));
       }
 
