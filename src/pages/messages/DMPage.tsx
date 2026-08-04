@@ -44,25 +44,59 @@ export default function DMPage() {
     const { accessToken } = getStoredTokens();
     if (!accessToken) return;
 
-    const es = new EventSource(`/api/chat/stream?token=${accessToken}`);
+    const abortController = new AbortController();
+    const base = import.meta.env.VITE_API_URL || '';
 
-    es.addEventListener('chat:message', (e) => {
-      const msg: ChatMessage = JSON.parse(e.data);
-      if (msg.roomId === roomId) {
-        setLocalMessages((prev) => {
-          if (prev.some((m) => m.id === msg.id)) return prev;
-          return [...prev, msg];
-        });
-        chatApi.markAsRead(roomId);
-        queryClient.invalidateQueries({ queryKey: ['chatRooms'] });
-      }
-    });
+    fetch(`${base}/api/chat/stream`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      signal: abortController.signal,
+    })
+      .then((response) => {
+        if (!response.ok || !response.body) return;
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
 
-    es.onerror = () => {
-      es.close();
-    };
+        function processStream(): Promise<void> {
+          return reader.read().then(({ done, value }) => {
+            if (done) return;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
 
-    return () => es.close();
+            let currentEvent = '';
+            let currentData = '';
+            for (const line of lines) {
+              if (line.startsWith('event: ')) currentEvent = line.slice(7);
+              else if (line.startsWith('data: ')) currentData = line.slice(6);
+              else if (line === '' && currentData) {
+                if (currentEvent === 'chat:message') {
+                  try {
+                    const msg: ChatMessage = JSON.parse(currentData);
+                    if (msg.roomId === roomId) {
+                      setLocalMessages((prev) => {
+                        if (prev.some((m) => m.id === msg.id)) return prev;
+                        return [...prev, msg];
+                      });
+                      chatApi.markAsRead(roomId);
+                      queryClient.invalidateQueries({ queryKey: ['chatRooms'] });
+                    }
+                  } catch { /* ignore parse errors */ }
+                }
+                currentEvent = '';
+                currentData = '';
+              }
+            }
+            return processStream();
+          });
+        }
+        return processStream();
+      })
+      .catch((err) => {
+        if (err.name !== 'AbortError') console.error('[Chat SSE] error:', err);
+      });
+
+    return () => abortController.abort();
   }, [roomId, queryClient]);
 
   useEffect(() => {
