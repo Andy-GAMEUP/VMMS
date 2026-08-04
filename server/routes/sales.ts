@@ -63,24 +63,28 @@ export function createSalesRoutes(xzy: XzyClient): Router {
       const st = Number(startTime);
       const et = Number(endTime);
 
-      // countInfo doesn't support funId filtering — fetch overall stats and return machines with totals
-      let overallSales = 0;
-      let overallOrders = 0;
-      try {
-        const stats = await xzy.getSalesStats({ startTime: st, endTime: et });
-        const statsList = Array.isArray(stats) ? stats : [];
-        overallSales = statsList.reduce((s: number, v: any) => s + (v.decTotalOrderMoney ?? 0), 0);
-        overallOrders = statsList.reduce((s: number, v: any) => s + (v.totalOrderNumber ?? 0), 0);
-      } catch { /* no sales data available */ }
+      const results = await Promise.allSettled(
+        machines.map((m) => xzy.getSalesStats({ startTime: st, endTime: et, funId: m.funId })),
+      );
 
-      const data = machines.map((m) => ({
-        funId: m.funId,
-        funName: m.funName,
-        funStatus: m.funStatus,
-        lineStatus: m.lineStatus,
-        totalSales: 0,
-        totalOrders: 0,
-      }));
+      const data = machines.map((m, i) => {
+        let totalSales = 0;
+        let totalOrders = 0;
+        const result = results[i];
+        if (result.status === 'fulfilled') {
+          const statsList = Array.isArray(result.value) ? result.value : [];
+          totalSales = statsList.reduce((s: number, v: any) => s + (v.decTotalOrderMoney ?? 0), 0);
+          totalOrders = statsList.reduce((s: number, v: any) => s + (v.totalOrderNumber ?? 0), 0);
+        }
+        return {
+          funId: m.funId,
+          funName: m.funName,
+          funStatus: m.funStatus,
+          lineStatus: m.lineStatus,
+          totalSales,
+          totalOrders,
+        };
+      });
 
       res.json({ success: true, data, timestamp: Date.now() });
     } catch (err) {
