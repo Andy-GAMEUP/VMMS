@@ -7,6 +7,7 @@
 
 import type { XzyClient } from './xzyClient.js';
 import type { AmqpConsumer, AlertMessage, AlertType } from './amqpConsumer.js';
+import { isLcdDevice } from './deviceFilter.js';
 
 interface MachineSnapshot {
   funId: number;
@@ -67,8 +68,11 @@ export class StatusPoller {
 
   private async poll() {
     try {
-      const machines = (await this.xzy.getMachines()) as MachineSnapshot[];
-      if (!Array.isArray(machines) || machines.length === 0) return;
+      const allMachines = (await this.xzy.getMachines()) as MachineSnapshot[];
+      if (!Array.isArray(allMachines) || allMachines.length === 0) return;
+
+      // 자판기 LCD(디스플레이 전용 장비)는 알림 대상에서 제외
+      const machines = allMachines.filter((m) => !isLcdDevice(m.funName, m.funNumber));
 
       for (const m of machines) {
         const prev = this.prevMachines.get(m.funId);

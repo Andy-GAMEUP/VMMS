@@ -78,10 +78,9 @@ export default function DashboardPage() {
 
   const todayDate = new Date().toLocaleDateString(lang === 'ko' ? 'ko-KR' : 'en-US', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' });
 
-  const machRanks = (data.machines ?? [])
-    .map((m) => ({ name: m.funName ?? m.funCode, sales: 0 }))
+  const machRanks = (data.machineSales ?? [])
     .slice(0, 5)
-    .map((r, i) => ({ ...r, rank: i + 1 }));
+    .map((m, i) => ({ rank: i + 1, name: m.funName, sales: m.totalSales }));
 
   return (
     <div className="space-y-5 pb-4">

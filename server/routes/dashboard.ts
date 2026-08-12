@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from 'express';
 import type { XzyClient } from '../lib/xzyClient.js';
 import type { AuthenticatedRequest } from '../lib/auth.js';
 import { machineAssignStore } from '../db/machineAssignStore.js';
+import { isLcdDevice } from '../lib/deviceFilter.js';
 
 export function createDashboardRoutes(xzy: XzyClient): Router {
   const router = Router();
@@ -15,11 +16,15 @@ export function createDashboardRoutes(xzy: XzyClient): Router {
       const rawList = Array.isArray(rawData) ? rawData : (rawData?.records ?? []);
       let machines = rawList.map((raw: any) => ({
         funId: raw.funId,
+        funCode: raw.funNumber || '',
         funName: raw.funName || '',
         funStatus: raw.funStatus ?? 0,
         lineStatus: raw.lineStatus ?? 0,
         funWaring: raw.funWaring ?? 5,
       }));
+
+      // 자판기 LCD(디스플레이 전용 장비)는 장비 집계 대상에서 제외
+      machines = machines.filter((m: any) => !isLcdDevice(m.funName, m.funCode));
 
       if (user.role !== 'admin') {
         const assignedIds = await machineAssignStore.getByUser(user.userId);
