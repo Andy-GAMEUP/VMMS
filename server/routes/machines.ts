@@ -10,6 +10,7 @@ import type { XzyClient } from '../lib/xzyClient.js';
 import type { AuthenticatedRequest } from '../lib/auth.js';
 import { machineAssignStore } from '../db/machineAssignStore.js';
 import { isLcdDevice } from '../lib/deviceFilter.js';
+import { buildProductMap, type ProductInfo } from '../lib/productMap.js';
 
 /** 鑫之源 설비 목록 항목 → VMMS Machine 변환 */
 function toMachine(raw: any) {
@@ -48,7 +49,7 @@ function toMachineDetail(raw: any) {
 }
 
 /** 鑫之源 화도(슬롯) → VMMS Road 변환 (상품 룩업맵으로 이름/가격 보강) */
-function toRoad(raw: any, productMap?: Map<number, { name: string; price: number }>) {
+function toRoad(raw: any, productMap?: Map<number, ProductInfo>) {
   const goodsId = raw.goodsId ?? null;
   const product = goodsId ? productMap?.get(goodsId) : undefined;
   return {
@@ -65,26 +66,6 @@ function toRoad(raw: any, productMap?: Map<number, { name: string; price: number
     isSale: goodsId ? 1 : 0,
     shelfDate: raw.shelfDate ?? null,
   };
-}
-
-/** 상품 목록에서 goodsId → {name, price} 룩업맵 생성 */
-async function buildProductMap(xzy: XzyClient): Promise<Map<number, { name: string; price: number }>> {
-  const map = new Map<number, { name: string; price: number }>();
-  try {
-    const rawData = await xzy.getProducts({ current: 1, size: 200 }) as any;
-    const records = Array.isArray(rawData) ? rawData : (rawData?.records ?? []);
-    for (const p of records) {
-      if (p.goodsId) {
-        map.set(p.goodsId, {
-          name: p.goodsName || '',
-          price: p.oldGoodsPrice ?? 0,
-        });
-      }
-    }
-  } catch {
-    // 상품 조회 실패해도 슬롯 데이터는 반환
-  }
-  return map;
 }
 
 /** 자판기별 재고부족 여부 판정 (슬롯 중 하나라도 roadStock <= funWaring이면 true) */

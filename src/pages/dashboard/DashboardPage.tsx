@@ -82,6 +82,10 @@ export default function DashboardPage() {
     .slice(0, 5)
     .map((m, i) => ({ rank: i + 1, name: m.funName, sales: m.totalSales }));
 
+  const prodRanks = (data.topProducts ?? [])
+    .slice(0, 5)
+    .map((p, i) => ({ rank: i + 1, name: p.goodsName, orders: p.totalOrders }));
+
   return (
     <div className="space-y-5 pb-4">
       {/* Greeting */}
@@ -191,13 +195,12 @@ export default function DashboardPage() {
         />
         <RankingSection
           title={t.dashboard.productRanking}
-          items={[
-            { rank: 1, name: '코카콜라 제로 355ml', value: '2,847', sub: t.common.items },
-            { rank: 2, name: '포카리스웨트 500ml', value: '2,156', sub: t.common.items },
-            { rank: 3, name: '아메리카노 HOT', value: '1,933', sub: t.common.items },
-            { rank: 4, name: '밀키스 250ml', value: '1,488', sub: t.common.items },
-            { rank: 5, name: '허니버터칩', value: '1,205', sub: t.common.items },
-          ]}
+          items={prodRanks.map((p) => ({
+            rank: p.rank,
+            name: p.name,
+            value: p.orders.toLocaleString('ko-KR'),
+            sub: t.common.items,
+          }))}
         />
       </div>
 
@@ -231,6 +234,11 @@ function RankingSection({ title, items }: {
           {t.calendar.yearMonth(new Date().getFullYear(), new Date().getMonth() + 1)}
         </div>
       </div>
+      {items.length === 0 && (
+        <div className="text-center py-6 text-xs rounded-[11px] border" style={{ color: 'var(--c-tx3)', backgroundColor: 'var(--c-sf)', borderColor: 'var(--c-bd)' }}>
+          {t.sales.noData}
+        </div>
+      )}
       {items.map((it) => (
         <div
           key={it.rank}

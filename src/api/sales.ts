@@ -10,6 +10,14 @@ export interface MachineSalesData {
   totalOrders: number;
 }
 
+export interface TopProductData {
+  goodsId: number;
+  goodsName: string;
+  fileUrl: string;
+  totalSales: number;
+  totalOrders: number;
+}
+
 export const salesApi = {
   /** 매출 통계 (statType 제거됨 — 鑫之源 2026-05-29 회신) */
   getStats: (params: {
@@ -24,4 +32,11 @@ export const salesApi = {
     startTime: number;
     endTime: number;
   }) => apiGet<MachineSalesData[]>('/sales/by-machine', params),
+
+  /** 인기 상품 순위 (판매 건수 상위) */
+  getTopProducts: (params: {
+    startTime: number;
+    endTime: number;
+    limit?: number;
+  }) => apiGet<TopProductData[]>('/sales/top-products', params),
 };
