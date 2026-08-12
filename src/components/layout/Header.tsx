@@ -30,10 +30,9 @@ export function Header() {
   const devCounts = (machines ?? []).reduce(
     (acc, m) => {
       const s = resolveDeviceStatus(m.funStatus, m.lineStatus);
-      if (s === 'online' && !m.hasLowStock) acc.ok++;
-      else if (s === 'fault') acc.err++;
+      if (s === 'offline') acc.err++;
       else if (m.hasLowStock) acc.warn++;
-      else acc.err++;
+      else acc.ok++;
       return acc;
     },
     { ok: 0, err: 0, warn: 0 },

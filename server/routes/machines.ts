@@ -86,12 +86,12 @@ async function buildProductMap(xzy: XzyClient): Promise<Map<number, { name: stri
   return map;
 }
 
-/** 자판기별 재고부족 여부 판정 (슬롯 중 하나라도 roadStock < funWaring이면 true) */
+/** 자판기별 재고부족 여부 판정 (슬롯 중 하나라도 roadStock <= funWaring이면 true) */
 async function checkLowStock(xzy: XzyClient, funId: number, funWaring: number): Promise<boolean> {
   try {
     const rawRoads = await xzy.getRoads(funId) as any[];
     return (rawRoads || []).some(
-      (r) => r.goodsId && (r.roadStock ?? 0) < funWaring,
+      (r) => r.goodsId && (r.roadStock ?? 0) <= funWaring,
     );
   } catch {
     return false;
