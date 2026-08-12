@@ -3,6 +3,7 @@ import type { XzyClient } from '../lib/xzyClient.js';
 import type { AuthenticatedRequest } from '../lib/auth.js';
 import { machineAssignStore } from '../db/machineAssignStore.js';
 import { isLcdDevice } from '../lib/deviceFilter.js';
+import { countByStatus } from '../lib/deviceStatus.js';
 
 export function createDashboardRoutes(xzy: XzyClient): Router {
   const router = Router();
@@ -31,12 +32,8 @@ export function createDashboardRoutes(xzy: XzyClient): Router {
         machines = machines.filter((m: any) => assignedIds.includes(m.funId));
       }
 
-      // 장비 상태 집계 — funStatus/lineStatus 모두 0=온라인, 1=오프라인
-      let online = 0, offline = 0;
-      for (const m of machines) {
-        if (m.funStatus === 1 || m.lineStatus === 1) offline++;
-        else online++;
-      }
+      // 장비 상태 집계 (판정 규칙은 server/lib/deviceStatus.ts 주석 참고)
+      const statusCounts = countByStatus(machines);
 
       // 재고부족 자판기 카운트 (병렬)
       const lowStockChecks = await Promise.allSettled(
@@ -59,8 +56,7 @@ export function createDashboardRoutes(xzy: XzyClient): Router {
         success: true,
         data: {
           totalMachines: machines.length,
-          online,
-          offline,
+          ...statusCounts,
           lowStockCount,
         },
         timestamp: Date.now(),

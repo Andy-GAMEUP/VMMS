@@ -37,12 +37,24 @@ export interface MachineDetail extends Machine {
 export type DeviceStatusType = 'online' | 'offline' | 'fault' | 'stopped';
 
 /**
- * REST API funStatus + lineStatus → VMMS 상태
- * 두 필드 모두 0=온라인, 1=오프라인이며 REST 응답에는 고장 상태가 없다.
- * fault/stopped는 AMQP 알림(resolveMqDeviceStatus)에서만 전달된다.
+ * funStatus + lineStatus → VMMS 상태
+ *
+ * 두 벤더 문서가 funStatus를 다르게 정의한다:
+ *   REST 문서 3.1.1 : 0=온라인, 1=오프라인
+ *   MQ   문서 3.2   : 1=정상, 2=고장, 3=정지
+ * 반면 lineStatus는 양쪽 문서가 0=온라인, 1=오프라인으로 동일하게 정의한다.
+ *
+ * 따라서 접속 여부는 정의가 일치하는 lineStatus로만 판정하고,
+ * funStatus는 MQ 문서에만 존재하는 2(고장)/3(정지)일 때만 사용한다.
+ * REST 해석이 맞더라도 2/3은 내려오지 않으므로 어느 쪽이든 오판이 없다.
+ *
+ * 운영 확인(2026-08): 자판기 4대 모두 funStatus=1, lineStatus=1 →
+ * MQ 문서의 "설비 정상이나 오프라인(네트워크 문제)" 조합.
  */
 export function resolveDeviceStatus(funStatus: number, lineStatus: number): DeviceStatusType {
-  return funStatus === 1 || lineStatus === 1 ? 'offline' : 'online';
+  if (funStatus === 2) return 'fault';   // 설비 고장 — 접속 여부보다 우선 표시
+  if (funStatus === 3) return 'stopped'; // 인위적 운영 정지
+  return lineStatus === 1 ? 'offline' : 'online';
 }
 
 /** 상태별 표시 정보 */
