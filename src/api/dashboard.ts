@@ -9,6 +9,8 @@ export interface DashboardSummary {
   totalMachines: number;
   online: number;
   offline: number;
+  fault: number;
+  stopped: number;
   lowStockCount: number;
 }
 
