@@ -26,11 +26,10 @@ export function createDashboardRoutes(xzy: XzyClient): Router {
         machines = machines.filter((m: any) => assignedIds.includes(m.funId));
       }
 
-      // 장비 상태 집계
-      let online = 0, fault = 0, offline = 0;
+      // 장비 상태 집계 — funStatus/lineStatus 모두 0=온라인, 1=오프라인
+      let online = 0, offline = 0;
       for (const m of machines) {
-        if (m.funStatus === 1) fault++;
-        else if (m.lineStatus === 1) offline++;
+        if (m.funStatus === 1 || m.lineStatus === 1) offline++;
         else online++;
       }
 
@@ -40,7 +39,7 @@ export function createDashboardRoutes(xzy: XzyClient): Router {
           try {
             const roads = await xzy.getRoads(m.funId) as any[];
             return (roads || []).some(
-              (r: any) => r.goodsId && (r.roadStock ?? 0) < m.funWaring,
+              (r: any) => r.goodsId && (r.roadStock ?? 0) <= m.funWaring,
             );
           } catch {
             return false;
@@ -56,7 +55,6 @@ export function createDashboardRoutes(xzy: XzyClient): Router {
         data: {
           totalMachines: machines.length,
           online,
-          fault,
           offline,
           lowStockCount,
         },

@@ -8,7 +8,7 @@ export interface Machine {
   funId: number;
   funCode: string;
   funName: string;
-  funStatus: number; // REST: 0=정상, 1=고장
+  funStatus: number; // 0=온라인, 1=오프라인
   lineStatus: number; // 0=온라인, 1=오프라인
   address: string;
   deptId: number;
@@ -36,11 +36,13 @@ export interface MachineDetail extends Machine {
 /** VMMS 내부 설비 상태 */
 export type DeviceStatusType = 'online' | 'offline' | 'fault' | 'stopped';
 
-/** REST API funStatus + lineStatus → VMMS 상태 */
+/**
+ * REST API funStatus + lineStatus → VMMS 상태
+ * 두 필드 모두 0=온라인, 1=오프라인이며 REST 응답에는 고장 상태가 없다.
+ * fault/stopped는 AMQP 알림(resolveMqDeviceStatus)에서만 전달된다.
+ */
 export function resolveDeviceStatus(funStatus: number, lineStatus: number): DeviceStatusType {
-  if (funStatus === 1) return 'fault';
-  if (lineStatus === 1) return 'offline';
-  return 'online';
+  return funStatus === 1 || lineStatus === 1 ? 'offline' : 'online';
 }
 
 /** 상태별 표시 정보 */

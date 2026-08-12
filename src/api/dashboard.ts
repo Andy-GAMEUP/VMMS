@@ -8,7 +8,6 @@ import { startOfMonth, endOfDay } from 'date-fns';
 export interface DashboardSummary {
   totalMachines: number;
   online: number;
-  fault: number;
   offline: number;
   lowStockCount: number;
 }
