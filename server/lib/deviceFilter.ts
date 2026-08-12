@@ -12,8 +12,8 @@
  * 콤마 구분해 덮어쓸 수 있다 (예: `LCD_KEYWORDS=인치,LCD,광고판`).
  */
 
-/** 숫자 + 인치 표기 (65인치 / 65 인치 / 65" / 65inch / 65-inch) */
-const INCH_PATTERN = /\d+\s*(인치|"|″|inch)/i;
+/** 숫자 + 인치 표기 (65인치 / 65 인치 / 65" / 65inch / 32-inch) */
+const INCH_PATTERN = /\d+\s*-?\s*(인치|"|″|inch)/i;
 
 const DEFAULT_KEYWORDS = ['LCD'];
 

@@ -7,6 +7,8 @@ import type { XzyClient } from '../lib/xzyClient.js';
 import type { AuthenticatedRequest } from '../lib/auth.js';
 import { machineAssignStore } from '../db/machineAssignStore.js';
 import { isLcdDevice } from '../lib/deviceFilter.js';
+import { buildProductMap } from '../lib/productMap.js';
+import { aggregateTopProducts, type RawSalesStat } from '../lib/salesAggregate.js';
 
 export function createSalesRoutes(xzy: XzyClient): Router {
   const router = Router();
@@ -29,6 +31,34 @@ export function createSalesRoutes(xzy: XzyClient): Router {
       if (funId) params.funId = Number(funId);
 
       const data = await xzy.getSalesStats(params);
+      res.json({ success: true, data, timestamp: Date.now() });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      res.status(500).json({ success: false, error: message, timestamp: Date.now() });
+    }
+  });
+
+  /** GET /api/sales/top-products — 인기 상품 순위 (판매 건수 상위) */
+  router.get('/top-products', async (req: Request, res: Response) => {
+    try {
+      const { startTime, endTime } = req.query;
+
+      if (!startTime || !endTime) {
+        res.status(400).json({ success: false, error: 'startTime and endTime are required' });
+        return;
+      }
+
+      const limit = Math.min(Math.max(Number(req.query.limit) || 5, 1), 50);
+
+      const [stats, productMap] = await Promise.all([
+        xzy.getSalesStats({
+          startTime: Number(startTime),
+          endTime: Number(endTime),
+        }) as Promise<RawSalesStat[]>,
+        buildProductMap(xzy),
+      ]);
+
+      const data = aggregateTopProducts(stats, productMap, limit);
       res.json({ success: true, data, timestamp: Date.now() });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';
