@@ -1,5 +1,5 @@
 import { machineApi } from './machines';
-import { salesApi } from './sales';
+import { salesApi, type MachineSalesData } from './sales';
 import { apiGet } from './client';
 import { resolveDeviceStatus } from '@/types';
 import type { Machine, DeviceStatusType } from '@/types';
@@ -16,6 +16,8 @@ export interface DashboardData {
   mtdSales: number;
   mtdOrders: number;
   machines: Machine[];
+  /** 자판기별 당월 매출 — 매출 내림차순 정렬 */
+  machineSales: MachineSalesData[];
   statusSummary: Record<DeviceStatusType, number>;
   totalMachines: number;
   lowStockCount: number;
@@ -25,13 +27,15 @@ export const dashboardApi = {
   /** 대시보드 데이터 조합 (MTD 매출 + 장비 요약) */
   getData: async (): Promise<DashboardData> => {
     const now = new Date();
-    const [machines, salesStats, summary] = await Promise.all([
+    const mtdRange = {
+      startTime: startOfMonth(now).getTime(),
+      endTime: endOfDay(now).getTime(),
+    };
+    const [machines, salesStats, summary, machineSales] = await Promise.all([
       machineApi.getAll(),
-      salesApi.getStats({
-        startTime: startOfMonth(now).getTime(),
-        endTime: endOfDay(now).getTime(),
-      }),
+      salesApi.getStats(mtdRange),
       apiGet<DashboardSummary>('/dashboard/summary'),
+      salesApi.getByMachine(mtdRange),
     ]);
 
     const statusSummary: Record<DeviceStatusType, number> = { online: 0, offline: 0, fault: 0, stopped: 0 };
@@ -47,6 +51,7 @@ export const dashboardApi = {
       mtdSales,
       mtdOrders,
       machines,
+      machineSales: [...machineSales].sort((a, b) => b.totalSales - a.totalSales),
       statusSummary,
       totalMachines: machines.length,
       lowStockCount: summary.lowStockCount,

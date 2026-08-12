@@ -9,6 +9,7 @@ import { Router, type Request, type Response } from 'express';
 import type { XzyClient } from '../lib/xzyClient.js';
 import type { AuthenticatedRequest } from '../lib/auth.js';
 import { machineAssignStore } from '../db/machineAssignStore.js';
+import { isLcdDevice } from '../lib/deviceFilter.js';
 
 /** 鑫之源 설비 목록 항목 → VMMS Machine 변환 */
 function toMachine(raw: any) {
@@ -109,6 +110,9 @@ export function createMachineRoutes(xzy: XzyClient): Router {
 
       const rawList = Array.isArray(rawData) ? rawData : (rawData?.records ?? []);
       let machines = rawList.map(toMachine);
+
+      // 자판기 LCD(디스플레이 전용 장비)는 자판기 목록에서 제외
+      machines = machines.filter((m) => !isLcdDevice(m.funName, m.funCode));
 
       if (user.role !== 'admin') {
         const assignedIds = await machineAssignStore.getByUser(user.userId);
